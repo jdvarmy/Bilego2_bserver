@@ -43,18 +43,18 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 `APP_VERSION`= версия приложения (0.0.1) \
 `PORT`= порт для запуска приложения (3001) \
 `BILEGO_URL`= устарело. адрес api wordpress (http://chekisu6.bget.ru/wp-json/bilego/v1/front) \
-`STATIC_FILES_DIR`= папка для статических файлов (upload) \
+`STATIC_FILES_DIR`= папка для статических файлов (upload) 
 
 `CLIENT_URL`= адрес клиента приложения (http://localhost:3000) \
-`ADMIN_URL`= адрес администратора приложения (http://localhost:3003) \
+`ADMIN_URL`= адрес администратора приложения (http://localhost:3003) 
 
 `JWT_ACCESS_SECRET`= секрет авторизации \
 `JWT_REFRESH_SECRET`= секрет авторизации \
 `JWT_ACCESS_EXPIRES`= время жизни (15m) \
-`JWT_REFRESH_EXPIRES`= время жизни (60d) \
+`JWT_REFRESH_EXPIRES`= время жизни (60d) 
 
 `MYSQL_HOST`= адрес БД (localhost) \
 `MYSQL_PORT`= порт БД (3306) \
 `MYSQL_DB`= имя БД (bilego2) \
 `MYSQL_USER`= пользователь (dba) \
-`MYSQL_PASS`= пароль (dba) \
+`MYSQL_PASS`= пароль (dba) 
