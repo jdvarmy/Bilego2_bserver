@@ -47,6 +47,6 @@ export class MedialibraryService {
       size: file.size,
     });
 
-    return await this.mediaRepo.save(media);
+    return this.mediaRepo.save(media);
   }
 }

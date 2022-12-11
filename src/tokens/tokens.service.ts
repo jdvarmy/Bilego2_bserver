@@ -38,7 +38,7 @@ export class TokensService {
 
     if (userAccess) {
       userAccess.refreshToken = token;
-      return await this.userAccessRepo.save(userAccess);
+      return this.userAccessRepo.save(userAccess);
     }
 
     const access = await this.userAccessRepo.insert({
