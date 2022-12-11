@@ -21,6 +21,7 @@ export class MedialibraryService {
 
   async insertMediaData(files: Express.Multer.File[]): Promise<boolean> {
     for (const file of files) {
+      // todo: переделать, убрать await
       await this.saveMediaToDB(file);
     }
 
