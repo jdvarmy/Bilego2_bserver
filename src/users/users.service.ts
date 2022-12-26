@@ -49,14 +49,13 @@ export class UsersService {
     const user = await this.prepareUserDataToSave(data, uid);
 
     if (uid) {
-      const editUser = await this.usersRepo.findOne({
-        where: { uid },
-      });
+      const editUser = await this.usersRepo.findOne({ where: { uid } });
 
       if (!editUser) {
         throw new InternalServerErrorException(Exception500.findUser);
       }
 
+      // todo: переделать убрать await
       await this.usersRepo.save({ ...editUser, ...user });
     } else {
       await this.usersRepo.save(user);

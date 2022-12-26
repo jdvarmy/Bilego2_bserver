@@ -53,7 +53,7 @@ export enum EventHeaderType {
   effect = 'effect',
 }
 
-export enum TaxonomyLink {
+export enum TaxonomyTypeLink {
   event = 'event',
   item = 'item',
 }
@@ -110,6 +110,7 @@ export enum Exception500 {
   uploadMap, // Проблемы с загрузкой карты или мини-карты
   uploadMapNoData, // Нет файла карты или мини-карты
   parseSVGError, // Ошибка при парсинге SVG карты
+  findTaxonomy, // Таксономия с таким id не найдена
 }
 
 export enum FileType {

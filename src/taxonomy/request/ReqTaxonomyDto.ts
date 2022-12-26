@@ -1,36 +1,34 @@
-import {
-  IsOptional,
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsBoolean,
-} from 'class-validator';
-import { TaxonomyType } from '../../types/enums';
+import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
+import { TaxonomyType, TaxonomyTypeLink } from '../../types/enums';
 
 export class ReqTaxonomyDto {
   @IsOptional()
   @IsNumber()
   id?: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  type: TaxonomyType;
+  type?: TaxonomyType;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  slug: string;
+  slug?: string;
+
+  @IsOptional()
+  @IsString()
+  link?: TaxonomyTypeLink;
 
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  icon: number;
+  icon?: number;
 
   @IsOptional()
   @IsNumber()

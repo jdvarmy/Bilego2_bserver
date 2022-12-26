@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TaxonomyLink, TaxonomyType } from '../types/enums';
+import { TaxonomyTypeLink, TaxonomyType } from '../types/enums';
 import { Events } from './Events';
 import { Items } from './Items';
 import { Media } from './Media';
@@ -25,8 +25,8 @@ export class Taxonomy {
   @JoinTable()
   item: Items[];
 
-  @Column({ type: 'enum', enum: TaxonomyLink })
-  link: TaxonomyLink;
+  @Column({ type: 'enum', enum: TaxonomyTypeLink })
+  link: TaxonomyTypeLink;
 
   @Column({ type: 'enum', enum: TaxonomyType })
   type: TaxonomyType;

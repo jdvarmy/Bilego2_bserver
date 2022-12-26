@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { ReqTaxonomyDto } from '../dtos/request/ReqTaxonomyDto';
-import { TaxonomyDto } from '../dtos/TaxonomyDto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { PostTaxonomyDto } from './request/PostTaxonomyDto';
+import { ResTaxonomyDto } from './response/ResTaxonomyDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media, Taxonomy } from '../typeorm';
 import { Repository } from 'typeorm';
-import { TaxonomyType } from '../types/enums';
+import { Exception500, TaxonomyType } from '../types/enums';
+import { PatchTaxonomyDto } from './request/PatchTaxonomyDto';
 
 @Injectable()
 export class TaxonomyService {
@@ -13,25 +14,65 @@ export class TaxonomyService {
     @InjectRepository(Media) private mediaRepo: Repository<Media>,
   ) {}
 
-  async getTaxonomy(type: TaxonomyType): Promise<TaxonomyDto[]> {
+  async getTaxonomy(type: TaxonomyType): Promise<ResTaxonomyDto[]> {
     return (await this.getTaxonomyByType(type)).map(
-      (taxonomy) => new TaxonomyDto(taxonomy),
+      (taxonomy) => new ResTaxonomyDto(taxonomy),
     );
   }
 
-  async saveTaxonomy(taxonomy: ReqTaxonomyDto): Promise<TaxonomyDto[]> {
-    const mediaIcon = await this.getMedia(taxonomy.icon);
-    const mediaImage = await this.getMedia(taxonomy.image);
-
+  async saveTaxonomy(taxonomy: PostTaxonomyDto): Promise<ResTaxonomyDto[]> {
     await this.taxonomyRepo.save({
       ...taxonomy,
-      icon: mediaIcon,
-      image: mediaImage,
+      ...(await this.getMedia({ icon: taxonomy.icon, image: taxonomy.image })),
     });
 
     return (await this.getTaxonomyByType(taxonomy.type)).map(
-      (taxonomy) => new TaxonomyDto(taxonomy),
+      (taxonomy) => new ResTaxonomyDto(taxonomy),
     );
+  }
+
+  async deleteTaxonomy(id: number): Promise<Taxonomy> {
+    const taxonomy = await this.getTaxonomyById(id);
+    return this.taxonomyRepo.remove(taxonomy);
+  }
+
+  async updateTaxonomy(taxonomy: PatchTaxonomyDto): Promise<ResTaxonomyDto> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, icon, image, ...props } = taxonomy;
+    const editTaxonomy = await this.taxonomyRepo.findOne({ where: { id } });
+    const media = await this.getMedia({ icon, image });
+
+    return new ResTaxonomyDto(
+      await this.taxonomyRepo.save({
+        ...editTaxonomy,
+        ...props,
+        ...media,
+      }),
+    );
+  }
+
+  // HELPERS
+  async getMediaData(id: number): Promise<Media | undefined> {
+    return id ? await this.mediaRepo.findOne({ where: { id } }) : undefined;
+  }
+
+  async getMedia(props: { icon: number; image: number }) {
+    const mediaIcon = await this.getMediaData(props.icon);
+    const mediaImage = await this.getMediaData(props.image);
+
+    return { icon: mediaIcon, image: mediaImage };
+  }
+
+  async getTaxonomyById(id: number): Promise<Taxonomy> {
+    const taxonomy = await this.taxonomyRepo.findOne({
+      where: { id },
+    });
+
+    if (!taxonomy) {
+      throw new InternalServerErrorException(Exception500.findTaxonomy);
+    }
+
+    return taxonomy;
   }
 
   async getTaxonomyByType(type: TaxonomyType): Promise<Taxonomy[]> {
@@ -40,9 +81,5 @@ export class TaxonomyService {
       where: { type },
       order: { name: 'ASC' },
     });
-  }
-
-  async getMedia(id: number): Promise<Media | undefined> {
-    return id ? await this.mediaRepo.findOne({ where: { id } }) : undefined;
   }
 }

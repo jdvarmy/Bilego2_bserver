@@ -35,4 +35,4 @@ export interface Slide {
   terms?: string[];
 }
 
-export type MediaType = { id: number; name: string };
+export type MediaType = { id?: number; name?: string; path?: string };

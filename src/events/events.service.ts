@@ -75,6 +75,7 @@ export class EventsService {
 
   async deleteEventDate(uid: string): Promise<boolean> {
     const eventDateFromDb = await this.getEventDateByUid(uid);
+    // todo: убрать await
     await this.eventDatesRepo.remove(eventDateFromDb);
 
     return true;
@@ -87,7 +88,7 @@ export class EventsService {
       throw new InternalServerErrorException(Exception500.editNoEventDateId);
     }
     const eventDateFromDb = await this.getEventDateByUid(uid);
-    const mapFromDb = !!map?.uid
+    const mapFromDb = map?.uid
       ? await this.mapService.getMapByUid(map.uid)
       : null;
 
