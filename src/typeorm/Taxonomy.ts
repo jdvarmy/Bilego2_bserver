@@ -53,7 +53,7 @@ export class Taxonomy {
   image: Media;
 
   @Column({ nullable: true })
-  sortNumber: number;
+  overIndex: number;
 
   @Column({ default: false })
   showInMenu: boolean;

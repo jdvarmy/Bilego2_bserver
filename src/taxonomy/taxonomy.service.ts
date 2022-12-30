@@ -6,6 +6,7 @@ import { Media, Taxonomy } from '../typeorm';
 import { Repository } from 'typeorm';
 import { Exception500, TaxonomyType } from '../types/enums';
 import { PatchTaxonomyDto } from './request/PatchTaxonomyDto';
+import cloneDeep from '../utils';
 
 @Injectable()
 export class TaxonomyService {
@@ -21,8 +22,14 @@ export class TaxonomyService {
   }
 
   async saveTaxonomy(taxonomy: PostTaxonomyDto): Promise<ResTaxonomyDto[]> {
+    const overIndex = await this.taxonomyRepo.findOne({
+      where: { type: taxonomy.type },
+      order: { overIndex: 'desc', id: 'desc' },
+    });
+
     await this.taxonomyRepo.save({
       ...taxonomy,
+      overIndex: overIndex.overIndex ? overIndex.overIndex + 1 : 0,
       ...(await this.getMedia({ icon: taxonomy.icon, image: taxonomy.image })),
     });
 
@@ -37,21 +44,63 @@ export class TaxonomyService {
   }
 
   async updateTaxonomy(taxonomy: PatchTaxonomyDto): Promise<ResTaxonomyDto> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, icon, image, ...props } = taxonomy;
-    const editTaxonomy = await this.taxonomyRepo.findOne({ where: { id } });
-    const media = await this.getMedia({ icon, image });
+    const { id, icon, image, overIndex, ...props } = taxonomy;
 
-    return new ResTaxonomyDto(
-      await this.taxonomyRepo.save({
-        ...editTaxonomy,
-        ...props,
-        ...media,
-      }),
-    );
+    if (typeof overIndex === 'number' && overIndex + 1 && props.type) {
+      // меняем порядок отображения
+      return this.updateIndex({ id, overIndex, ...props });
+    } else {
+      // просто обновляем таксономию
+      const editTaxonomy = await this.taxonomyRepo.findOne({ where: { id } });
+      const media = await this.getMedia({ icon, image });
+      return this.update({ ...editTaxonomy, ...props, ...media });
+    }
   }
 
   // HELPERS
+  async update(taxonomy): Promise<ResTaxonomyDto> {
+    return new ResTaxonomyDto(await this.taxonomyRepo.save(taxonomy));
+  }
+
+  async updateIndex(taxonomy): Promise<ResTaxonomyDto> {
+    const oldItems = (await this.getTaxonomyByType(taxonomy.type)).map(
+      (tax) => ({ id: tax.id, overIndex: tax.overIndex }),
+    );
+    const currentItem = { id: taxonomy.id, overIndex: taxonomy.overIndex };
+    const index = oldItems.findIndex((item) => item.id === currentItem.id);
+    const newItems = cloneDeep<typeof oldItems>(oldItems) as Array<{
+      id: string;
+      overIndex: number;
+    }>;
+
+    if (index !== -1 && newItems) {
+      newItems.splice(index, 1);
+      newItems.splice(currentItem.overIndex, 0, currentItem);
+      // перестраиваем индексы
+      newItems.forEach((item, index) => (item.overIndex = index));
+
+      const updateItems: Array<{ id: string; overIndex: number }> = [];
+      newItems.forEach((newItem, index) => {
+        if (+newItem.id !== +oldItems[index].id) {
+          updateItems.push(newItem);
+        }
+      });
+
+      updateItems.forEach((item) => {
+        this.taxonomyRepo
+          .createQueryBuilder()
+          .update(Taxonomy)
+          .set({ overIndex: item.overIndex })
+          .where('id = :id', { id: item.id })
+          .execute();
+      });
+    }
+
+    return new ResTaxonomyDto(
+      await this.taxonomyRepo.findOne({ where: { id: taxonomy.id } }),
+    );
+  }
+
   async getMediaData(id: number): Promise<Media | undefined> {
     return id ? await this.mediaRepo.findOne({ where: { id } }) : undefined;
   }
@@ -79,7 +128,7 @@ export class TaxonomyService {
     return this.taxonomyRepo.find({
       relations: ['icon', 'image'],
       where: { type },
-      order: { name: 'ASC' },
+      order: { overIndex: 'asc', id: 'asc' },
     });
   }
 }

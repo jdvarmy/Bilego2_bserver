@@ -36,7 +36,7 @@ export class ReqTaxonomyDto {
 
   @IsOptional()
   @IsNumber()
-  sortNumber?: number;
+  overIndex?: number;
 
   @IsOptional()
   @IsBoolean()
