@@ -29,7 +29,7 @@ export class TaxonomyService {
 
     await this.taxonomyRepo.save({
       ...taxonomy,
-      overIndex: overIndex.overIndex ? overIndex.overIndex + 1 : 0,
+      overIndex: overIndex?.overIndex ? overIndex.overIndex + 1 : 0,
       ...(await this.getMedia({ icon: taxonomy.icon, image: taxonomy.image })),
     });
 
