@@ -4,7 +4,7 @@ import { ResTaxonomyDto } from './response/ResTaxonomyDto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media, Taxonomy } from '../typeorm';
 import { Repository } from 'typeorm';
-import { Exception500, TaxonomyType } from '../types/enums';
+import { Exception500, TaxonomyType, TaxonomyTypeLink } from '../types/enums';
 import { PatchTaxonomyDto } from './request/PatchTaxonomyDto';
 import cloneDeep from '../utils';
 
@@ -15,8 +15,17 @@ export class TaxonomyService {
     @InjectRepository(Media) private mediaRepo: Repository<Media>,
   ) {}
 
-  async getTaxonomy(type: TaxonomyType): Promise<ResTaxonomyDto[]> {
-    return (await this.getTaxonomyByType(type)).map(
+  async getTaxonomy(
+    link: TaxonomyTypeLink,
+    type?: TaxonomyType,
+  ): Promise<ResTaxonomyDto[]> {
+    if (type) {
+      return (await this.getTaxonomyByType(type)).map(
+        (taxonomy) => new ResTaxonomyDto(taxonomy),
+      );
+    }
+
+    return (await this.getTaxonomyByLink(link)).map(
       (taxonomy) => new ResTaxonomyDto(taxonomy),
     );
   }
@@ -122,6 +131,14 @@ export class TaxonomyService {
     }
 
     return taxonomy;
+  }
+
+  async getTaxonomyByLink(link: TaxonomyTypeLink): Promise<Taxonomy[]> {
+    return this.taxonomyRepo.find({
+      relations: ['icon', 'image'],
+      where: { link },
+      order: { overIndex: 'asc', id: 'asc' },
+    });
   }
 
   async getTaxonomyByType(type: TaxonomyType): Promise<Taxonomy[]> {

@@ -12,7 +12,7 @@ import {
 import { TaxonomyService } from './taxonomy.service';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { ResTaxonomyDto } from './response/ResTaxonomyDto';
-import { TaxonomyType, Version } from '../types/enums';
+import { TaxonomyType, TaxonomyTypeLink, Version } from '../types/enums';
 import { PostTaxonomyDto } from './request/PostTaxonomyDto';
 import { ReqTaxonomyDto } from './request/ReqTaxonomyDto';
 import { Taxonomy } from '../typeorm';
@@ -21,11 +21,27 @@ import { Taxonomy } from '../typeorm';
 export class TaxonomyController {
   constructor(private readonly taxonomyService: TaxonomyService) {}
 
-  @Get(':type')
+  @Get(':link')
   @UseGuards(AccessJwtAuthGuard)
-  getTaxonomy(@Param('type') type: TaxonomyType): Promise<ResTaxonomyDto[]> {
+  getTaxonomy(
+    @Param('link') link: TaxonomyTypeLink,
+    @Param('type') type?: TaxonomyType,
+  ): Promise<ResTaxonomyDto[]> {
     try {
-      return this.taxonomyService.getTaxonomy(type);
+      return this.taxonomyService.getTaxonomy(link, type);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  @Get(':link/:type')
+  @UseGuards(AccessJwtAuthGuard)
+  getTaxonomyByType(
+    @Param('link') link: TaxonomyTypeLink,
+    @Param('type') type?: TaxonomyType,
+  ): Promise<ResTaxonomyDto[]> {
+    try {
+      return this.taxonomyService.getTaxonomy(link, type);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
