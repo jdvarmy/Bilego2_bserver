@@ -41,7 +41,7 @@ export class UsersController {
 
   @Post('save')
   @UseGuards(AccessJwtAuthGuard)
-  public async saveUser(@Body() userDto: ReqUserDto): Promise<boolean> {
+  public async saveUser(@Body() userDto: ReqUserDto): Promise<UserDto> {
     try {
       return this.usersService.saveUserData(userDto);
     } catch (e) {
@@ -54,7 +54,7 @@ export class UsersController {
   public async saveEditUser(
     @Param('uid') uid: string,
     @Body() userDto: ReqUserDto,
-  ): Promise<boolean> {
+  ): Promise<UserDto> {
     try {
       return this.usersService.saveUserData(userDto, uid);
     } catch (e) {

@@ -1,8 +1,8 @@
-import { ReqTaxonomyDto } from './ReqTaxonomyDto';
+import { ReqTaxonomy } from './ReqTaxonomy';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { TaxonomyType, TaxonomyTypeLink } from '../../types/enums';
 
-export class PostTaxonomyDto extends ReqTaxonomyDto {
+export class PostTaxonomyDto extends ReqTaxonomy {
   @IsNotEmpty()
   @IsString()
   type: TaxonomyType;

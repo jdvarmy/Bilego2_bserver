@@ -136,10 +136,8 @@ export class TicketsService {
   }
 
   async saveSell(sell: TicketSellDto): Promise<TicketsSell> {
-    const repo = this.ticketsSellRepo.create({ ...sell });
-    await this.ticketsSellRepo.save(repo);
-
-    return repo;
+    const repo = await this.ticketsSellRepo.create({ ...sell });
+    return this.ticketsSellRepo.save(repo);
   }
 
   async deleteTicketSell(): Promise<void> {

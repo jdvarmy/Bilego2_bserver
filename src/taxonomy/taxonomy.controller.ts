@@ -14,7 +14,7 @@ import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { ResTaxonomyDto } from './response/ResTaxonomyDto';
 import { TaxonomyType, TaxonomyTypeLink, Version } from '../types/enums';
 import { PostTaxonomyDto } from './request/PostTaxonomyDto';
-import { ReqTaxonomyDto } from './request/ReqTaxonomyDto';
+import { ReqTaxonomy } from './request/ReqTaxonomy';
 import { Taxonomy } from '../typeorm';
 
 @Controller(`${Version._1}taxonomy`)
@@ -75,7 +75,7 @@ export class TaxonomyController {
     @Param('id') id: number,
     // todo: заменить на более узкий тип данных
     // todo: посмотреть как проверять переменные в параметрах запроса
-    @Body() taxonomyDto: ReqTaxonomyDto,
+    @Body() taxonomyDto: ReqTaxonomy,
   ): Promise<ResTaxonomyDto> {
     try {
       return this.taxonomyService.updateTaxonomy({ id, ...taxonomyDto });

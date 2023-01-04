@@ -5,6 +5,7 @@ import {
   Get,
   InternalServerErrorException,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -12,12 +13,13 @@ import {
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { City, SortType } from '../types/enums';
-import { ReqEventDto } from '../dtos/request/ReqEventDto';
-import { EventDto } from '../dtos/EventDto';
+import { PutEventDto } from './request/PutEventDto';
+import { EventDto } from './response/EventDto';
 import { EventDates } from '../typeorm';
-import { ReqEventDateDto } from '../dtos/request/ReqEventDateDto';
-import { EventDatesDto } from '../dtos/EventDatesDto';
+import { ReqEventDateDto } from './request/ReqEventDateDto';
+import { EventDatesDto } from './response/EventDatesDto';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { PatchEventDto } from './request/PatchEventDto';
 
 @Controller('v1/events')
 export class EventsController {
@@ -63,18 +65,34 @@ export class EventsController {
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  saveEvent(): Promise<EventDto> {
+  saveEventTemplate(): Promise<EventDto> {
     try {
-      return this.eventService.saveTemplateEvent();
+      return this.eventService.saveEventTemplate();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
   }
 
+  // пока что не используется
   @Put()
   @UseGuards(AccessJwtAuthGuard)
-  editEvent(@Body() eventDto: ReqEventDto): Promise<EventDto> {
+  editEvent(@Body() eventDto: PutEventDto): Promise<EventDto> {
     try {
+      return this.eventService.editEvent(eventDto);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
+
+  @Patch(':uid')
+  @UseGuards(AccessJwtAuthGuard)
+  patchEvent(
+    @Param('uid') uid: string,
+    @Body() eventDto: PatchEventDto,
+  ): Promise<EventDto> {
+    try {
+      this.eventService.checkEventUid(uid, eventDto.uid);
+
       return this.eventService.editEvent(eventDto);
     } catch (e) {
       throw new InternalServerErrorException(e.message);

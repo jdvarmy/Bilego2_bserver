@@ -1,21 +1,24 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ApiService } from '../api/api.service';
-import { ReqEventDto } from '../dtos/request/ReqEventDto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventDates, Events } from '../typeorm';
+import { EventDates, Events, Taxonomy } from '../typeorm';
 import { Repository } from 'typeorm';
-import { EventDto } from '../dtos/EventDto';
+import { EventDto } from './response/EventDto';
 import { v4 as uidv4 } from 'uuid';
 import { Exception500 } from '../types/enums';
-import { ReqEventDateDto } from '../dtos/request/ReqEventDateDto';
-import { EventDatesDto } from '../dtos/EventDatesDto';
+import { ReqEventDateDto } from './request/ReqEventDateDto';
+import { EventDatesDto } from './response/EventDatesDto';
 import { MapService } from '../map/map.service';
+import { PatchEventDto } from './request/PatchEventDto';
+import { TaxonomyService } from '../taxonomy/taxonomy.service';
+import { EventTaxonomyDto } from './response/EventTaxonomyDto';
 
 @Injectable()
 export class EventsService {
   constructor(
     private readonly apiService: ApiService,
     private readonly mapService: MapService,
+    private readonly taxonomyService: TaxonomyService,
     @InjectRepository(Events) private eventsRepo: Repository<Events>,
     @InjectRepository(EventDates)
     private eventDatesRepo: Repository<EventDates>,
@@ -30,7 +33,7 @@ export class EventsService {
     return new EventDto(await this.getEventByUid(uid));
   }
 
-  async saveTemplateEvent(): Promise<EventDto> {
+  async saveEventTemplate(): Promise<EventDto> {
     const uid = uidv4();
 
     const event = this.eventsRepo.create({
@@ -44,17 +47,31 @@ export class EventsService {
     return new EventDto(await this.getEventByUid(uid));
   }
 
-  async editEvent(data: ReqEventDto): Promise<EventDto> {
-    const { uid, ...eventData } = data;
+  async editEvent(data: PatchEventDto): Promise<EventDto> {
+    const { uid, taxonomy, ...eventData } = data;
 
     const eventFromDb = await this.getEventByUid(uid);
-    if (!eventFromDb) {
-      throw new InternalServerErrorException(Exception500.findEventUid);
-    }
+
+    // taxonomy убираем дубли
+    const taxonomies = (await this.getTaxonomies(taxonomy)).reduce(
+      (acc, tax) => {
+        if (acc.find((accTax) => accTax.id === tax.id)) {
+          return acc;
+        }
+
+        acc.push(tax);
+        return acc;
+      },
+      [],
+    );
 
     const updateEventData = this.eventsRepo.create(eventData);
     return new EventDto(
-      await this.eventsRepo.save({ ...eventFromDb, ...updateEventData }),
+      await this.eventsRepo.save({
+        ...eventFromDb,
+        taxonomy: taxonomies,
+        ...updateEventData,
+      }),
     );
   }
 
@@ -106,7 +123,7 @@ export class EventsService {
   async getEventByUid(uid: string): Promise<Events> {
     const event = await this.eventsRepo.findOne({
       where: { uid },
-      relations: { eventDates: { map: true } },
+      relations: { eventDates: { map: true }, taxonomy: {} },
     });
 
     if (!event) {
@@ -143,5 +160,22 @@ export class EventsService {
     }
 
     return eventDates;
+  }
+
+  checkEventUid(uid1, uid2): boolean {
+    if (uid1 !== uid2) {
+      throw new InternalServerErrorException(Exception500.eventUid);
+    }
+
+    return true;
+  }
+
+  async getTaxonomies(taxonomies: EventTaxonomyDto[]): Promise<Taxonomy[]> {
+    const result = [];
+    taxonomies.forEach((taxonomy) => {
+      result.push(this.taxonomyService.getTaxonomyById(taxonomy.id));
+    });
+
+    return Promise.all(result);
   }
 }

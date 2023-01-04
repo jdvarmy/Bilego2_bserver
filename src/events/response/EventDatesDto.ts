@@ -1,6 +1,6 @@
-import { TicketType } from '../types/enums';
-import { EventDates } from '../typeorm';
-import { MapDto } from './MapDto';
+import { TicketType } from '../../types/enums';
+import { EventDates } from '../../typeorm';
+import { MapDto } from '../../dtos/MapDto';
 
 export class EventDatesDto {
   uid: string;

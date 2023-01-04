@@ -60,9 +60,14 @@ export class TaxonomyService {
       return this.updateIndex({ id, overIndex, ...props });
     } else {
       // просто обновляем таксономию
-      const editTaxonomy = await this.taxonomyRepo.findOne({ where: { id } });
+      const taxonomyFromDb = await this.getTaxonomyById(id);
+      const updateTaxonomyData = this.taxonomyRepo.create(props);
       const media = await this.getMedia({ icon, image });
-      return this.update({ ...editTaxonomy, ...props, ...media });
+      return this.update({
+        ...taxonomyFromDb,
+        ...updateTaxonomyData,
+        ...media,
+      });
     }
   }
 

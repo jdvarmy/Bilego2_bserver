@@ -1,7 +1,7 @@
 import { IsOptional, IsString, IsNumber, IsBoolean } from 'class-validator';
 import { TaxonomyType, TaxonomyTypeLink } from '../../types/enums';
 
-export class ReqTaxonomyDto {
+export class ReqTaxonomy {
   @IsOptional()
   @IsNumber()
   id?: number;

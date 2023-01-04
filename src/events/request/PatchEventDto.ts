@@ -1,11 +1,8 @@
+import { ReqEvent } from './ReqEvent';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class ReqEventDto {
+export class PatchEventDto extends ReqEvent {
   @IsNotEmpty()
   @IsString()
   uid: string;
-
-  @IsNotEmpty()
-  @IsString()
-  slug: string;
 }

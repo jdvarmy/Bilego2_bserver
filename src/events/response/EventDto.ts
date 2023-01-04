@@ -1,6 +1,7 @@
-import { EventDates, Events, Users } from '../typeorm';
-import { City, EventHeaderType, PostStatus } from '../types/enums';
+import { Events, Users } from '../../typeorm';
+import { City, EventHeaderType, PostStatus } from '../../types/enums';
 import { EventDatesDto } from './EventDatesDto';
+import { EventTaxonomyDto } from './EventTaxonomyDto';
 
 export class EventDto {
   uid: string;
@@ -15,7 +16,7 @@ export class EventDto {
   city?: City;
   seo?: any;
   eventManager?: Users;
-  taxonomy?: any;
+  taxonomy?: EventTaxonomyDto[];
   eventDates?: EventDatesDto[];
   image?: any;
   fragment?: string;
@@ -47,7 +48,7 @@ export class EventDto {
     this.item = event.item;
     this.city = event.city;
     this.eventManager = event.eventManager;
-    this.taxonomy = event.taxonomy;
+    this.taxonomy = event.taxonomy.map((tax) => new EventTaxonomyDto(tax));
     this.eventDates = event.eventDates.map((date) => new EventDatesDto(date));
     this.image = event.image;
     this.fragment = event.fragment;

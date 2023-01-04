@@ -7,5 +7,6 @@ import { DatabaseModule } from '../database/database.module';
   imports: [DatabaseModule],
   controllers: [TaxonomyController],
   providers: [TaxonomyService],
+  exports: [TaxonomyService],
 })
 export class TaxonomyModule {}

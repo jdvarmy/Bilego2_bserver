@@ -45,7 +45,7 @@ export class UsersService {
     return new UserDto(user);
   }
 
-  async saveUserData(data: ReqUserDto, uid?: string): Promise<boolean> {
+  async saveUserData(data: ReqUserDto, uid?: string): Promise<UserDto> {
     const user = await this.prepareUserDataToSave(data, uid);
 
     if (uid) {
@@ -55,13 +55,10 @@ export class UsersService {
         throw new InternalServerErrorException(Exception500.findUser);
       }
 
-      // todo: переделать убрать await
-      await this.usersRepo.save({ ...editUser, ...user });
+      return new UserDto(await this.usersRepo.save({ ...editUser, ...user }));
     } else {
-      await this.usersRepo.save(user);
+      return new UserDto(await this.usersRepo.save(user));
     }
-
-    return true;
   }
 
   async deleteUserData(uid: string): Promise<boolean> {

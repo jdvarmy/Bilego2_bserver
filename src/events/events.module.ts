@@ -4,9 +4,10 @@ import { EventsService } from './events.service';
 import { ApiModule } from '../api/api.module';
 import { DatabaseModule } from '../database/database.module';
 import { MapModule } from '../map/map.module';
+import { TaxonomyModule } from '../taxonomy/taxonomy.module';
 
 @Module({
-  imports: [ApiModule, DatabaseModule, MapModule],
+  imports: [ApiModule, DatabaseModule, MapModule, TaxonomyModule],
   controllers: [EventsController],
   providers: [EventsService],
   exports: [EventsService],
