@@ -27,10 +27,8 @@ export class EventDto {
   videoLink?: string;
   headerType?: EventHeaderType;
   headerImage?: any;
-  headerVideo?: any;
-  headerTitle?: string;
-  headerSubtitle?: string;
-  headerMeta?: string;
+  headerMedia?: string;
+  headerText?: string;
   headerTextColor?: string;
   concertManagerInfo?: string;
   concertManagerPercentage?: number;
@@ -59,10 +57,8 @@ export class EventDto {
     this.videoLink = event.videoLink;
     this.headerType = event.headerType;
     this.headerImage = event.headerImage;
-    this.headerVideo = event.headerVideo;
-    this.headerTitle = event.headerTitle;
-    this.headerSubtitle = event.headerSubtitle;
-    this.headerMeta = event.headerMeta;
+    this.headerMedia = event.headerMedia;
+    this.headerText = event.headerText;
     this.headerTextColor = event.headerTextColor;
     this.concertManagerInfo = event.concertManagerInfo;
     this.concertManagerPercentage = event.concertManagerPercentage;

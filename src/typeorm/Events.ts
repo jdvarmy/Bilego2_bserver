@@ -94,16 +94,13 @@ export class Events extends AbstractPost {
   headerImage: Media;
 
   @Column({ nullable: true })
-  headerVideo: string;
+  headerMedia: string;
 
-  @Column({ nullable: true })
-  headerTitle: string;
-
-  @Column({ nullable: true })
-  headerSubtitle: string;
-
-  @Column({ nullable: true })
-  headerMeta: string;
+  @Column({
+    nullable: true,
+    default: JSON.stringify({ title: '', subtitle: '', meta: '' }),
+  })
+  headerText: string;
 
   @Column({
     nullable: true,
