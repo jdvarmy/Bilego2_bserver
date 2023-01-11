@@ -105,9 +105,9 @@ export class Events extends AbstractPost {
   @Column({
     nullable: true,
     default: JSON.stringify({
-      title: 'rgba(255, 255, 255, 1)',
-      subtitle: 'rgba(255, 255, 255, 1)',
-      meta: 'rgba(255, 255, 255, 1)',
+      title: '#ffffff',
+      subtitle: '#ffffff',
+      meta: '#ffffff',
     }),
   })
   headerTextColor: string;
