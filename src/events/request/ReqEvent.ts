@@ -5,8 +5,7 @@ import {
   IsBoolean,
   IsArray,
 } from 'class-validator';
-import { City, PostStatus } from '../../types/enums';
-import { EventTaxonomyDto } from '../response/EventTaxonomyDto';
+import { City, EventHeaderType, PostStatus } from '../../types/enums';
 
 export class ReqEvent {
   @IsOptional()
@@ -31,7 +30,7 @@ export class ReqEvent {
 
   @IsOptional()
   @IsArray()
-  taxonomy?: EventTaxonomyDto[];
+  taxonomy?: number[];
 
   @IsOptional()
   @IsString()
@@ -46,6 +45,14 @@ export class ReqEvent {
   ageRestriction?: number;
 
   @IsOptional()
+  @IsString()
+  concertManagerInfo?: string;
+
+  @IsOptional()
+  @IsNumber()
+  concertManagerPercentage?: number;
+
+  @IsOptional()
   @IsBoolean()
   isShowOnSlider?: boolean;
 
@@ -56,4 +63,20 @@ export class ReqEvent {
   @IsOptional()
   @IsString()
   videoLink?: string;
+
+  @IsOptional()
+  @IsString()
+  headerMedia?: string;
+
+  @IsOptional()
+  @IsString()
+  headerText?: string;
+
+  @IsOptional()
+  @IsString()
+  headerTextColor?: string;
+
+  @IsOptional()
+  @IsString()
+  headerType?: EventHeaderType;
 }

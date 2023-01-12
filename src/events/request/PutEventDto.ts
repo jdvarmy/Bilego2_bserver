@@ -1,11 +1,16 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ReqEvent } from './ReqEvent';
+import { ReqEventDateDto } from './ReqEventDateDto';
 
-export class PutEventDto {
+export class PutEventDto extends ReqEvent {
   @IsNotEmpty()
   @IsString()
   uid: string;
 
-  @IsNotEmpty()
-  @IsString()
-  slug: string;
+  @IsOptional()
+  eventDates?: ReqEventDateDto;
+
+  @IsOptional()
+  @IsNumber()
+  headerImage?: number;
 }

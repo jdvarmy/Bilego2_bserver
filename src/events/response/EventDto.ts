@@ -2,6 +2,7 @@ import { Events, Users } from '../../typeorm';
 import { City, EventHeaderType, PostStatus } from '../../types/enums';
 import { EventDatesDto } from './EventDatesDto';
 import { EventTaxonomyDto } from './EventTaxonomyDto';
+import { MediaDto } from '../../dtos/MediaDto';
 
 export class EventDto {
   uid: string;
@@ -18,7 +19,7 @@ export class EventDto {
   eventManager?: Users;
   taxonomy?: EventTaxonomyDto[];
   eventDates?: EventDatesDto[];
-  image?: any;
+  image?: MediaDto;
   fragment?: string;
   searchWords?: string;
   ageRestriction?: number;
@@ -26,7 +27,7 @@ export class EventDto {
   musicLink?: string;
   videoLink?: string;
   headerType?: EventHeaderType;
-  headerImage?: any;
+  headerImage?: MediaDto;
   headerMedia?: string;
   headerText?: string;
   headerTextColor?: string;
@@ -48,7 +49,7 @@ export class EventDto {
     this.eventManager = event.eventManager;
     this.taxonomy = event.taxonomy.map((tax) => new EventTaxonomyDto(tax));
     this.eventDates = event.eventDates.map((date) => new EventDatesDto(date));
-    this.image = event.image;
+    this.image = event.image ? new MediaDto(event.image, true) : undefined;
     this.fragment = event.fragment;
     this.searchWords = event.searchWords;
     this.ageRestriction = event.ageRestriction;
@@ -56,7 +57,9 @@ export class EventDto {
     this.musicLink = event.musicLink;
     this.videoLink = event.videoLink;
     this.headerType = event.headerType;
-    this.headerImage = event.headerImage;
+    this.headerImage = event.headerImage
+      ? new MediaDto(event.headerImage, true)
+      : undefined;
     this.headerMedia = event.headerMedia;
     this.headerText = event.headerText;
     this.headerTextColor = event.headerTextColor;

@@ -73,12 +73,16 @@ export class EventsController {
     }
   }
 
-  // пока что не используется
-  @Put()
+  @Put(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  editEvent(@Body() eventDto: PutEventDto): Promise<EventDto> {
+  editEvent(
+    @Param('uid') uid: string,
+    @Body() eventDto: PutEventDto,
+  ): Promise<EventDto> {
     try {
-      return this.eventService.editEvent(eventDto);
+      this.eventService.checkEventUid(uid, eventDto.uid);
+
+      return this.eventService.saveEvent(eventDto);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

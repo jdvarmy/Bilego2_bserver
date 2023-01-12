@@ -11,7 +11,8 @@ import { EventDatesDto } from './response/EventDatesDto';
 import { MapService } from '../map/map.service';
 import { PatchEventDto } from './request/PatchEventDto';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
-import { EventTaxonomyDto } from './response/EventTaxonomyDto';
+import { PutEventDto } from './request/PutEventDto';
+import { MedialibraryService } from '../medialibrary/medialibrary.service';
 
 @Injectable()
 export class EventsService {
@@ -19,6 +20,7 @@ export class EventsService {
     private readonly apiService: ApiService,
     private readonly mapService: MapService,
     private readonly taxonomyService: TaxonomyService,
+    private readonly medialibraryService: MedialibraryService,
     @InjectRepository(Events) private eventsRepo: Repository<Events>,
     @InjectRepository(EventDates)
     private eventDatesRepo: Repository<EventDates>,
@@ -47,23 +49,36 @@ export class EventsService {
     return new EventDto(await this.getEventByUid(uid));
   }
 
+  async saveEvent(data: PutEventDto): Promise<EventDto> {
+    const { uid, taxonomy, eventDates, headerImage, ...eventData } = data;
+
+    const eventFromDb = await this.getEventByUid(uid);
+
+    console.log(eventDates);
+
+    const localTaxonomies = await this.getTaxonomies([...new Set(taxonomy)]);
+    const localHeaderImage = await this.medialibraryService.getMediaById(
+      headerImage,
+    );
+
+    const updateEventData = this.eventsRepo.create(eventData);
+    return new EventDto(
+      await this.eventsRepo.save({
+        ...eventFromDb,
+        ...updateEventData,
+        taxonomy: localTaxonomies,
+        headerImage: localHeaderImage,
+      }),
+    );
+  }
+
   async editEvent(data: PatchEventDto): Promise<EventDto> {
     const { uid, taxonomy, ...eventData } = data;
 
     const eventFromDb = await this.getEventByUid(uid);
 
     // taxonomy убираем дубли
-    const taxonomies = (await this.getTaxonomies(taxonomy)).reduce(
-      (acc, tax) => {
-        if (acc.find((accTax) => accTax.id === tax.id)) {
-          return acc;
-        }
-
-        acc.push(tax);
-        return acc;
-      },
-      [],
-    );
+    const taxonomies = await this.getTaxonomies([...new Set(taxonomy)]);
 
     const updateEventData = this.eventsRepo.create(eventData);
     return new EventDto(
@@ -88,6 +103,14 @@ export class EventsService {
 
     const eventDates = this.eventDatesRepo.create({ uid, event });
     return new EventDatesDto(await this.eventDatesRepo.save(eventDates));
+  }
+
+  async saveEventDate(eventUid: string): Promise<EventDates> {
+    const uid = uidv4();
+    const event = await this.getEventByUid(eventUid);
+
+    const eventDates = this.eventDatesRepo.create({ uid, event });
+    return this.eventDatesRepo.save(eventDates);
   }
 
   async deleteEventDate(uid: string): Promise<boolean> {
@@ -120,10 +143,23 @@ export class EventsService {
   }
 
   // UTILS
+  checkEventUid(uid1, uid2): boolean {
+    if (uid1 !== uid2) {
+      throw new InternalServerErrorException(Exception500.eventUid);
+    }
+
+    return true;
+  }
+
   async getEventByUid(uid: string): Promise<Events> {
     const event = await this.eventsRepo.findOne({
       where: { uid },
-      relations: { eventDates: { map: true }, taxonomy: {} },
+      relations: {
+        eventDates: { map: true },
+        taxonomy: {},
+        headerImage: {},
+        image: {},
+      },
     });
 
     if (!event) {
@@ -162,18 +198,10 @@ export class EventsService {
     return eventDates;
   }
 
-  checkEventUid(uid1, uid2): boolean {
-    if (uid1 !== uid2) {
-      throw new InternalServerErrorException(Exception500.eventUid);
-    }
-
-    return true;
-  }
-
-  async getTaxonomies(taxonomies: EventTaxonomyDto[]): Promise<Taxonomy[]> {
+  async getTaxonomies(taxonomies: number[]): Promise<Taxonomy[]> {
     const result = [];
-    taxonomies.forEach((taxonomy) => {
-      result.push(this.taxonomyService.getTaxonomyById(taxonomy.id));
+    taxonomies.forEach((taxonomyId) => {
+      result.push(this.taxonomyService.getTaxonomyById(taxonomyId));
     });
 
     return Promise.all(result);

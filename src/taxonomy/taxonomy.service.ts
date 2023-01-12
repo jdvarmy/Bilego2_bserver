@@ -7,10 +7,12 @@ import { Repository } from 'typeorm';
 import { Exception500, TaxonomyType, TaxonomyTypeLink } from '../types/enums';
 import { PatchTaxonomyDto } from './request/PatchTaxonomyDto';
 import cloneDeep from '../utils';
+import { MedialibraryService } from '../medialibrary/medialibrary.service';
 
 @Injectable()
 export class TaxonomyService {
   constructor(
+    private readonly medialibraryService: MedialibraryService,
     @InjectRepository(Taxonomy) private taxonomyRepo: Repository<Taxonomy>,
     @InjectRepository(Media) private mediaRepo: Repository<Media>,
   ) {}
@@ -115,13 +117,9 @@ export class TaxonomyService {
     );
   }
 
-  async getMediaData(id: number): Promise<Media | undefined> {
-    return id ? await this.mediaRepo.findOne({ where: { id } }) : undefined;
-  }
-
   async getMedia(props: { icon: number; image: number }) {
-    const mediaIcon = await this.getMediaData(props.icon);
-    const mediaImage = await this.getMediaData(props.image);
+    const mediaIcon = await this.medialibraryService.getMediaById(props.icon);
+    const mediaImage = await this.medialibraryService.getMediaById(props.image);
 
     return { icon: mediaIcon, image: mediaImage };
   }

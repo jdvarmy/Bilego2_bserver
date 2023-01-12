@@ -9,13 +9,15 @@ export class MediaDto {
   encoding: string;
   size: number;
 
-  constructor(image: Media) {
+  constructor(image: Media, short = false) {
     this.id = image.id;
-    this.name = image.name;
-    this.originalName = image.originalName;
+    this.name = image.name || image.originalName;
     this.path = image.path;
-    this.mimetype = image.mimetype;
-    this.encoding = image.encoding;
-    this.size = image.size;
+    if (!short) {
+      this.originalName = image.originalName;
+      this.mimetype = image.mimetype;
+      this.encoding = image.encoding;
+      this.size = image.size;
+    }
   }
 }

@@ -50,4 +50,8 @@ export class MedialibraryService {
 
     return this.mediaRepo.save(media);
   }
+
+  async getMediaById(id?: number): Promise<Media> {
+    return id ? this.mediaRepo.findOne({ where: { id } }) : undefined;
+  }
 }
