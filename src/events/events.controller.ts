@@ -125,7 +125,7 @@ export class EventsController {
 
   @Delete(':eventUid/dates/:uid')
   @UseGuards(AccessJwtAuthGuard)
-  deleteEventDate(@Param('uid') uid: string): Promise<boolean> {
+  deleteEventDate(@Param('uid') uid: string): Promise<EventDatesDto> {
     try {
       return this.eventService.deleteEventDate(uid);
     } catch (e) {

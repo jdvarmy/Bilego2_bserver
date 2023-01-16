@@ -8,7 +8,7 @@ export class PutEventDto extends ReqEvent {
   uid: string;
 
   @IsOptional()
-  eventDates?: ReqEventDateDto;
+  eventDates?: ReqEventDateDto[];
 
   @IsOptional()
   @IsNumber()

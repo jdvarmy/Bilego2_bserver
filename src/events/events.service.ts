@@ -53,23 +53,41 @@ export class EventsService {
     const { uid, taxonomy, eventDates, headerImage, ...eventData } = data;
 
     const eventFromDb = await this.getEventByUid(uid);
+    const relations: Partial<Event> = {};
 
-    console.log(eventDates);
+    // Обновляем таксономию
+    if (taxonomy) {
+      relations['taxonomy'] = await this.getTaxonomies([...new Set(taxonomy)]);
+    }
 
-    const localTaxonomies = await this.getTaxonomies([...new Set(taxonomy)]);
-    const localHeaderImage = await this.medialibraryService.getMediaById(
-      headerImage,
-    );
+    // Обновляем заголовок события
+    if (headerImage) {
+      relations['headerImage'] = await this.medialibraryService.getMediaById(
+        headerImage,
+      );
+    }
+
+    // Обновляем даты проведения события
+    if (eventDates) {
+      for (const date of eventDates) {
+        const { uid: dateUid, ...eventDateData } = date;
+        const eventDateFromDb = await this.getEventDateByUid(dateUid);
+        const eventDate = this.eventDatesRepo.create(eventDateData);
+        this.eventDatesRepo.save({
+          ...eventDateFromDb,
+          ...eventDate,
+        });
+      }
+    }
 
     const updateEventData = this.eventsRepo.create(eventData);
-    return new EventDto(
-      await this.eventsRepo.save({
-        ...eventFromDb,
-        ...updateEventData,
-        taxonomy: localTaxonomies,
-        headerImage: localHeaderImage,
-      }),
-    );
+    await this.eventsRepo.save({
+      ...eventFromDb,
+      ...updateEventData,
+      ...relations,
+    });
+
+    return this.getEvent(uid);
   }
 
   async editEvent(data: PatchEventDto): Promise<EventDto> {
@@ -113,12 +131,9 @@ export class EventsService {
     return this.eventDatesRepo.save(eventDates);
   }
 
-  async deleteEventDate(uid: string): Promise<boolean> {
+  async deleteEventDate(uid: string): Promise<EventDatesDto> {
     const eventDateFromDb = await this.getEventDateByUid(uid);
-    // todo: убрать await
-    await this.eventDatesRepo.remove(eventDateFromDb);
-
-    return true;
+    return new EventDatesDto(await this.eventDatesRepo.remove(eventDateFromDb));
   }
 
   async editEventDate(data: ReqEventDateDto): Promise<EventDatesDto> {
@@ -169,10 +184,13 @@ export class EventsService {
     return event;
   }
 
-  async getEventDateByUid(uid: string): Promise<EventDates> {
+  async getEventDateByUid(
+    uid: string,
+    relations = ['map'],
+  ): Promise<EventDates> {
     const eventDate = await this.eventDatesRepo.findOne({
       where: { uid },
-      relations: ['map'],
+      relations,
     });
 
     if (!eventDate) {
