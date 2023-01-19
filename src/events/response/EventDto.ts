@@ -16,7 +16,6 @@ export class EventDto {
   item?: any;
   city?: City;
   seo?: any;
-  eventManager?: Users;
   taxonomy?: EventTaxonomyDto[];
   eventDates?: EventDatesDto[];
   image?: MediaDto;
@@ -31,6 +30,7 @@ export class EventDto {
   headerMedia?: string;
   headerText?: string;
   headerTextColor?: string;
+  eventManager?: Users;
   concertManagerInfo?: string;
   concertManagerPercentage?: number;
 

@@ -4,6 +4,7 @@ import { Items } from '../typeorm';
 import { Repository } from 'typeorm';
 import { City, Exception500, PostStatus } from '../types/enums';
 import { ItemDto } from '../dtos/ItemDto';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 @Injectable()
 export class ItemsService {
@@ -29,5 +30,22 @@ export class ItemsService {
     }
 
     return items.map((item) => new ItemDto(item));
+  }
+
+  // UTILS
+  async getItemByUid(
+    uid: string,
+    relations?: FindOptionsRelations<Items>,
+  ): Promise<Items> {
+    const items = await this.itemsRepo.findOne({
+      where: { uid },
+      relations,
+    });
+
+    if (!items) {
+      throw new InternalServerErrorException(Exception500.findItem);
+    }
+
+    return items;
   }
 }

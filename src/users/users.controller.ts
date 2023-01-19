@@ -7,13 +7,14 @@ import {
   Param,
   Post,
   Put,
-  Req,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { UsersService } from './users.service';
 import { ReqUserDto } from '../dtos/request/ReqUserDto';
 import { UserDto } from '../dtos/UserDto';
+import { UserEntityRole } from '../types/enums';
 
 @Controller('v1/users')
 export class UsersController {
@@ -21,9 +22,16 @@ export class UsersController {
 
   @Get()
   @UseGuards(AccessJwtAuthGuard)
-  public async getUsers(@Req() req): Promise<UserDto[]> {
+  public async getUsers(
+    @Query('search') search?: string,
+    @Query('role') role?: UserEntityRole,
+  ): Promise<UserDto[]> {
     try {
-      return this.usersService.getUsersData();
+      if (search || role) {
+        return this.usersService.searchUsersList({ search, role });
+      }
+
+      return this.usersService.getUsersList();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

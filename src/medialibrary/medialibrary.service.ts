@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from '../typeorm';
 import { Repository } from 'typeorm';
 import { MediaDto } from '../dtos/MediaDto';
 import { FileService } from '../file/file.service';
-import { FileType } from '../types/enums';
+import { Exception500, FileType } from '../types/enums';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 @Injectable()
 export class MedialibraryService {
@@ -51,7 +52,21 @@ export class MedialibraryService {
     return this.mediaRepo.save(media);
   }
 
-  async getMediaById(id?: number): Promise<Media> {
-    return id ? this.mediaRepo.findOne({ where: { id } }) : undefined;
+  async getMediaById(
+    id?: number,
+    relations?: FindOptionsRelations<Media>,
+  ): Promise<Media> {
+    if (!id) return;
+
+    const media = await this.mediaRepo.findOne({
+      where: { id },
+      relations,
+    });
+
+    if (!media) {
+      throw new InternalServerErrorException(Exception500.findMedia);
+    }
+
+    return media;
   }
 }

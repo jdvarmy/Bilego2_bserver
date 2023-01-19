@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ApiService } from '../api/api.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventDates, Events, Taxonomy } from '../typeorm';
+import { Artists, EventDates, Events, Taxonomy } from '../typeorm';
 import { Repository } from 'typeorm';
 import { EventDto } from './response/EventDto';
 import { v4 as uidv4 } from 'uuid';
@@ -13,12 +13,19 @@ import { PatchEventDto } from './request/PatchEventDto';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import { PutEventDto } from './request/PutEventDto';
 import { MedialibraryService } from '../medialibrary/medialibrary.service';
+import { ItemsService } from '../items/items.service';
+import { ArtistsService } from '../artists/artists.service';
+import { UsersService } from '../users/users.service';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 @Injectable()
 export class EventsService {
   constructor(
     private readonly apiService: ApiService,
     private readonly mapService: MapService,
+    private readonly itemsService: ItemsService,
+    private readonly artistsService: ArtistsService,
+    private readonly usersService: UsersService,
     private readonly taxonomyService: TaxonomyService,
     private readonly medialibraryService: MedialibraryService,
     @InjectRepository(Events) private eventsRepo: Repository<Events>,
@@ -32,7 +39,17 @@ export class EventsService {
   }
 
   async getEvent(uid: string) {
-    return new EventDto(await this.getEventByUid(uid));
+    return new EventDto(
+      await this.getEventByUid(uid, {
+        item: true,
+        artist: true,
+        eventManager: true,
+        eventDates: { map: true },
+        taxonomy: true,
+        headerImage: true,
+        image: true,
+      }),
+    );
   }
 
   async saveEventTemplate(): Promise<EventDto> {
@@ -50,14 +67,46 @@ export class EventsService {
   }
 
   async saveEvent(data: PutEventDto): Promise<EventDto> {
-    const { uid, taxonomy, eventDates, headerImage, ...eventData } = data;
+    const {
+      uid,
+      taxonomy,
+      eventDates,
+      headerImage,
+      image,
+      item,
+      artist,
+      eventManager,
+      ...eventData
+    } = data;
 
     const eventFromDb = await this.getEventByUid(uid);
     const relations: Partial<Event> = {};
 
+    // Обновляем площадку
+    if (item) {
+      relations['item'] = await this.itemsService.getItemByUid(item);
+    }
+
+    // Обновляем артистов
+    if (artist) {
+      relations['artist'] = await this.getArtists(artist);
+    }
+
+    // Обновляем менеджера события
+    if (eventManager) {
+      relations['eventManager'] = await this.usersService.getUserByUid(
+        eventManager,
+      );
+    }
+
     // Обновляем таксономию
     if (taxonomy) {
       relations['taxonomy'] = await this.getTaxonomies([...new Set(taxonomy)]);
+    }
+
+    // Обновляем картинку события
+    if (image) {
+      relations['image'] = await this.medialibraryService.getMediaById(image);
     }
 
     // Обновляем заголовок события
@@ -166,15 +215,18 @@ export class EventsService {
     return true;
   }
 
-  async getEventByUid(uid: string): Promise<Events> {
+  async getEventByUid(
+    uid: string,
+    relations: FindOptionsRelations<Events> = {
+      eventDates: { map: true },
+      taxonomy: true,
+      headerImage: true,
+      image: true,
+    },
+  ): Promise<Events> {
     const event = await this.eventsRepo.findOne({
       where: { uid },
-      relations: {
-        eventDates: { map: true },
-        taxonomy: {},
-        headerImage: {},
-        image: {},
-      },
+      relations,
     });
 
     if (!event) {
@@ -214,6 +266,15 @@ export class EventsService {
     }
 
     return eventDates;
+  }
+
+  async getArtists(artists: string[]): Promise<Artists[]> {
+    const result = [];
+    artists.forEach((artistUid) => {
+      result.push(this.artistsService.getArtistByUid(artistUid));
+    });
+
+    return Promise.all(result);
   }
 
   async getTaxonomies(taxonomies: number[]): Promise<Taxonomy[]> {
