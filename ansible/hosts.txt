@@ -1,0 +1,2 @@
+[beget]
+bilego2  ansible_host=chekisu6.beget.tech  ansible_user=chekisu6  ansible_ssh_private_key_file=/Users/sergey.antonov/.ssh/id_rsa

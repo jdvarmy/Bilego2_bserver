@@ -1,0 +1,78 @@
+---
+- name: Copy builds bserver and badmin
+  hosts: beget
+
+  tasks:
+    - name: Delete server directory
+      file:
+        path: "{{ source_server }}/server"
+        state: absent
+
+    - name: Create new server directory
+      file:
+        path: "{{ source_server }}/server"
+        state: directory
+        mode: '0755'
+
+    - name: Copy bserver dist catalog
+      copy:
+        src: "{{ source_server_temp }}/dist"
+        dest: "{{ source_server }}/server"
+        remote_src: true
+
+    - name: Copy bserver node_modules catalog
+      copy:
+        src: "{{ source_server_temp }}/node_modules"
+        dest: "{{ source_server }}/server"
+        remote_src: true
+
+    - name: Delete temp directory
+      file:
+        path: "{{ source_server_temp }}"
+        state: absent
+
+    - name: Delete htaccess file
+      file:
+        path: "{{ source_server }}/.htaccess"
+        state: absent
+
+    - name: Copy htaccess file
+      copy:
+        src: "./htaccess/bserver-htaccess"
+        dest: "{{ source_server }}/.htaccess"
+        remote_src: false
+        mode: '0444'
+
+    - name: Restart config Passenger
+      shell: touch api.chekisu6.beget.tech/public_html/tmp/restart.txt
+
+
+
+    - name: Delete admin directory
+      file:
+        path: "{{ source_admin }}"
+        state: absent
+
+    - name: Create new admin directory
+      file:
+        path: "{{ source_admin }}"
+        state: directory
+        mode: '0700'
+
+    - name: Copy badmin build catalog
+      copy:
+        src: "{{ source_admin_temp }}/build/"
+        dest: "{{ source_admin }}/"
+        remote_src: true
+
+    - name: Delete temp directory
+      file:
+        path: "{{ source_admin_temp }}"
+        state: absent
+
+    - name: Copy htaccess file
+      copy:
+        src: "./htaccess/badmin-htaccess"
+        dest: "{{ source_admin }}/.htaccess"
+        remote_src: false
+        mode: '0444'

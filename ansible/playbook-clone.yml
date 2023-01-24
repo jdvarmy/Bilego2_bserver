@@ -1,0 +1,31 @@
+---
+- name: Clone repos bserver and badmin
+  hosts: beget
+
+  tasks:
+  - name: Clone a git repo bserver
+    git:
+      repo: "{{ git_server }}"
+      dest: "{{ source_server_temp }}"
+
+  - name: Clone a git repo badmin
+    git:
+      repo: "{{ git_admin }}"
+      dest: "{{ source_admin_temp }}"
+
+  - name: Copy htaccess file
+    copy:
+      src: "./env/.env.badmin"
+      dest: "{{ source_admin_temp }}/.env"
+      remote_src: false
+      mode: '0444'
+
+  # - name: Docker connect
+  #   shell: |
+  #     spawn ssh localhost -p 222
+  #     expect "password:"
+  #     send "{{ docker_pass }}"
+  #     exit 0
+  # - name: Install packages based on package.json for bserver
+  #   npm:
+  #     path: "{{ source_server_temp }}"
