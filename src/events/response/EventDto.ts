@@ -1,8 +1,9 @@
-import { Events, Users } from '../../typeorm';
+import { Events } from '../../typeorm';
 import { City, EventHeaderType, PostStatus } from '../../types/enums';
 import { EventDatesDto } from './EventDatesDto';
 import { EventTaxonomyDto } from './EventTaxonomyDto';
 import { MediaDto } from '../../dtos/MediaDto';
+import { UserDto } from '../../dtos/UserDto';
 
 export class EventDto {
   uid: string;
@@ -30,7 +31,7 @@ export class EventDto {
   headerMedia?: string;
   headerText?: string;
   headerTextColor?: string;
-  eventManager?: Users;
+  eventManager?: UserDto;
   concertManagerInfo?: string;
   concertManagerPercentage?: number;
 
@@ -46,7 +47,9 @@ export class EventDto {
     this.artist = event.artist;
     this.item = event.item;
     this.city = event.city;
-    this.eventManager = event.eventManager;
+    this.eventManager = event.eventManager
+      ? new UserDto(event.eventManager)
+      : undefined;
     this.taxonomy = event.taxonomy?.map((tax) => new EventTaxonomyDto(tax));
     this.eventDates = event.eventDates?.map((date) => new EventDatesDto(date));
     this.image = event.image ? new MediaDto(event.image, true) : undefined;

@@ -51,6 +51,7 @@ export class EventsService {
       .leftJoinAndSelect('events.eventDates', 'dates')
       .leftJoinAndSelect('events.item', 'item')
       .leftJoinAndSelect('events.artist', 'artist')
+      .leftJoinAndSelect('events.eventManager', 'eventManager')
       .orderBy('events.id', 'ASC')
       .offset(options.offset)
       .limit(options.count)
