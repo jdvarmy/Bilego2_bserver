@@ -47,8 +47,8 @@ export class EventDto {
     this.item = event.item;
     this.city = event.city;
     this.eventManager = event.eventManager;
-    this.taxonomy = event.taxonomy.map((tax) => new EventTaxonomyDto(tax));
-    this.eventDates = event.eventDates.map((date) => new EventDatesDto(date));
+    this.taxonomy = event.taxonomy?.map((tax) => new EventTaxonomyDto(tax));
+    this.eventDates = event.eventDates?.map((date) => new EventDatesDto(date));
     this.image = event.image ? new MediaDto(event.image, true) : undefined;
     this.fragment = event.fragment;
     this.searchWords = event.searchWords;

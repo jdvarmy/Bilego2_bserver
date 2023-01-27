@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
-import { ApiModule } from '../api/api.module';
 import { DatabaseModule } from '../database/database.module';
 import { MapModule } from '../map/map.module';
 import { TaxonomyModule } from '../taxonomy/taxonomy.module';
@@ -12,7 +11,6 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    ApiModule,
     DatabaseModule,
     MapModule,
     TaxonomyModule,

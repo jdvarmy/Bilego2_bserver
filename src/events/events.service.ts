@@ -1,11 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ApiService } from '../api/api.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artists, EventDates, Events, Taxonomy } from '../typeorm';
 import { Repository } from 'typeorm';
 import { EventDto } from './response/EventDto';
 import { v4 as uidv4 } from 'uuid';
-import { Exception500 } from '../types/enums';
+import { City, Exception500 } from '../types/enums';
 import { ReqEventDateDto } from './request/ReqEventDateDto';
 import { EventDatesDto } from './response/EventDatesDto';
 import { MapService } from '../map/map.service';
@@ -21,7 +20,6 @@ import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations'
 @Injectable()
 export class EventsService {
   constructor(
-    private readonly apiService: ApiService,
     private readonly mapService: MapService,
     private readonly itemsService: ItemsService,
     private readonly artistsService: ArtistsService,
@@ -33,9 +31,32 @@ export class EventsService {
     private eventDatesRepo: Repository<EventDates>,
   ) {}
 
-  // todo: refactor
-  async getFilteredEvents(options) {
-    return this.apiService.get<Event[]>('events', options);
+  async getFilteredEvents(options: {
+    city?: City;
+    offset: number;
+    count: number;
+  }) {
+    const events = await this.eventsRepo
+      .createQueryBuilder('events')
+      .select([
+        'events.uid',
+        'events.status',
+        'events.city',
+        'events.title',
+        'events.slug',
+        'events.isShowOnSlider',
+        'events.eventManager',
+        'events.concertManagerPercentage',
+      ])
+      .leftJoinAndSelect('events.eventDates', 'dates')
+      .leftJoinAndSelect('events.item', 'item')
+      .leftJoinAndSelect('events.artist', 'artist')
+      .orderBy('events.id', 'ASC')
+      .offset(options.offset)
+      .limit(options.count)
+      .getMany();
+
+    return events.map((event) => new EventDto(event));
   }
 
   async getEvent(uid: string) {
@@ -252,6 +273,7 @@ export class EventsService {
     return eventDate;
   }
 
+  // todo: поменять на event uid
   async getEventDatesByEventId(id: number): Promise<EventDates[]> {
     const eventDates = await this.eventDatesRepo
       .createQueryBuilder('dates')

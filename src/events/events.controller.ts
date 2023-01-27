@@ -25,30 +25,17 @@ import { PatchEventDto } from './request/PatchEventDto';
 export class EventsController {
   constructor(private readonly eventService: EventsService) {}
 
-  // todo: refactor
   @Get()
   getFilteredEvents(
     @Query('city') city?: City,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
-    @Query('sort') sort?: SortType,
-    @Query('weekends') weekends?: boolean,
-    @Query('include') include?: string,
-    @Query('exclude') exclude?: string,
   ) {
     const props: any = {
       city,
       offset: offset ?? 0,
-      count: count ?? 10,
-      sort: sort ?? SortType.asc,
-      weekends: weekends ?? false,
+      count: count ?? 20,
     };
-    if (include) {
-      props.include = include;
-    }
-    if (exclude) {
-      props.exclude = exclude;
-    }
 
     return this.eventService.getFilteredEvents(props);
   }
