@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
 export const APP_VERSION = process.env.APP_VERSION || '0.0.1';

@@ -39,6 +39,7 @@ export class EventsService {
     const events = await this.eventsRepo
       .createQueryBuilder('events')
       .select([
+        'events.id',
         'events.uid',
         'events.status',
         'events.city',
@@ -53,8 +54,8 @@ export class EventsService {
       .leftJoinAndSelect('events.artist', 'artist')
       .leftJoinAndSelect('events.eventManager', 'eventManager')
       .orderBy('events.id', 'ASC')
-      .offset(options.offset)
-      .limit(options.count)
+      .skip(options.offset)
+      .take(options.count)
       .getMany();
 
     return events.map((event) => new EventDto(event));

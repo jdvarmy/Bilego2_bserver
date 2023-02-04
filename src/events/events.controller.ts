@@ -120,10 +120,15 @@ export class EventsController {
     }
   }
 
-  @Put(':eventUid/dates')
+  @Put(':eventUid/dates/:uid')
   @UseGuards(AccessJwtAuthGuard)
-  editEventDate(@Body() eventDateDto: ReqEventDateDto): Promise<EventDatesDto> {
+  editEventDate(
+    @Param('uid') uid: string,
+    @Body() eventDateDto: ReqEventDateDto,
+  ): Promise<EventDatesDto> {
     try {
+      this.eventService.checkEventUid(uid, eventDateDto.uid);
+
       return this.eventService.editEventDate(eventDateDto);
     } catch (e) {
       throw new InternalServerErrorException(e.message);

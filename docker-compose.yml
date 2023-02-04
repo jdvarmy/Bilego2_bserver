@@ -1,0 +1,45 @@
+version: '3.5'
+
+networks:
+  internal:
+    name: "${COMPOSE_PROJECT_NAME}_network"
+
+volumes:
+  mongodb_data:
+
+services:
+  mysql:
+    container_name: "${COMPOSE_PROJECT_NAME}__mysql"
+    image: mysql:5.7
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_USER: "${MYSQL_USER}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_PASS}"
+      MYSQL_DB: "${MYSQL_DB}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASS: "${MYSQL_PASS}"
+    networks:
+      - internal
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - ../migrations/init.sql:/data/application/init.sql
+      - ../migrations/init.sql:/docker-entrypoint-initdb.d/dump.sql
+
+  app:
+    container_name: "${COMPOSE_PROJECT_NAME}__app"
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+      target: runtime-development
+    networks:
+      - internal
+    ports:
+      - '${PORT}:3001'
+    volumes:
+       - ./src:/opt/app-root/app/src
+       - ./.env:/opt/app-root/app/.env
+    env_file:
+      - ./.env
+    depends_on:
+      - mysql
