@@ -13,7 +13,11 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+
 .env
+ansible/group_vars/beget.yml
+ansible/htaccess/badmin-htaccess
+ansible/htaccess/bserver-htaccess
 
 # Tests
 /coverage
