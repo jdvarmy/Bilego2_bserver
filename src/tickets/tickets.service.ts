@@ -60,13 +60,14 @@ export class TicketsService {
     return this.getEventTicketsDto(eventDate.id);
   }
 
-  async deleteTickets(ticketsUid: string[]): Promise<boolean> {
+  async deleteTickets(ticketsUid: string[]): Promise<TicketDto[]> {
+    const deleted: Tickets[] = [];
     for (const uid of ticketsUid) {
       const ticket = await this.getTicketByUid(uid);
-      await this.ticketsRepo.remove(ticket);
+      deleted.push(await this.ticketsRepo.remove(ticket));
     }
 
-    return true;
+    return deleted.map((t) => new TicketDto(t));
   }
 
   // UTILS

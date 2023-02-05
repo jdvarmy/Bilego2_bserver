@@ -58,7 +58,7 @@ export class TicketsController {
 
   @Delete(':eventDateUid')
   @UseGuards(AccessJwtAuthGuard)
-  deleteTickets(@Body() ticketsUid: string[]): Promise<boolean> {
+  deleteTickets(@Body() ticketsUid: string[]): Promise<TicketDto[]> {
     try {
       return this.ticketsService.deleteTickets(ticketsUid);
     } catch (e) {
