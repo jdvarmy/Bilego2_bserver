@@ -180,6 +180,11 @@ export class EventsService {
     );
   }
 
+  async deleteEvent(uid: string): Promise<EventDto> {
+    const eventFromDb = await this.getEventByUid(uid);
+    return new EventDto(await this.eventsRepo.remove(eventFromDb));
+  }
+
   // EVENT DATES
   async getEventDates(uid: string): Promise<EventDates[]> {
     const event = await this.getEventByUid(uid);

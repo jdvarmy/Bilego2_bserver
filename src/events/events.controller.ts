@@ -89,6 +89,15 @@ export class EventsController {
       throw new InternalServerErrorException(e.message);
     }
   }
+  @Delete(':uid')
+  @UseGuards(AccessJwtAuthGuard)
+  deleteEvent(@Param('uid') uid: string): Promise<EventDto> {
+    try {
+      return this.eventService.deleteEvent(uid);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
+  }
 
   @Get(':eventUid/dates')
   @UseGuards(AccessJwtAuthGuard)
