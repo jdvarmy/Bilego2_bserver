@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   InternalServerErrorException,
   Post,
@@ -17,12 +18,12 @@ import { AuthHttpExceptionFilter } from './auth-http-exception.filter';
 import { setCookieRefreshToken } from '../utils';
 import { IpDecorator } from '../decorators/ip.decorator';
 
-@Controller()
+@Controller('v1/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   // todo: refactor
-  @Post('v1/auth/register')
+  @Post('register')
   @UseFilters(new AuthHttpExceptionFilter())
   public async register(
     @Body() registerDto: ReqRegisterDto,
@@ -41,7 +42,7 @@ export class AuthController {
     }
   }
 
-  @Post('v1/auth/login')
+  @Post('login')
   @UseFilters(new AuthHttpExceptionFilter())
   public async login(
     @Body() loginDto: ReqLoginDto,
@@ -62,23 +63,25 @@ export class AuthController {
     }
   }
 
-  @Post('v1/auth/logout')
+  @Post('logout')
   public async logout(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<boolean> {
     try {
-      const { refreshToken } = req.cookies;
-      const response = await this.authService.logout(refreshToken);
       res.clearCookie(CookieTokenName);
 
-      return response;
+      if (req?.cookies?.refreshToken) {
+        return this.authService.logout(req.cookies.refreshToken);
+      }
+
+      return true;
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
   }
 
-  @Get('v1/auth/refresh')
+  @Get('refresh')
   public async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
@@ -94,7 +97,7 @@ export class AuthController {
 
       return data;
     } catch (e) {
-      throw new InternalServerErrorException(e.message);
+      throw new ForbiddenException(e.message);
     }
   }
 }
