@@ -47,7 +47,7 @@ export class UsersController {
     }
   }
 
-  @Post('save')
+  @Post()
   @UseGuards(AccessJwtAuthGuard)
   public async saveUser(@Body() userDto: ReqUserDto): Promise<UserDto> {
     try {
@@ -57,7 +57,7 @@ export class UsersController {
     }
   }
 
-  @Put('save/:uid')
+  @Put(':uid')
   @UseGuards(AccessJwtAuthGuard)
   public async saveEditUser(
     @Param('uid') uid: string,
