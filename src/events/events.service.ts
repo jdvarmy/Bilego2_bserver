@@ -1,14 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Artists, EventDates, Events, Taxonomy } from '../typeorm';
+import { Artists, EventDates, Events } from '../typeorm';
 import { Repository } from 'typeorm';
 import { EventDto } from './response/EventDto';
 import { v4 as uidv4 } from 'uuid';
-import { City, Exception500 } from '../types/enums';
+import { Exception500 } from '../types/enums';
 import { ReqEventDateDto } from './request/ReqEventDateDto';
 import { EventDatesDto } from './response/EventDatesDto';
 import { MapService } from '../map/map.service';
-import { PatchEventDto } from './request/PatchEventDto';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import { PutEventDto } from './request/PutEventDto';
 import { MedialibraryService } from '../medialibrary/medialibrary.service';
@@ -16,6 +15,7 @@ import { ItemsService } from '../items/items.service';
 import { ArtistsService } from '../artists/artists.service';
 import { UsersService } from '../users/users.service';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
+import { PostOptions } from '../types/types';
 
 @Injectable()
 export class EventsService {
@@ -31,11 +31,7 @@ export class EventsService {
     private eventDatesRepo: Repository<EventDates>,
   ) {}
 
-  async getFilteredEvents(options: {
-    city?: City;
-    offset: number;
-    count: number;
-  }) {
+  async getEventList(options: PostOptions) {
     const events = await this.eventsRepo
       .createQueryBuilder('events')
       .select([
@@ -103,7 +99,7 @@ export class EventsService {
     } = data;
 
     const eventFromDb = await this.getEventByUid(uid);
-    const relations: Partial<Event> = {};
+    const relations: Partial<Events> = {};
 
     // Обновляем площадку
     if (item) {
@@ -112,7 +108,7 @@ export class EventsService {
 
     // Обновляем артистов
     if (artist) {
-      relations['artist'] = await this.getArtists(artist);
+      relations['artists'] = await this.getArtists(artist);
     }
 
     // Обновляем менеджера события
@@ -124,7 +120,9 @@ export class EventsService {
 
     // Обновляем таксономию
     if (taxonomy) {
-      relations['taxonomy'] = await this.getTaxonomies([...new Set(taxonomy)]);
+      relations['taxonomy'] = await this.taxonomyService.getTaxonomies([
+        ...new Set(taxonomy),
+      ]);
     }
 
     // Обновляем картинку события
@@ -160,24 +158,6 @@ export class EventsService {
     });
 
     return this.getEvent(uid);
-  }
-
-  async editEvent(data: PatchEventDto): Promise<EventDto> {
-    const { uid, taxonomy, ...eventData } = data;
-
-    const eventFromDb = await this.getEventByUid(uid);
-
-    // taxonomy убираем дубли
-    const taxonomies = await this.getTaxonomies([...new Set(taxonomy)]);
-
-    const updateEventData = this.eventsRepo.create(eventData);
-    return new EventDto(
-      await this.eventsRepo.save({
-        ...eventFromDb,
-        taxonomy: taxonomies,
-        ...updateEventData,
-      }),
-    );
   }
 
   async deleteEvent(uid: string): Promise<EventDto> {
@@ -235,14 +215,6 @@ export class EventsService {
   }
 
   // UTILS
-  checkEventUid(uid1, uid2): boolean {
-    if (uid1 !== uid2) {
-      throw new InternalServerErrorException(Exception500.eventUid);
-    }
-
-    return true;
-  }
-
   async getEventByUid(
     uid: string,
     relations: FindOptionsRelations<Events> = {
@@ -301,15 +273,6 @@ export class EventsService {
     const result = [];
     artists.forEach((artistUid) => {
       result.push(this.artistsService.getArtistByUid(artistUid));
-    });
-
-    return Promise.all(result);
-  }
-
-  async getTaxonomies(taxonomies: number[]): Promise<Taxonomy[]> {
-    const result = [];
-    taxonomies.forEach((taxonomyId) => {
-      result.push(this.taxonomyService.getTaxonomyById(taxonomyId));
     });
 
     return Promise.all(result);

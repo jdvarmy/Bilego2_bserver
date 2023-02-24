@@ -26,6 +26,8 @@ export class Media {
 
   @OneToMany(() => Items, (item) => item.image)
   itemImage: Items[];
+  @OneToMany(() => Items, (item) => item.headerImage)
+  itemHeaderImage: Items[];
 
   @OneToMany(() => Events, (event) => event.image)
   eventImage: Events[];

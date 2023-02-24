@@ -124,6 +124,15 @@ export class TaxonomyService {
     return { icon: mediaIcon, image: mediaImage };
   }
 
+  async getTaxonomies(taxonomies: number[]): Promise<Taxonomy[]> {
+    const result = [];
+    taxonomies.forEach((taxonomyId) => {
+      result.push(this.getTaxonomyById(taxonomyId));
+    });
+
+    return Promise.all(result);
+  }
+
   async getTaxonomyById(id: number): Promise<Taxonomy> {
     const taxonomy = await this.taxonomyRepo.findOne({
       where: { id },

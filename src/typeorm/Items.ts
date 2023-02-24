@@ -36,7 +36,13 @@ export class Items extends AbstractPost {
     onDelete: 'SET NULL',
   })
   @JoinColumn()
-  image: string;
+  image: Media;
+
+  @ManyToOne(() => Media, (media) => media.itemHeaderImage, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn()
+  headerImage: Media;
 
   @Column({
     type: 'enum',
@@ -45,6 +51,12 @@ export class Items extends AbstractPost {
     nullable: true,
   })
   city: City;
+
+  @Column({ type: 'text', nullable: true })
+  fragment: string;
+
+  @Column({ type: 'text', nullable: true })
+  searchWords: string;
 
   @Column({ nullable: true })
   address: string;

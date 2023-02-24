@@ -1,4 +1,5 @@
 import { UserDto } from '../dtos/UserDto';
+import { City, PostStatus } from './enums';
 
 export const CookieTokenName = 'refreshToken' as const;
 
@@ -36,3 +37,11 @@ export interface Slide {
 }
 
 export type MediaType = { id?: number; name?: string; path?: string };
+
+export type PostOptions = {
+  city?: City;
+  search?: string;
+  status?: PostStatus;
+  offset: number;
+  count: number;
+};

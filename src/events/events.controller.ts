@@ -5,39 +5,44 @@ import {
   Get,
   InternalServerErrorException,
   Param,
-  Patch,
   Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { City, SortType } from '../types/enums';
+import { City } from '../types/enums';
 import { PutEventDto } from './request/PutEventDto';
 import { EventDto } from './response/EventDto';
 import { EventDates } from '../typeorm';
 import { ReqEventDateDto } from './request/ReqEventDateDto';
 import { EventDatesDto } from './response/EventDatesDto';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { PatchEventDto } from './request/PatchEventDto';
+import { PostOptions } from '../types/types';
+import { compareUid } from '../helpers/compareUid';
 
 @Controller('v1/events')
 export class EventsController {
   constructor(private readonly eventService: EventsService) {}
 
   @Get()
-  getFilteredEvents(
+  @UseGuards(AccessJwtAuthGuard)
+  getEventList(
     @Query('city') city?: City,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
   ) {
-    const props: any = {
-      city,
-      offset: offset ?? 0,
-      count: count ?? 20,
-    };
+    try {
+      const props: PostOptions = {
+        city,
+        offset: offset ?? 0,
+        count: count ?? 20,
+      };
 
-    return this.eventService.getFilteredEvents(props);
+      return this.eventService.getEventList(props);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message);
+    }
   }
 
   @Get(':uid')
@@ -67,7 +72,7 @@ export class EventsController {
     @Body() eventDto: PutEventDto,
   ): Promise<EventDto> {
     try {
-      this.eventService.checkEventUid(uid, eventDto.uid);
+      compareUid(uid, eventDto.uid);
 
       return this.eventService.saveEvent(eventDto);
     } catch (e) {
@@ -75,20 +80,6 @@ export class EventsController {
     }
   }
 
-  @Patch(':uid')
-  @UseGuards(AccessJwtAuthGuard)
-  patchEvent(
-    @Param('uid') uid: string,
-    @Body() eventDto: PatchEventDto,
-  ): Promise<EventDto> {
-    try {
-      this.eventService.checkEventUid(uid, eventDto.uid);
-
-      return this.eventService.editEvent(eventDto);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
-  }
   @Delete(':uid')
   @UseGuards(AccessJwtAuthGuard)
   deleteEvent(@Param('uid') uid: string): Promise<EventDto> {
@@ -136,7 +127,7 @@ export class EventsController {
     @Body() eventDateDto: ReqEventDateDto,
   ): Promise<EventDatesDto> {
     try {
-      this.eventService.checkEventUid(uid, eventDateDto.uid);
+      compareUid(uid, eventDateDto.uid);
 
       return this.eventService.editEventDate(eventDateDto);
     } catch (e) {
