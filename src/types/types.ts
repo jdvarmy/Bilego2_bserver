@@ -42,6 +42,11 @@ export type PostOptions = {
   city?: City;
   search?: string;
   status?: PostStatus;
+  filter?: Record<string, string>;
   offset: number;
   count: number;
+};
+
+export type ItemsPageProps = {
+  total: number;
 };

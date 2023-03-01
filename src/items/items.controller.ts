@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { ItemDto } from './response/ItemDto';
-import { City, Exception500 } from '../types/enums';
-import { PostOptions } from '../types/types';
+import { Exception500 } from '../types/enums';
+import { ItemsPageProps, PostOptions } from '../types/types';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { compareUid } from '../helpers/compareUid';
 import { ReqItemDto } from './request/ReqItemDto';
@@ -25,18 +25,18 @@ export class ItemsController {
   @Get()
   @UseGuards(AccessJwtAuthGuard)
   getItemList(
-    @Query('search') search?: string,
-    @Query('city') city?: City,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
-  ): Promise<ItemDto[]> {
+    @Query('filter') filter?: Record<string, string>,
+  ): Promise<{ items: ItemDto[]; props: ItemsPageProps }> {
     try {
       const props: PostOptions = {
-        search,
-        city,
         offset: offset ?? 0,
         count: count ?? 20,
       };
+      if (filter) {
+        props.filter = filter;
+      }
 
       return this.itemsService.getItemList(props);
     } catch (e) {

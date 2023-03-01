@@ -1,15 +1,16 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Items } from '../typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Exception500 } from '../types/enums';
 import { ItemDto } from './response/ItemDto';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
-import { PostOptions } from '../types/types';
+import { ItemsPageProps, PostOptions } from '../types/types';
 import { v4 as uidv4 } from 'uuid';
 import { ReqItemDto } from './request/ReqItemDto';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import { MedialibraryService } from '../medialibrary/medialibrary.service';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 
 @Injectable()
 export class ItemsService {
@@ -19,8 +20,10 @@ export class ItemsService {
     @InjectRepository(Items) private itemsRepo: Repository<Items>,
   ) {}
 
-  async getItemList(options: PostOptions): Promise<ItemDto[]> {
-    const items = await this.itemsRepo
+  async getItemList(
+    options: PostOptions,
+  ): Promise<{ items: ItemDto[]; props: ItemsPageProps }> {
+    const query = this.itemsRepo
       .createQueryBuilder('items')
       .select([
         'items.uid',
@@ -29,24 +32,24 @@ export class ItemsService {
         'items.title',
         'items.city',
       ])
-      // .where(
-      //   'lower(items.title) LIKE lower(:search) /* AND items.status = :status */ AND items.city IN (:...city)',
-      //   {
-      //     search: `%${options.search}%`,
-      //     // status: PostStatus.publish,
-      //     city: options.city ? [options.city] : Object.values(City),
-      //   },
-      // )
-      .orderBy('items.title', 'ASC')
+      .orderBy('items.id', 'ASC')
       .skip(options.offset)
-      .take(options.count)
-      .getMany();
+      .take(options.count);
+
+    if (options.filter && Object.keys(options.filter).length) {
+      query.where((builder) => this.andWhereCondition(builder, options.filter));
+    }
+
+    const items = await query.getMany();
 
     if (!items) {
       throw new InternalServerErrorException(Exception500.findItems);
     }
 
-    return items.map((item) => new ItemDto(item));
+    return {
+      items: items.map((item) => new ItemDto(item)),
+      props: { total: await this.getTotal(options.filter) },
+    };
   }
 
   async getItem(uid: string) {
@@ -113,6 +116,16 @@ export class ItemsService {
     return items;
   }
 
+  async getTotal(params: FindOptionsWhere<Items>): Promise<number> {
+    const query = this.itemsRepo.createQueryBuilder('items').select('items.id');
+
+    if (params && Object.keys(params).length) {
+      query.where((builder) => this.andWhereCondition(builder, params));
+    }
+
+    return query.getCount();
+  }
+
   async getItemRelationData({
     taxonomy,
     headerImage,
@@ -144,5 +157,24 @@ export class ItemsService {
     }
 
     return relations;
+  }
+
+  andWhereCondition(
+    builder: SelectQueryBuilder<Items>,
+    filter: FindOptionsWhere<Items>,
+  ) {
+    return Object.entries(filter).forEach(([key, value]) => {
+      const clearKey = key.replace(/[^a-zA-Z0-9]/g, '');
+
+      if (typeof value === 'string') {
+        builder.andWhere(`lower(items.${clearKey}) LIKE lower(:${clearKey})`, {
+          [clearKey]: `%${value.trim()}%`,
+        });
+      } else if (Array.isArray(value)) {
+        builder.andWhere(`items.${clearKey} IN (:...${clearKey})`, {
+          [clearKey]: value,
+        });
+      }
+    });
   }
 }
