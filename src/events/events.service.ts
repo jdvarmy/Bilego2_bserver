@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artists, EventDates, Events } from '../typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { EventDto } from './response/EventDto';
 import { v4 as uidv4 } from 'uuid';
 import { Exception500 } from '../types/enums';
@@ -15,7 +15,8 @@ import { ItemsService } from '../items/items.service';
 import { ArtistsService } from '../artists/artists.service';
 import { UsersService } from '../users/users.service';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
-import { PostOptions } from '../types/types';
+import { ItemsPageProps, PostOptions } from '../types/types';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 
 @Injectable()
 export class EventsService {
@@ -31,8 +32,10 @@ export class EventsService {
     private eventDatesRepo: Repository<EventDates>,
   ) {}
 
-  async getEventList(options: PostOptions) {
-    const events = await this.eventsRepo
+  async getEventList(
+    options: PostOptions,
+  ): Promise<{ items: EventDto[]; props: ItemsPageProps }> {
+    const query = await this.eventsRepo
       .createQueryBuilder('events')
       .select([
         'events.id',
@@ -51,10 +54,22 @@ export class EventsService {
       .leftJoinAndSelect('events.eventManager', 'eventManager')
       .orderBy('events.id', 'ASC')
       .skip(options.offset)
-      .take(options.count)
-      .getMany();
+      .take(options.count);
 
-    return events.map((event) => new EventDto(event));
+    if (options.filter && Object.keys(options.filter).length) {
+      query.where((builder) => this.andWhereCondition(builder, options.filter));
+    }
+
+    const events = await query.getMany();
+
+    if (!events) {
+      throw new InternalServerErrorException(Exception500.findEvents);
+    }
+
+    return {
+      items: events.map((event) => new EventDto(event)),
+      props: { total: await this.getTotal(options.filter) },
+    };
   }
 
   async getEvent(uid: string) {
@@ -269,6 +284,18 @@ export class EventsService {
     return eventDates;
   }
 
+  async getTotal(params: FindOptionsWhere<Events>): Promise<number> {
+    const query = this.eventsRepo
+      .createQueryBuilder('events')
+      .select('events.id');
+
+    if (params && Object.keys(params).length) {
+      query.where((builder) => this.andWhereCondition(builder, params));
+    }
+
+    return query.getCount();
+  }
+
   async getArtists(artists: string[]): Promise<Artists[]> {
     const result = [];
     artists.forEach((artistUid) => {
@@ -276,5 +303,24 @@ export class EventsService {
     });
 
     return Promise.all(result);
+  }
+
+  andWhereCondition(
+    builder: SelectQueryBuilder<Events>,
+    filter: FindOptionsWhere<Events>,
+  ) {
+    return Object.entries(filter).forEach(([key, value]) => {
+      const clearKey = key.replace(/[^a-zA-Z0-9]/g, '');
+
+      if (typeof value === 'string') {
+        builder.andWhere(`lower(events.${clearKey}) LIKE lower(:${clearKey})`, {
+          [clearKey]: `%${value.trim()}%`,
+        });
+      } else if (Array.isArray(value)) {
+        builder.andWhere(`events.${clearKey} IN (:...${clearKey})`, {
+          [clearKey]: value,
+        });
+      }
+    });
   }
 }

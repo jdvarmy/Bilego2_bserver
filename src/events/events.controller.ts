@@ -11,7 +11,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { City } from '../types/enums';
 import { PutEventDto } from './request/PutEventDto';
 import { EventDto } from './response/EventDto';
 import { EventDates } from '../typeorm';
@@ -28,16 +27,18 @@ export class EventsController {
   @Get()
   @UseGuards(AccessJwtAuthGuard)
   getEventList(
-    @Query('city') city?: City,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
+    @Query('filter') filter?: Record<string, string>,
   ) {
     try {
       const props: PostOptions = {
-        city,
         offset: offset ?? 0,
         count: count ?? 20,
       };
+      if (filter) {
+        props.filter = filter;
+      }
 
       return this.eventService.getEventList(props);
     } catch (e) {
