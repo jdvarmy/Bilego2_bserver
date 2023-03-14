@@ -131,7 +131,7 @@ export class ItemsService {
     headerImage,
     image,
   }: {
-    taxonomy: number[];
+    taxonomy: string[];
     headerImage: number;
     image: number;
   }) {

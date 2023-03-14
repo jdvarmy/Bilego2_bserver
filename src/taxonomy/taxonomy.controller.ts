@@ -5,43 +5,42 @@ import {
   Get,
   InternalServerErrorException,
   Param,
-  Patch,
   Post,
+  Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TaxonomyService } from './taxonomy.service';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { ResTaxonomyDto } from './response/ResTaxonomyDto';
+import { TaxonomyDto } from './response/TaxonomyDto';
 import { TaxonomyType, TaxonomyTypeLink, Version } from '../types/enums';
 import { PostTaxonomyDto } from './request/PostTaxonomyDto';
-import { ReqTaxonomy } from './request/ReqTaxonomy';
-import { Taxonomy } from '../typeorm';
+import { ItemsPageProps, PostOptions } from '../types/types';
+import { PutTaxonomyDto } from './request/PutTaxonomyDto';
 
 @Controller(`${Version._1}taxonomy`)
 export class TaxonomyController {
   constructor(private readonly taxonomyService: TaxonomyService) {}
 
-  @Get(':link')
+  @Get([':link', ':link/:type'])
   @UseGuards(AccessJwtAuthGuard)
-  getTaxonomy(
+  getTaxonomyListByType(
     @Param('link') link: TaxonomyTypeLink,
     @Param('type') type?: TaxonomyType,
-  ): Promise<ResTaxonomyDto[]> {
+    @Query('offset') offset?: number,
+    @Query('count') count?: number,
+    @Query('filter') filter?: Record<string, string>,
+  ): Promise<{ items: TaxonomyDto[]; props: ItemsPageProps }> {
     try {
-      return this.taxonomyService.getTaxonomy(link, type);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
-  }
+      const props: PostOptions = {
+        offset: offset ?? 0,
+        count: count ?? 20,
+      };
+      if (filter) {
+        props.filter = filter;
+      }
 
-  @Get(':link/:type')
-  @UseGuards(AccessJwtAuthGuard)
-  getTaxonomyByType(
-    @Param('link') link: TaxonomyTypeLink,
-    @Param('type') type?: TaxonomyType,
-  ): Promise<ResTaxonomyDto[]> {
-    try {
-      return this.taxonomyService.getTaxonomy(link, type);
+      return this.taxonomyService.getTaxonomyList(link, props);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -49,9 +48,7 @@ export class TaxonomyController {
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  saveTaxonomy(
-    @Body() taxonomyDto: PostTaxonomyDto,
-  ): Promise<ResTaxonomyDto[]> {
+  saveTaxonomy(@Body() taxonomyDto: PostTaxonomyDto): Promise<TaxonomyDto> {
     try {
       return this.taxonomyService.saveTaxonomy(taxonomyDto);
     } catch (e) {
@@ -59,26 +56,26 @@ export class TaxonomyController {
     }
   }
 
-  @Delete(':id')
+  @Delete(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  deleteTaxonomy(@Param('id') id: number): Promise<Taxonomy> {
+  deleteTaxonomy(@Param('uid') uid: string): Promise<TaxonomyDto> {
     try {
-      return this.taxonomyService.deleteTaxonomy(id);
+      return this.taxonomyService.deleteTaxonomy(uid);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
   }
 
-  @Patch(':id')
+  @Put(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  patchTaxonomy(
-    @Param('id') id: number,
+  putTaxonomy(
+    @Param('uid') uid: string,
     // todo: заменить на более узкий тип данных
     // todo: посмотреть как проверять переменные в параметрах запроса
-    @Body() taxonomyDto: ReqTaxonomy,
-  ): Promise<ResTaxonomyDto> {
+    @Body() taxonomyDto: PutTaxonomyDto,
+  ): Promise<TaxonomyDto> {
     try {
-      return this.taxonomyService.updateTaxonomy({ id, ...taxonomyDto });
+      return this.taxonomyService.updateTaxonomy({ uid, ...taxonomyDto });
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

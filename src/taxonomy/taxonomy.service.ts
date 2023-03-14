@@ -1,13 +1,17 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PostTaxonomyDto } from './request/PostTaxonomyDto';
-import { ResTaxonomyDto } from './response/ResTaxonomyDto';
+import { TaxonomyDto } from './response/TaxonomyDto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Media, Taxonomy } from '../typeorm';
-import { Repository } from 'typeorm';
+import { Events, Media, Taxonomy } from '../typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Exception500, TaxonomyType, TaxonomyTypeLink } from '../types/enums';
-import { PatchTaxonomyDto } from './request/PatchTaxonomyDto';
+import { PutTaxonomyDto } from './request/PutTaxonomyDto';
 import cloneDeep from '../utils';
+import { v4 as uidv4 } from 'uuid';
 import { MedialibraryService } from '../medialibrary/medialibrary.service';
+import { ItemsPageProps, PostOptions } from '../types/types';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
+import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 @Injectable()
 export class TaxonomyService {
@@ -17,52 +21,76 @@ export class TaxonomyService {
     @InjectRepository(Media) private mediaRepo: Repository<Media>,
   ) {}
 
-  async getTaxonomy(
+  async getTaxonomyList(
     link: TaxonomyTypeLink,
-    type?: TaxonomyType,
-  ): Promise<ResTaxonomyDto[]> {
-    if (type) {
-      return (await this.getTaxonomyByType(type)).map(
-        (taxonomy) => new ResTaxonomyDto(taxonomy),
-      );
+    options: PostOptions | undefined,
+  ): Promise<{ items: TaxonomyDto[]; props: ItemsPageProps }> {
+    const query = this.taxonomyRepo
+      .createQueryBuilder('taxonomy')
+      .select([
+        'taxonomy.id',
+        'taxonomy.uid',
+        'taxonomy.name',
+        'taxonomy.slug',
+        'taxonomy.type',
+        'taxonomy.link',
+        'taxonomy.description',
+        'taxonomy.overIndex',
+        'taxonomy.showInMenu',
+        'taxonomy.showInMainPage',
+      ])
+      .leftJoinAndSelect('taxonomy.icon', 'icon')
+      .leftJoinAndSelect('taxonomy.image', 'image')
+      .orderBy('taxonomy.overIndex', 'ASC')
+      .skip(options.offset)
+      .take(options.count);
+
+    if (options.filter && Object.keys(options.filter).length) {
+      query.where((builder) => this.andWhereCondition(builder, options.filter));
     }
 
-    return (await this.getTaxonomyByLink(link)).map(
-      (taxonomy) => new ResTaxonomyDto(taxonomy),
-    );
+    const taxonomies = await query.getMany();
+
+    if (!taxonomies) {
+      throw new InternalServerErrorException(Exception500.findTaxonomies);
+    }
+
+    return {
+      items: taxonomies.map(this.toDto),
+      props: { total: await this.getTotal(options.filter) },
+    };
   }
 
-  async saveTaxonomy(taxonomy: PostTaxonomyDto): Promise<ResTaxonomyDto[]> {
+  async saveTaxonomy(taxonomy: PostTaxonomyDto): Promise<TaxonomyDto> {
     const overIndex = await this.taxonomyRepo.findOne({
       where: { type: taxonomy.type },
       order: { overIndex: 'desc', id: 'desc' },
     });
 
-    await this.taxonomyRepo.save({
+    const tax = await this.taxonomyRepo.save({
       ...taxonomy,
+      uid: uidv4(),
       overIndex: overIndex?.overIndex ? overIndex.overIndex + 1 : 0,
       ...(await this.getMedia({ icon: taxonomy.icon, image: taxonomy.image })),
     });
 
-    return (await this.getTaxonomyByType(taxonomy.type)).map(
-      (taxonomy) => new ResTaxonomyDto(taxonomy),
-    );
+    return this.toDto(tax);
   }
 
-  async deleteTaxonomy(id: number): Promise<Taxonomy> {
-    const taxonomy = await this.getTaxonomyById(id);
-    return this.taxonomyRepo.remove(taxonomy);
+  async deleteTaxonomy(uid: string): Promise<TaxonomyDto> {
+    const taxonomy = await this.getTaxonomyByUid(uid);
+    return new TaxonomyDto(await this.taxonomyRepo.remove(taxonomy));
   }
 
-  async updateTaxonomy(taxonomy: PatchTaxonomyDto): Promise<ResTaxonomyDto> {
-    const { id, icon, image, overIndex, ...props } = taxonomy;
+  async updateTaxonomy(taxonomy: PutTaxonomyDto): Promise<TaxonomyDto> {
+    const { uid, icon, image, overIndex, ...props } = taxonomy;
 
     if (typeof overIndex === 'number' && overIndex + 1 && props.type) {
       // меняем порядок отображения
-      return this.updateIndex({ id, overIndex, ...props });
+      return this.updateIndex({ uid, overIndex, ...props });
     } else {
       // просто обновляем таксономию
-      const taxonomyFromDb = await this.getTaxonomyById(id);
+      const taxonomyFromDb = await this.getTaxonomyByUid(uid);
       const updateTaxonomyData = this.taxonomyRepo.create(props);
       const media = await this.getMedia({ icon, image });
       return this.update({
@@ -74,18 +102,18 @@ export class TaxonomyService {
   }
 
   // HELPERS
-  async update(taxonomy): Promise<ResTaxonomyDto> {
-    return new ResTaxonomyDto(await this.taxonomyRepo.save(taxonomy));
+  async update(taxonomy): Promise<TaxonomyDto> {
+    return new TaxonomyDto(await this.taxonomyRepo.save(taxonomy));
   }
 
-  async updateIndex(taxonomy): Promise<ResTaxonomyDto> {
+  async updateIndex(taxonomy): Promise<TaxonomyDto> {
     const oldItems = (await this.getTaxonomyByType(taxonomy.type)).map(
-      (tax) => ({ id: tax.id, overIndex: tax.overIndex }),
+      (tax) => ({ uid: tax.uid, overIndex: tax.overIndex }),
     );
-    const currentItem = { id: taxonomy.id, overIndex: taxonomy.overIndex };
-    const index = oldItems.findIndex((item) => item.id === currentItem.id);
+    const currentItem = { uid: taxonomy.uid, overIndex: taxonomy.overIndex };
+    const index = oldItems.findIndex((item) => item.uid === currentItem.uid);
     const newItems = cloneDeep<typeof oldItems>(oldItems) as Array<{
-      id: string;
+      uid: string;
       overIndex: number;
     }>;
 
@@ -95,9 +123,9 @@ export class TaxonomyService {
       // перестраиваем индексы
       newItems.forEach((item, index) => (item.overIndex = index));
 
-      const updateItems: Array<{ id: string; overIndex: number }> = [];
+      const updateItems: Array<{ uid: string; overIndex: number }> = [];
       newItems.forEach((newItem, index) => {
-        if (+newItem.id !== +oldItems[index].id) {
+        if (newItem.uid !== oldItems[index].uid) {
           updateItems.push(newItem);
         }
       });
@@ -107,13 +135,13 @@ export class TaxonomyService {
           .createQueryBuilder()
           .update(Taxonomy)
           .set({ overIndex: item.overIndex })
-          .where('id = :id', { id: item.id })
+          .where('uid = :uid', { uid: item.uid })
           .execute();
       });
     }
 
-    return new ResTaxonomyDto(
-      await this.taxonomyRepo.findOne({ where: { id: taxonomy.id } }),
+    return new TaxonomyDto(
+      await this.taxonomyRepo.findOne({ where: { uid: taxonomy.uid } }),
     );
   }
 
@@ -124,18 +152,22 @@ export class TaxonomyService {
     return { icon: mediaIcon, image: mediaImage };
   }
 
-  async getTaxonomies(taxonomies: number[]): Promise<Taxonomy[]> {
+  async getTaxonomies(taxonomies: string[]): Promise<Taxonomy[]> {
     const result = [];
-    taxonomies.forEach((taxonomyId) => {
-      result.push(this.getTaxonomyById(taxonomyId));
+    taxonomies.forEach((taxonomyUid) => {
+      result.push(this.getTaxonomyByUid(taxonomyUid));
     });
 
     return Promise.all(result);
   }
 
-  async getTaxonomyById(id: number): Promise<Taxonomy> {
+  async getTaxonomyByUid(
+    uid: string,
+    relations: FindOptionsRelations<Taxonomy> = { icon: true, image: true },
+  ): Promise<Taxonomy> {
     const taxonomy = await this.taxonomyRepo.findOne({
-      where: { id },
+      where: { uid },
+      relations,
     });
 
     if (!taxonomy) {
@@ -145,12 +177,8 @@ export class TaxonomyService {
     return taxonomy;
   }
 
-  async getTaxonomyByLink(link: TaxonomyTypeLink): Promise<Taxonomy[]> {
-    return this.taxonomyRepo.find({
-      relations: ['icon', 'image'],
-      where: { link },
-      order: { overIndex: 'asc', id: 'asc' },
-    });
+  toDto(taxonomy: Taxonomy): TaxonomyDto {
+    return new TaxonomyDto(taxonomy);
   }
 
   async getTaxonomyByType(type: TaxonomyType): Promise<Taxonomy[]> {
@@ -159,5 +187,39 @@ export class TaxonomyService {
       where: { type },
       order: { overIndex: 'asc', id: 'asc' },
     });
+  }
+
+  andWhereCondition(
+    builder: SelectQueryBuilder<Taxonomy>,
+    filter: FindOptionsWhere<Taxonomy>,
+  ) {
+    return Object.entries(filter).forEach(([key, value]) => {
+      const clearKey = key.replace(/[^a-zA-Z0-9]/g, '');
+
+      if (typeof value === 'string') {
+        builder.andWhere(
+          `lower(taxonomy.${clearKey}) LIKE lower(:${clearKey})`,
+          {
+            [clearKey]: `%${value.trim()}%`,
+          },
+        );
+      } else if (Array.isArray(value)) {
+        builder.andWhere(`taxonomy.${clearKey} IN (:...${clearKey})`, {
+          [clearKey]: value,
+        });
+      }
+    });
+  }
+
+  async getTotal(params: FindOptionsWhere<Events>): Promise<number> {
+    const query = this.taxonomyRepo
+      .createQueryBuilder('taxonomy')
+      .select('taxonomy.id');
+
+    if (params && Object.keys(params).length) {
+      query.where((builder) => this.andWhereCondition(builder, params));
+    }
+
+    return query.getCount();
   }
 }

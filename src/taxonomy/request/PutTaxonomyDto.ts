@@ -1,8 +1,8 @@
 import { ReqTaxonomy } from './ReqTaxonomy';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
-export class PatchTaxonomyDto extends ReqTaxonomy {
+export class PutTaxonomyDto extends ReqTaxonomy {
   @IsNotEmpty()
   @IsNumber()
-  id: number;
+  uid: string;
 }

@@ -4,7 +4,7 @@ import { TaxonomyType, TaxonomyTypeLink } from '../../types/enums';
 export class ReqTaxonomy {
   @IsOptional()
   @IsNumber()
-  id?: number;
+  uid?: string;
 
   @IsOptional()
   @IsString()

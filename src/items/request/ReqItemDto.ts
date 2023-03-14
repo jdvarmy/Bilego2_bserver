@@ -28,7 +28,7 @@ export class ReqItemDto {
 
   @IsOptional()
   @IsArray()
-  taxonomy?: number[];
+  taxonomy?: string[];
 
   @IsOptional()
   @IsString()

@@ -30,7 +30,7 @@ export class ReqEvent {
 
   @IsOptional()
   @IsArray()
-  taxonomy?: number[];
+  taxonomy?: string[];
 
   @IsOptional()
   @IsString()

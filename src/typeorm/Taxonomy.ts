@@ -17,6 +17,9 @@ export class Taxonomy {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
+  @Column({ length: 60, unique: true })
+  uid: string;
+
   @ManyToMany(() => Events, (event) => event.taxonomy)
   @JoinTable()
   event: Events[];

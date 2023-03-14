@@ -117,6 +117,7 @@ export enum Exception500 {
   uploadMapNoData, // Нет файла карты или мини-карты
   parseSVGError, // Ошибка при парсинге SVG карты
   findTaxonomy, // Таксономия с таким id не найдена
+  findTaxonomies, // Категории с такими данными не найдены
 }
 
 export enum FileType {
