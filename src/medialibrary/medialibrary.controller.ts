@@ -24,7 +24,7 @@ export class MedialibraryController {
   @UseGuards(AccessJwtAuthGuard)
   getMedia(@Req() req): Promise<MediaDto[]> {
     try {
-      return this.medialibraryService.getMedia();
+      return this.medialibraryService.fetchMedia();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

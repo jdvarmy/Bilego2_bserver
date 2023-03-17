@@ -14,8 +14,11 @@ export class MedialibraryService {
     @InjectRepository(Media) private mediaRepo: Repository<Media>,
   ) {}
 
-  async getMedia(): Promise<MediaDto[]> {
-    const media: Media[] = await this.mediaRepo.find({ order: { id: 'DESC' } });
+  async fetchMedia(): Promise<MediaDto[]> {
+    const media: Media[] = await this.mediaRepo.find({
+      where: { mimetype: 'webp' },
+      order: { id: 'DESC' },
+    });
 
     return media.map((image) => new MediaDto(image));
   }
