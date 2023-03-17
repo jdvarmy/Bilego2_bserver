@@ -21,7 +21,7 @@ export class MapController {
   @UseGuards(AccessJwtAuthGuard)
   getMapItems(): Promise<MapDto[]> {
     try {
-      return this.mapService.getMapItems();
+      return this.mapService.fetchMapItems();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -43,7 +43,14 @@ export class MapController {
     },
   ): Promise<boolean> {
     const { map, minimap } = files;
-    if (!map || !minimap || !map[0] || !minimap[0]) {
+    if (
+      !map ||
+      !minimap ||
+      !Array.isArray(map) ||
+      !Array.isArray(minimap) ||
+      !map[0] ||
+      !minimap[0]
+    ) {
       throw new InternalServerErrorException(Exception500.uploadMapNoData);
     }
 

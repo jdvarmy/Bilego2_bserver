@@ -17,7 +17,7 @@ export class MapService {
     @InjectRepository(Maps) private mapRepo: Repository<Maps>,
   ) {}
 
-  async getMapItems(): Promise<MapDto[]> {
+  async fetchMapItems(): Promise<MapDto[]> {
     const maps: Maps[] = await this.mapRepo.find({
       order: { id: 'DESC' },
       relations: ['map'],
