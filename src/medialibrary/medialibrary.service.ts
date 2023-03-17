@@ -28,7 +28,6 @@ export class MedialibraryService {
     return true;
   }
 
-  // следующее, сделать подправить загрузку карты событий
   async deleteMediaData(id: number): Promise<boolean> {
     const media = await this.mediaRepo.findOne({ where: { id } });
     await this.mediaRepo.remove(media);
