@@ -14,8 +14,9 @@ import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { MediaDto } from '../dtos/MediaDto';
 import { MedialibraryService } from './medialibrary.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { Version } from '../types/enums';
 
-@Controller('v1/media')
+@Controller(`${Version._1}media`)
 export class MedialibraryController {
   constructor(private readonly medialibraryService: MedialibraryService) {}
 

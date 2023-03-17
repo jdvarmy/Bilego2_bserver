@@ -2,7 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { Exception500 } from '../types/enums';
 import { parse } from 'svg-parser';
 import { v4 as uidv4 } from 'uuid';
-import * as camelCase from 'lodash.camelcase';
+import camelCase from 'lodash.camelcase';
 
 enum Type {
   element = 'element',
@@ -65,6 +65,7 @@ export function mapSVGParser(buffer: Buffer, prev = null) {
     }
 
     const accumulator = prev ? prev : { background: [] };
+    // eslint-disable-next-line no-inner-declarations
     function rePropsFc({ children, properties, ...props }: XMLType): XMLType {
       let newChildren = [] as XMLType[];
 
@@ -98,12 +99,13 @@ export function mapSVGParser(buffer: Buffer, prev = null) {
           // map elements
           case 'g':
             switch (properties.id) {
+              // здесь нет break; это правильно
               case 'background':
                 accumulator.paths = children.map(({ tagName, properties }) => ({
                   tagName,
                   ...propertiesToCamelCase(properties),
                 }));
-              // обрати внимание, здесь нет break; это правильно
+              // eslint-disable-next-line no-fallthrough
               case 'details':
                 accumulator.background.push(...children.map(rePropsFc));
                 break;

@@ -30,6 +30,8 @@ import { DatabaseModule } from './database/database.module';
 import { MedialibraryModule } from './medialibrary/medialibrary.module';
 import { MapModule } from './map/map.module';
 import { FileModule } from './file/file.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 
 @Module({
   imports: [
@@ -46,6 +48,9 @@ import { FileModule } from './file/file.module';
       password: MYSQL_PASS,
       entities: entities,
       synchronize: true, // todo: убрать на проде
+    }),
+    MulterModule.register({
+      storage: memoryStorage(),
     }),
     ApiModule,
     DatabaseModule,

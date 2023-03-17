@@ -19,8 +19,9 @@ import { EventDatesDto } from './response/EventDatesDto';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { PostOptions } from '../types/types';
 import { compareUid } from '../helpers/compareUid';
+import { Version } from '../types/enums';
 
-@Controller('v1/events')
+@Controller(`${Version._1}events`)
 export class EventsController {
   constructor(private readonly eventService: EventsService) {}
 

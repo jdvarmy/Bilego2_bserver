@@ -45,14 +45,11 @@ export class Media {
   @Column()
   originalName: string;
 
-  @Column()
+  @Column({ type: 'longtext' })
   path: string;
 
   @Column()
   mimetype: string;
-
-  @Column()
-  encoding: string;
 
   @Column()
   size: number;

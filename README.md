@@ -117,7 +117,7 @@ npm i
 npm run build
 
 Отключаемся от сервера, переходим обратно в директорию ansible, запускаем плейбук копи
-ansible-playbook playbook-clone.yml
+ansible-playbook playbook-copy.yml
 
 
 

@@ -36,10 +36,8 @@ export class MapService {
       throw new InternalServerErrorException(Exception500.uploadMap);
     }
 
-    const mapMediaDB = await this.medialibraryService.saveMediaToDB(map);
-    const minimapMediaDB = await this.medialibraryService.saveMediaToDB(
-      minimap,
-    );
+    const mapMediaDB = await this.medialibraryService.saveMediaMap(map);
+    const minimapMediaDB = await this.medialibraryService.saveMediaMap(minimap);
 
     const parsedMap = mapSVGParser(map.buffer);
     const mapData = Object.fromEntries(

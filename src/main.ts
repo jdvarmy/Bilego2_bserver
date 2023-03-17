@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import * as requestIp from 'request-ip';
 import { ValidationPipe } from '@nestjs/common';
 import { CLIENT_URL, ADMIN_URL, PORT } from './constants/env';

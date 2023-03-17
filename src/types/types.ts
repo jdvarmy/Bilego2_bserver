@@ -50,3 +50,5 @@ export type PostOptions = {
 export type ItemsPageProps = {
   total: number;
 };
+
+export type SharpType = { name: string; format: 'webp'; path: string[] };

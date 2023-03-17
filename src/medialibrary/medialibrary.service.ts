@@ -22,30 +22,43 @@ export class MedialibraryService {
 
   async insertMediaData(files: Express.Multer.File[]): Promise<boolean> {
     for (const file of files) {
-      // todo: переделать, убрать await
-      await this.saveMediaToDB(file);
+      await this.saveImage(file, FileType.image);
     }
 
     return true;
   }
 
+  // следующее, сделать подправить загрузку карты событий
   async deleteMediaData(id: number): Promise<boolean> {
     const media = await this.mediaRepo.findOne({ where: { id } });
     await this.mediaRepo.remove(media);
 
-    this.fileService.removeFile(media.path);
+    this.fileService.removeFile(JSON.parse(media.path));
 
     return true;
   }
 
-  async saveMediaToDB(file: Express.Multer.File): Promise<Media> {
-    const imagePath = this.fileService.createFile(FileType.image, file);
+  async saveImage(file: Express.Multer.File, type: FileType) {
+    const image = await this.fileService.createImageWebP(file, type);
+
+    const media = this.mediaRepo.create({
+      name: image.name,
+      originalName: file.originalname,
+      path: JSON.stringify(image.path),
+      mimetype: image.format,
+      size: file.size,
+    });
+
+    return this.mediaRepo.save(media);
+  }
+
+  async saveMediaMap(file: Express.Multer.File): Promise<Media> {
+    const imagePath = this.fileService.createFileMap(file, FileType.map);
 
     const media = this.mediaRepo.create({
       originalName: file.originalname,
-      path: imagePath,
+      path: JSON.stringify(imagePath),
       mimetype: file.mimetype,
-      encoding: file.encoding,
       size: file.size,
     });
 
