@@ -8,7 +8,7 @@ import { LoginUser, RegisterUser, UserTokens } from 'src/types/types';
 import { checkWPErrorResponse } from '../utils';
 import { ApiService } from '../api/api.service';
 import { TokensService } from '../tokens/tokens.service';
-import { JWT_REFRESH_SECRET } from '../constants/env';
+import { JWT_REFRESH_SECRET } from '../types/constants/env';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Users } from '../typeorm';
@@ -17,7 +17,7 @@ import {
   ForbiddenException_403,
   UnauthorizedException_401,
 } from '../types/enums';
-import { UserDto } from '../dtos/UserDto';
+import { UserDto } from '../users/dtos/User.dto';
 
 @Injectable()
 export class AuthService {
@@ -48,10 +48,12 @@ export class AuthService {
     });
 
     if (!user) {
+      this.logger.error(`Нет пользователя с email ${data?.email}`);
       throw new UnauthorizedException(UnauthorizedException_401.notFound);
     }
 
     if (!(await bcrypt.compare(password, user.pass))) {
+      this.logger.error(`Неправильный пароль пользователя ${data?.email}`);
       throw new UnauthorizedException(UnauthorizedException_401.wrongPass);
     }
 
@@ -61,6 +63,7 @@ export class AuthService {
       ip: data.ip,
     });
 
+    this.logger.log(`Пользователь ${data?.email} вошел в систему`);
     return { user: userDto, ...tokens };
   }
 
@@ -81,7 +84,7 @@ export class AuthService {
     const userIdFromBd = await this.tokensService.findToken(refreshToken);
 
     if (!verifyToken || !userIdFromBd) {
-      this.logger.debug('Refresh token не прошел верификацию');
+      this.logger.error('Refresh token не прошел верификацию');
       throw new ForbiddenException();
     }
 
@@ -90,7 +93,7 @@ export class AuthService {
     });
 
     if (!user) {
-      this.logger.debug('Пользователь не найден');
+      this.logger.error('Пользователь не найден');
       throw new ForbiddenException(ForbiddenException_403.deleted);
     }
 

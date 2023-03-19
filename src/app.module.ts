@@ -10,7 +10,7 @@ import {
   MYSQL_PORT,
   MYSQL_USER,
   STATIC_FILES_DIR,
-} from './constants/env';
+} from './types/constants/env';
 import entities from './typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
@@ -32,10 +32,15 @@ import { MapModule } from './map/map.module';
 import { FileModule } from './file/file.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { PassportModule } from '@nestjs/passport';
+
+let envFilePath = '.env';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ envFilePath }),
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, STATIC_FILES_DIR),
     }),
@@ -49,9 +54,8 @@ import { memoryStorage } from 'multer';
       entities: entities,
       synchronize: true, // todo: убрать на проде
     }),
-    MulterModule.register({
-      storage: memoryStorage(),
-    }),
+    PassportModule.register({ session: true }),
+    MulterModule.register({ storage: memoryStorage() }),
     ApiModule,
     DatabaseModule,
     AuthModule,

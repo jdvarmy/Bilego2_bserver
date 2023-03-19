@@ -7,13 +7,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { MapService } from './map.service';
+import { MapService } from './services/map.service';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { MapDto } from '../dtos/MapDto';
+import { MapDto } from './dtos/Map.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Exception500 } from '../types/enums';
+import { Exception500, Routs } from '../types/enums';
 
-@Controller('v1/map')
+@Controller(Routs.map)
 export class MapController {
   constructor(private readonly mapService: MapService) {}
 

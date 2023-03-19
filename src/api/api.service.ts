@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
 import * as qs from 'qs';
-import { BILEGO_URL } from '../constants/env';
 
+//** deprecated **//
 @Injectable()
 export class ApiService {
-  apiUrl = BILEGO_URL;
+  apiUrl = 'not use';
 
   constructor(private readonly httpService: HttpService) {}
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   EventDates,
@@ -16,156 +16,75 @@ import {
   TicketsSell,
   UserAccess,
   Users,
+  Media,
+  Session,
+  LoggerEntries,
 } from '../typeorm';
-import * as bcrypt from 'bcrypt';
-import { v4 as uidv4 } from 'uuid';
-import {
-  City,
-  PostStatus,
-  UserEntityRole,
-  UserEntityStatus,
-} from '../types/enums';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 
 @Injectable()
 export class DatabaseService {
   constructor(
-    @InjectRepository(Users) private usersRepo: Repository<Users>,
-    @InjectRepository(UserAccess)
-    private userAccessRepo: Repository<UserAccess>,
+    @InjectRepository(Artists) private artistsRepo: Repository<Artists>,
     @InjectRepository(Events) private eventsRepo: Repository<Events>,
     @InjectRepository(EventDates)
     private eventDatesRepo: Repository<EventDates>,
     @InjectRepository(Items) private itemsRepo: Repository<Items>,
     @InjectRepository(ItemClosestMetro)
     private itemClosestMetroRepo: Repository<ItemClosestMetro>,
-    @InjectRepository(Artists) private artistsRepo: Repository<Artists>,
+    @InjectRepository(LoggerEntries)
+    private loggerEntriesRepo: Repository<LoggerEntries>,
     @InjectRepository(Maps) private mapsRepo: Repository<Maps>,
-    @InjectRepository(Tickets) private ticketsRepo: Repository<Tickets>,
-    @InjectRepository(TicketsSell)
-    private ticketsSellRepo: Repository<TicketsSell>,
-    @InjectRepository(SEO) private seoRepo: Repository<SEO>,
-    @InjectRepository(Taxonomy) private taxonomyRepo: Repository<Taxonomy>,
+    @InjectRepository(Media) private mediaRepo: Repository<Media>,
     @InjectRepository(Orders) private ordersRepo: Repository<Orders>,
     @InjectRepository(OrderItems)
     private orderItemsRepo: Repository<OrderItems>,
+    @InjectRepository(SEO) private seoRepo: Repository<SEO>,
+    @InjectRepository(Session) private sessionRepo: Repository<Session>,
+    @InjectRepository(Taxonomy) private taxonomyRepo: Repository<Taxonomy>,
+    @InjectRepository(Tickets) private ticketsRepo: Repository<Tickets>,
+    @InjectRepository(TicketsSell)
+    private ticketsSellRepo: Repository<TicketsSell>,
+    @InjectRepository(Users) private usersRepo: Repository<Users>,
+    @InjectRepository(UserAccess)
+    private userAccessRepo: Repository<UserAccess>,
   ) {}
 
-  async initial() {
-    const admin = this.usersRepo.create({
-      uid: uidv4(),
-      email: 'chekist.87@mail.ru',
-      login: 'chekist.87@mail.ru',
-      pass: await bcrypt.hash('123', 13),
-      role: UserEntityRole.admin,
-      status: UserEntityStatus.active,
-      name: 'Вася',
-      surname: 'Пупкин',
-      birthdate: new Date(),
-      phone: '+7(999)227-72-27',
+  andWhereFilterCondition<T>(
+    builder: SelectQueryBuilder<T>,
+    filter: FindOptionsWhere<T>,
+    tableName: string,
+  ) {
+    return Object.entries(filter).forEach(([key, value]) => {
+      const clearKey = key.replace(/[^a-zA-Z0-9]/g, '');
+
+      if (typeof value === 'string') {
+        builder.andWhere(
+          `lower(${tableName}.${clearKey}) LIKE lower(:${clearKey})`,
+          {
+            [clearKey]: `%${value.trim()}%`,
+          },
+        );
+      } else if (Array.isArray(value)) {
+        builder.andWhere(`${tableName}.${clearKey} IN (:...${clearKey})`, {
+          [clearKey]: value,
+        });
+      }
     });
-    await this.usersRepo.save(admin);
+  }
 
-    // items
-    for (const i of [
-      {
-        uid: uidv4(),
-        slug: 'dzhazovyj-parohod-dzhaz-kluba-kvadrat',
-        status: PostStatus.publish,
-        title: 'Джазовый пароход джаз-клуба Квадрат',
-        text: 'this is club text',
-        city: City.moscow,
-      },
-      {
-        uid: uidv4(),
-        slug: 'gostinica-oktjabrskaja',
-        status: PostStatus.publish,
-        title: 'Гостиница Октябрьская',
-        text: 'this is club text',
-        city: City.petersburg,
-      },
-      {
-        uid: uidv4(),
-        slug: 'dvorec-olimpija',
-        status: PostStatus.publish,
-        title: 'Дворец Олимпия',
-        text: 'this is club text',
-        city: City.petersburg,
-      },
-      {
-        uid: uidv4(),
-        slug: 'jfc-jazz-club',
-        status: PostStatus.publish,
-        title: 'JFC jazz club',
-        text: 'this is club text',
-        city: City.moscow,
-      },
-      {
-        uid: uidv4(),
-        slug: 'sevkabel-port',
-        status: PostStatus.draft,
-        title: 'Севкабель Порт',
-        text: 'this is club text',
-        city: City.petersburg,
-      },
-    ]) {
-      const item = this.itemsRepo.create({
-        uid: i.uid,
-        slug: i.slug,
-        status: i.status,
-        title: i.title,
-        text: i.text,
-        city: i.city,
-      });
+  async getTotal<T>(
+    params: FindOptionsWhere<T>,
+    scope: string,
+  ): Promise<number> {
+    const query = this[`${scope}Repo`].createQueryBuilder().select('id');
 
-      await this.itemsRepo.save(item);
+    if (params && Object.keys(params).length) {
+      query.where((builder) =>
+        this.andWhereFilterCondition(builder, params, scope),
+      );
     }
-    // artists
-    for (const i of [
-      {
-        uid: uidv4(),
-        slug: 'holms',
-        status: PostStatus.publish,
-        title: 'Шерлок Холмс',
-        text: 'this is artist text',
-      },
-      {
-        uid: uidv4(),
-        slug: 'ivanova',
-        status: PostStatus.publish,
-        title: 'Светлана Иванова',
-        text: 'this is artist text',
-      },
-      {
-        uid: uidv4(),
-        slug: 'love',
-        status: PostStatus.publish,
-        title: 'Любовь Ескина',
-        text: 'this is artist text',
-      },
-      {
-        uid: uidv4(),
-        slug: 'natalia',
-        status: PostStatus.publish,
-        title: 'Наталия Головлёва',
-        text: 'this is artist text',
-      },
-      {
-        uid: uidv4(),
-        slug: 'lilia',
-        status: PostStatus.draft,
-        title: 'Лилия Борохович',
-        text: 'this is artist text',
-      },
-    ]) {
-      const item = this.artistsRepo.create({
-        uid: i.uid,
-        slug: i.slug,
-        status: i.status,
-        title: i.title,
-        text: i.text,
-      });
 
-      await this.artistsRepo.save(item);
-    }
+    return query.getCount();
   }
 }

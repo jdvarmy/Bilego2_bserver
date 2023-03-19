@@ -1,4 +1,4 @@
-import { UserDto } from '../dtos/UserDto';
+import { UserDto } from '../users/dtos/User.dto';
 import { City, PostStatus } from './enums';
 
 export const CookieTokenName = 'refreshToken' as const;
@@ -52,3 +52,7 @@ export type ItemsPageProps = {
 };
 
 export type SharpType = { name: string; format: 'webp'; path: string[] };
+
+export function exhaustiveCheck(value: never) {
+  return value;
+}

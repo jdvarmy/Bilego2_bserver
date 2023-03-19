@@ -10,15 +10,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { TaxonomyService } from './taxonomy.service';
+import { TaxonomyService } from './services/taxonomy.service';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { TaxonomyDto } from './response/TaxonomyDto';
-import { TaxonomyType, TaxonomyTypeLink, Version } from '../types/enums';
-import { PostTaxonomyDto } from './request/PostTaxonomyDto';
+import { TaxonomyDto } from './dtos/Taxonomy.dto';
+import { Routs, TaxonomyType, TaxonomyTypeLink } from '../types/enums';
+import { SaveTaxonomyDto } from './dtos/SaveTaxonomy.dto';
 import { ItemsPageProps, PostOptions } from '../types/types';
-import { PutTaxonomyDto } from './request/PutTaxonomyDto';
+import { EditTaxonomyDto } from './dtos/EditTaxonomy.dto';
 
-@Controller(`${Version._1}taxonomy`)
+@Controller(Routs.taxonomy)
 export class TaxonomyController {
   constructor(private readonly taxonomyService: TaxonomyService) {}
 
@@ -48,7 +48,7 @@ export class TaxonomyController {
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  saveTaxonomy(@Body() taxonomyDto: PostTaxonomyDto): Promise<TaxonomyDto> {
+  saveTaxonomy(@Body() taxonomyDto: SaveTaxonomyDto): Promise<TaxonomyDto> {
     try {
       return this.taxonomyService.saveTaxonomy(taxonomyDto);
     } catch (e) {
@@ -72,7 +72,7 @@ export class TaxonomyController {
     @Param('uid') uid: string,
     // todo: заменить на более узкий тип данных
     // todo: посмотреть как проверять переменные в параметрах запроса
-    @Body() taxonomyDto: PutTaxonomyDto,
+    @Body() taxonomyDto: EditTaxonomyDto,
   ): Promise<TaxonomyDto> {
     try {
       return this.taxonomyService.updateTaxonomy({ uid, ...taxonomyDto });

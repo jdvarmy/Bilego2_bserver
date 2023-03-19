@@ -1,2 +1,0 @@
-insert into users (email, login, pass, role, status, name, surname, uid)
-values ('chekist.87@mail.ru', 'chekist.87@mail.ru', '$2b$13$vORntp3k/llIgA8avmrf..eDS9WBXtsTDgwDVBYV/C0kIW5XsY4.i', 'bilego_admin', 1, 'Вася', 'Пупкин', '069b7733-d3c5-46d8-9b6f-ca9b7e755402');

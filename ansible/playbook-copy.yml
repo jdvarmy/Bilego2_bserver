@@ -44,7 +44,7 @@
         mode: '0444'
 
     - name: Restart config Passenger
-      shell: touch api.chekisu6.beget.tech/public_html/tmp/restart.txt
+      shell: touch api.test.bilego.ru/public_html/tmp/restart.txt
 
 
 

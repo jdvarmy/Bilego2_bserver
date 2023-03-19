@@ -12,13 +12,13 @@ import {
 import { AuthService } from './auth.service';
 import { CookieTokenName, UserTokens } from '../types/types';
 import { Request, Response } from 'express';
-import { ReqRegisterDto } from '../dtos/request/ReqRegisterDto';
-import { ReqLoginDto } from '../dtos/request/ReqLoginDto';
+import { RegisterDto } from '../users/dtos/Register.dto';
+import { LoginDto } from '../users/dtos/Login.dto';
 import { AuthHttpExceptionFilter } from './auth-http-exception.filter';
 import { setCookieRefreshToken } from '../utils';
-import { IpDecorator } from '../decorators/ip.decorator';
+import { Routs } from '../types/enums';
 
-@Controller('v1/auth')
+@Controller(Routs.auth)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -26,7 +26,7 @@ export class AuthController {
   @Post('register')
   @UseFilters(new AuthHttpExceptionFilter())
   public async register(
-    @Body() registerDto: ReqRegisterDto,
+    @Body() registerDto: RegisterDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<Omit<UserTokens, 'refreshToken'>> {
     try {
@@ -45,14 +45,12 @@ export class AuthController {
   @Post('login')
   @UseFilters(new AuthHttpExceptionFilter())
   public async login(
-    @Body() loginDto: ReqLoginDto,
+    @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: Response,
-    @IpDecorator() userIp,
   ): Promise<Omit<UserTokens, 'refreshToken'>> {
     try {
       const { refreshToken, ...data } = await this.authService.login({
         ...loginDto,
-        ip: userIp,
       });
 
       setCookieRefreshToken(response, refreshToken);

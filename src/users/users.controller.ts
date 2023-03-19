@@ -11,12 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { UsersService } from './users.service';
-import { ReqUserDto } from '../dtos/request/ReqUserDto';
-import { UserDto } from '../dtos/UserDto';
-import { UserEntityRole } from '../types/enums';
+import { UsersService } from './services/users.service';
+import { SaveUserDto } from './dtos/SaveUser.dto';
+import { UserDto } from './dtos/User.dto';
+import { Routs, UserEntityRole } from '../types/enums';
 
-@Controller('v1/users')
+@Controller(Routs.users)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -28,10 +28,10 @@ export class UsersController {
   ): Promise<UserDto[]> {
     try {
       if (search || role) {
-        return this.usersService.searchUsersList({ search, role });
+        return this.usersService.searchUsers({ search, role });
       }
 
-      return this.usersService.getUsersList();
+      return this.usersService.fetchUsers();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -49,7 +49,7 @@ export class UsersController {
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  public async saveUser(@Body() userDto: ReqUserDto): Promise<UserDto> {
+  public async saveUser(@Body() userDto: SaveUserDto): Promise<UserDto> {
     try {
       return this.usersService.saveUserData(userDto);
     } catch (e) {
@@ -61,7 +61,7 @@ export class UsersController {
   @UseGuards(AccessJwtAuthGuard)
   public async saveEditUser(
     @Param('uid') uid: string,
-    @Body() userDto: ReqUserDto,
+    @Body() userDto: SaveUserDto,
   ): Promise<UserDto> {
     try {
       return this.usersService.saveUserData(userDto, uid);
@@ -72,7 +72,7 @@ export class UsersController {
 
   @Delete(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  public async removeUser(@Param('uid') uid: string): Promise<boolean> {
+  public async removeUser(@Param('uid') uid: string): Promise<UserDto> {
     try {
       return this.usersService.deleteUserData(uid);
     } catch (e) {

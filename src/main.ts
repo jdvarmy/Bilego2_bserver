@@ -1,36 +1,26 @@
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
-import * as requestIp from 'request-ip';
 import { ValidationPipe } from '@nestjs/common';
-import { CLIENT_URL, ADMIN_URL, PORT } from './constants/env';
+import { CLIENT_URL, ADMIN_URL, PORT } from './types/constants/env';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import passport from 'passport';
 
 const whitelist = [CLIENT_URL, ADMIN_URL];
 
 async function bootstrap() {
   try {
     const port = PORT || 3000;
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.getHttpAdapter().getInstance().disable('x-powered-by');
-    app.enableCors({
-      credentials: true,
-      origin: function (origin, callback) {
-        if (!origin || whitelist.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
-    });
-
-    app.use(requestIp.mw());
+    app.enableCors({ credentials: true, origin: whitelist });
 
     app.use(cookieParser());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-      }),
-    );
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+    // app.use(passport.initialize());
+    // app.use(passport.session());
 
     await app.listen(port, async () => {
       console.log(`Server start on port ${await app.getUrl()}`);

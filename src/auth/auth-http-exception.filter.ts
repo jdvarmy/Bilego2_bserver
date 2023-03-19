@@ -3,20 +3,22 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 
 @Catch(HttpException)
 export class AuthHttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AuthHttpExceptionFilter.name);
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const exceptionResponse = exception.getResponse();
 
-    console.log('exceptionResponse', exceptionResponse);
-    console.log('status', exception.getStatus());
-
-    console.log('Произошла ошибка');
+    this.logger.log(exceptionResponse);
+    this.logger.log(exception.getStatus());
+    this.logger.log('Произошла ошибка');
 
     response.status(exception.getStatus()).json(exception);
 

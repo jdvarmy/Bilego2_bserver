@@ -10,15 +10,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ItemsService } from './items.service';
-import { ItemDto } from './response/ItemDto';
-import { Exception500 } from '../types/enums';
+import { ItemsService } from './services/items.service';
+import { ItemDto } from './dtos/Item.dto';
+import { Exception500, Routs } from '../types/enums';
 import { ItemsPageProps, PostOptions } from '../types/types';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
 import { compareUid } from '../helpers/compareUid';
-import { ReqItemDto } from './request/ReqItemDto';
+import { SaveItemDto } from './dtos/SaveItem.dto';
 
-@Controller('v1/items')
+@Controller(Routs.items)
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
@@ -38,7 +38,7 @@ export class ItemsController {
         props.filter = filter;
       }
 
-      return this.itemsService.getItemList(props);
+      return this.itemsService.fetchItems(props);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -72,7 +72,7 @@ export class ItemsController {
   @UseGuards(AccessJwtAuthGuard)
   editItem(
     @Param('uid') uid: string,
-    @Body() itemDto: ReqItemDto,
+    @Body() itemDto: SaveItemDto,
   ): Promise<ItemDto> {
     try {
       compareUid(uid, itemDto.uid);

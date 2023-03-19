@@ -1,18 +1,20 @@
-import { Users } from './Users';
-import { UserAccess } from './UserAccess';
-import { Events } from './Events';
-import { Artists } from './Artists';
-import { Items } from './Items';
-import { ItemClosestMetro } from './ItemClosestMetro';
-import { EventDates } from './EventDates';
-import { Maps } from './Maps';
-import { Tickets } from './Tickets';
-import { TicketsSell } from './TicketsSell';
-import { SEO } from './SEO';
-import { Taxonomy } from './Taxonomy';
-import { Orders } from './Orders';
-import { OrderItems } from './OrderItems';
-import { Media } from './Media';
+import { Users } from './entries/Users';
+import { UserAccess } from './entries/UserAccess';
+import { Events } from './entries/Events';
+import { Artists } from './entries/Artists';
+import { Items } from './entries/Items';
+import { ItemClosestMetro } from './entries/ItemClosestMetro';
+import { EventDates } from './entries/EventDates';
+import { Maps } from './entries/Maps';
+import { Tickets } from './entries/Tickets';
+import { TicketsSell } from './entries/TicketsSell';
+import { SEO } from './entries/SEO';
+import { Taxonomy } from './entries/Taxonomy';
+import { Orders } from './entries/Orders';
+import { OrderItems } from './entries/OrderItems';
+import { Media } from './entries/Media';
+import { Session } from './entries/Session';
+import { LoggerEntries } from './entries/LoggerEntries';
 
 export {
   Users,
@@ -30,6 +32,8 @@ export {
   Orders,
   OrderItems,
   Media,
+  Session,
+  LoggerEntries,
 };
 
 const entities = [
@@ -48,6 +52,8 @@ const entities = [
   Orders,
   OrderItems,
   Media,
+  Session,
+  LoggerEntries,
 ];
 
 export default entities;

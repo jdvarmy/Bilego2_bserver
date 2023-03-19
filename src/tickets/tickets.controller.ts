@@ -10,11 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
-import { ReqTicketDto } from '../dtos/request/ReqTicketDto';
+import { SaveTicketDto } from './dtos/SaveTicket.dto';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { TicketDto } from '../dtos/TicketDto';
+import { TicketDto } from './dtos/Ticket.dto';
+import { Routs } from '../types/enums';
 
-@Controller('v1/tickets')
+@Controller(Routs.tickets)
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
@@ -34,7 +35,7 @@ export class TicketsController {
   @UseGuards(AccessJwtAuthGuard)
   saveTickets(
     @Param('eventDateUid') eventDateUid: string,
-    @Body() data: ReqTicketDto,
+    @Body() data: SaveTicketDto,
   ): Promise<TicketDto[]> {
     try {
       return this.ticketsService.saveTickets(eventDateUid, data);
@@ -47,7 +48,7 @@ export class TicketsController {
   @UseGuards(AccessJwtAuthGuard)
   editTickets(
     @Param('eventDateUid') eventDateUid: string,
-    @Body() data: ReqTicketDto,
+    @Body() data: SaveTicketDto,
   ): Promise<TicketDto[]> {
     try {
       return this.ticketsService.saveTickets(eventDateUid, data);

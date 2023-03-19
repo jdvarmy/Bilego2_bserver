@@ -6,11 +6,11 @@ import {
   JWT_ACCESS_SECRET,
   JWT_REFRESH_EXPIRES,
   JWT_REFRESH_SECRET,
-} from '../constants/env';
+} from '../types/constants/env';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserAccess, Users } from '../typeorm';
 import { Repository } from 'typeorm';
-import { UserDto } from '../dtos/UserDto';
+import { UserDto } from '../users/dtos/User.dto';
 
 @Injectable()
 export class TokensService {

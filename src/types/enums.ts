@@ -1,13 +1,19 @@
-export enum Version {
-  _1 = 'v1/',
-}
+const Version = {
+  _1: 'v1/',
+};
 
-export enum PostType {
-  ticketObject = 'bilego_ticket_object',
-  event = 'bilego_event_post',
-  item = 'bilego_item_post',
-  artist = 'bilego_artist_post',
-}
+export const Routs = {
+  artists: Version._1 + 'artists',
+  auth: Version._1 + 'auth',
+  events: Version._1 + 'events',
+  items: Version._1 + 'items',
+  map: Version._1 + 'map',
+  media: Version._1 + 'media',
+  slides: Version._1 + 'slides',
+  taxonomy: Version._1 + 'taxonomy',
+  tickets: Version._1 + 'tickets',
+  users: Version._1 + 'users',
+};
 
 export enum PostStatus {
   temp = 'temp', // - временный шаблон пост.
@@ -107,6 +113,7 @@ export enum Exception500 {
   findItem, // Площадка с таким uid не найдена
   findEventUid, // Событие с таким uid не найдена
   saveEventSlug, // Пустая ссылка на событие
+  findArtists, // Артисты с таким данными не найдены
   findArtist, // Артист с таким uid не найден
   editNoEventDateId, // Нет идентификатора даты события при редактировании
   editNoTicketId, // Нет идентификатора билета при редактировании
@@ -132,4 +139,12 @@ export enum ImageSizes {
   m = '660x470',
   l = '1340x560',
   xl = '1920x1080',
+}
+
+export enum LoggerMessageType {
+  error = 'error',
+  log = 'log',
+  warn = 'warn',
+  debug = 'debug',
+  verbose = 'verbose',
 }

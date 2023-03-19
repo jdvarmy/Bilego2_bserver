@@ -1,8 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { SlidesService } from './slides.service';
-import { City } from '../types/enums';
+import { City, Routs } from '../types/enums';
 
-@Controller('/slides')
+@Controller(Routs.slides)
 export class SlidesController {
   constructor(private readonly slidesService: SlidesService) {}
 

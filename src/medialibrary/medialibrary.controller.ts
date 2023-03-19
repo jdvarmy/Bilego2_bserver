@@ -11,12 +11,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { MediaDto } from '../dtos/MediaDto';
-import { MedialibraryService } from './medialibrary.service';
+import { MediaDto } from './dtos/Media.dto';
+import { MedialibraryService } from './services/medialibrary.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Version } from '../types/enums';
+import { Routs } from '../types/enums';
 
-@Controller(`${Version._1}media`)
+@Controller(Routs.media)
 export class MedialibraryController {
   constructor(private readonly medialibraryService: MedialibraryService) {}
 

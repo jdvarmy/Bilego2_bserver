@@ -157,7 +157,6 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 `COMPOSE_PROJECT_NAME`= имя проекта \
 `APP_VERSION`= версия приложения (0.0.1) \
 `PORT`= порт для запуска приложения (3001) \
-`BILEGO_URL`= устарело. адрес api wordpress (http://chekisu6.bget.ru/wp-json/bilego/v1/front) \
 `STATIC_FILES_DIR`= папка для статических файлов (upload) 
 
 `CLIENT_URL`= адрес клиента приложения (http://localhost:3000) \
