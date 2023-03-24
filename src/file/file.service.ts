@@ -1,11 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import sharp from 'sharp';
-import { FileType, Exception500, ImageSizes } from '../types/enums';
+import { FileType, Exception500, ImageSizes } from '../utils/types/enums';
 import * as path from 'path';
 import * as fs from 'fs';
 import { v4 as uidv4 } from 'uuid';
-import { STATIC_FILES_DIR } from '../types/constants/env';
-import { SharpType } from '../types/types';
+import { STATIC_FILES_DIR } from '../utils/types/constants/env';
+import { SharpType } from '../utils/types/types';
 
 @Injectable()
 export class FileService {

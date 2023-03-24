@@ -10,11 +10,11 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { MediaDto } from './dtos/Media.dto';
 import { MedialibraryService } from './services/medialibrary.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Routs } from '../types/enums';
+import { Routs } from '../utils/types/enums';
 
 @Controller(Routs.media)
 export class MedialibraryController {

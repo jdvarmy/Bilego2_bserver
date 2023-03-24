@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { ArtistsService } from './services/artists.service';
 import { ArtistDto } from './dtos/Artist.dto';
-import { Routs } from '../types/enums';
-import { ItemsPageProps, PostOptions } from '../types/types';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { Routs } from '../utils/types/enums';
+import { ItemsPageProps, PostOptions } from '../utils/types/types';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 
 @Controller(Routs.artists)
 export class ArtistsController {

@@ -11,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { SaveTicketDto } from './dtos/SaveTicket.dto';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { TicketDto } from './dtos/Ticket.dto';
-import { Routs } from '../types/enums';
+import { Routs } from '../utils/types/enums';
 
 @Controller(Routs.tickets)
 export class TicketsController {

@@ -4,11 +4,11 @@ import { FileService } from '../../file/file.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Maps } from '../../typeorm';
 import { Repository } from 'typeorm';
-import { Exception500 } from '../../types/enums';
+import { Exception500 } from '../../utils/types/enums';
 import { MedialibraryService } from '../../medialibrary/services/medialibrary.service';
-import { mapSVGParser } from '../../helpers/mapSVGParser';
+import { mapSVGParser } from '../../utils/helpers/mapSVGParser';
 import { v4 as uidv4 } from 'uuid';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 @Injectable()
 export class MapService {

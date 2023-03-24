@@ -77,7 +77,7 @@ export class DatabaseService {
     params: FindOptionsWhere<T>,
     scope: string,
   ): Promise<number> {
-    const query = this[`${scope}Repo`].createQueryBuilder().select('id');
+    const query = this[`${scope}Repo`].createQueryBuilder(scope).select('id');
 
     if (params && Object.keys(params).length) {
       query.where((builder) =>

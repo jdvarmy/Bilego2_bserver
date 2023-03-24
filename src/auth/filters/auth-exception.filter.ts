@@ -8,17 +8,13 @@ import {
 import { Response } from 'express';
 
 @Catch(HttpException)
-export class AuthHttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(AuthHttpExceptionFilter.name);
+export class AuthExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AuthExceptionFilter.name);
 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const exceptionResponse = exception.getResponse();
-
-    this.logger.log(exceptionResponse);
-    this.logger.log(exception.getStatus());
-    this.logger.log('Произошла ошибка');
 
     response.status(exception.getStatus()).json(exception);
 

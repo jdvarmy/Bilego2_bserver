@@ -7,11 +7,11 @@ import { v4 as uidv4 } from 'uuid';
 import { EventDates } from '../../typeorm';
 import { EventDatesDto } from '../dtos/EventDates.dto';
 import { EditEventDateDto } from '../dtos/EditEventDate.dto';
-import { Exception500 } from '../../types/enums';
+import { Exception500 } from '../../utils/types/enums';
 import { EventsUtilsService } from './events.utils.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { MapUtilsService } from '../../map/services/map.utils.service';
 
 @Injectable()

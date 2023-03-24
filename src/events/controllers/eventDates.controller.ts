@@ -9,12 +9,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { Routs } from '../../types/enums';
-import { AccessJwtAuthGuard } from '../../jwt/access-jwt-auth-guard.service';
+import { Routs } from '../../utils/types/enums';
+import { AccessJwtAuthGuard } from '../../auth/jwt/access-jwt-auth-guard.service';
 import { EventDates } from '../../typeorm';
 import { EventDatesDto } from '../dtos/EventDates.dto';
 import { EditEventDateDto } from '../dtos/EditEventDate.dto';
-import { compareUid } from '../../helpers/compareUid';
+import { compareUid } from '../../utils/helpers/compareUid';
 import { EventDatesService } from '../services/eventDates.service';
 
 @Controller(Routs.events)

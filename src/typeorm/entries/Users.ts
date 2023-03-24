@@ -1,4 +1,4 @@
-import { UserEntityRole, UserEntityStatus } from 'src/types/enums';
+import { UserEntityRole, UserEntityStatus } from 'src/utils/types/enums';
 import {
   Column,
   CreateDateColumn,

@@ -7,7 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { OrderStatus } from '../../types/enums';
+import { OrderStatus } from '../../utils/types/enums';
 import { Events } from './Events';
 import { Users } from './Users';
 import { OrderItems } from './OrderItems';

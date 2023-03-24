@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PostStatus } from '../../types/enums';
+import { PostStatus } from '../../utils/types/enums';
 
 export abstract class AbstractPost {
   @PrimaryGeneratedColumn({ type: 'bigint' })

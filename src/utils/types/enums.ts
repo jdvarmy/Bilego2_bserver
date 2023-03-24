@@ -82,20 +82,6 @@ export enum OrderStatus {
   refunded = 'refunded', // возвращен
 }
 
-export enum UnauthorizedException_401 {
-  notFound, // Пользователь не найден
-  wrongPass, // Неверный логин или пароль
-}
-
-export enum ForbiddenException_403 {
-  deleted, // Пользователь удален
-  token, // Протух токен
-}
-
-export enum NotFoundException_404 {}
-
-export enum BadRequestException_400 {}
-
 export enum Exception500 {
   uploadFile, // Неудалось загрузить файл на диск
   removeFile, // Неудалось удалить файл

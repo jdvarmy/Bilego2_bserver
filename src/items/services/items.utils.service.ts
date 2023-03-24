@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Items } from '../../typeorm';
 import { Repository } from 'typeorm';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
-import { Exception500 } from '../../types/enums';
+import { Exception500 } from '../../utils/types/enums';
 import { MedialibraryUtilsService } from '../../medialibrary/services/medialibrary.utils.service';
 import { TaxonomyUtilsService } from '../../taxonomy/services/taxonomy.utils.service';
 

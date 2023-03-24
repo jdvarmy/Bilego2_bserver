@@ -7,57 +7,40 @@ import {
   Post,
   Req,
   Res,
-  UseFilters,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CookieTokenName, UserTokens } from '../types/types';
+import { CookieTokenName, UserTokens } from '../utils/types/types';
 import { Request, Response } from 'express';
-import { RegisterDto } from '../users/dtos/Register.dto';
 import { LoginDto } from '../users/dtos/Login.dto';
-import { AuthHttpExceptionFilter } from './auth-http-exception.filter';
 import { setCookieRefreshToken } from '../utils';
-import { Routs } from '../types/enums';
+import { Routs } from '../utils/types/enums';
 
 @Controller(Routs.auth)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // todo: refactor
-  @Post('register')
-  @UseFilters(new AuthHttpExceptionFilter())
-  public async register(
-    @Body() registerDto: RegisterDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<Omit<UserTokens, 'refreshToken'>> {
-    try {
-      const { refreshToken, ...data } = await this.authService.register({
-        ...registerDto,
-      });
-
-      setCookieRefreshToken(response, refreshToken);
-
-      return data;
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
-  }
-
   @Post('login')
-  @UseFilters(new AuthHttpExceptionFilter())
   public async login(
     @Body() loginDto: LoginDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<Omit<UserTokens, 'refreshToken'>> {
     try {
       const { refreshToken, ...data } = await this.authService.login({
         ...loginDto,
+        ip: req.ip,
       });
 
       setCookieRefreshToken(response, refreshToken);
 
       return data;
     } catch (e) {
-      throw new InternalServerErrorException(e.message);
+      const message = e.getResponse().message ?? e.message;
+      if (e instanceof UnauthorizedException) {
+        throw new UnauthorizedException(message);
+      }
+      throw new InternalServerErrorException(message);
     }
   }
 
@@ -75,7 +58,8 @@ export class AuthController {
 
       return true;
     } catch (e) {
-      throw new InternalServerErrorException(e.message);
+      const message = e.getResponse().message ?? e.message;
+      throw new InternalServerErrorException(message);
     }
   }
 
@@ -95,7 +79,11 @@ export class AuthController {
 
       return data;
     } catch (e) {
-      throw new ForbiddenException(e.message);
+      const message = e.getResponse().message ?? e.message;
+      if (e instanceof ForbiddenException) {
+        throw new ForbiddenException(message);
+      }
+      throw new InternalServerErrorException(message);
     }
   }
 }

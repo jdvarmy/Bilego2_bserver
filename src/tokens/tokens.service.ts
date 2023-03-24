@@ -6,7 +6,7 @@ import {
   JWT_ACCESS_SECRET,
   JWT_REFRESH_EXPIRES,
   JWT_REFRESH_SECRET,
-} from '../types/constants/env';
+} from '../utils/types/constants/env';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserAccess, Users } from '../typeorm';
 import { Repository } from 'typeorm';

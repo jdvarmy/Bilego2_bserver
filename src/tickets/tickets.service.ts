@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EventDates, Tickets, TicketsSell } from '../typeorm';
 import { Repository } from 'typeorm';
 import { TicketDto } from './dtos/Ticket.dto';
-import { Exception500 } from '../types/enums';
+import { Exception500 } from '../utils/types/enums';
 import { TicketSellDto } from './dtos/TicketSell.dto';
 import { EventsUtilsService } from '../events/services/events.utils.service';
 

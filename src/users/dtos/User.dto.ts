@@ -1,6 +1,6 @@
 import { Users } from '../../typeorm';
-import { UserEntityRole, UserEntityStatus } from '../../types/enums';
-import { MediaType } from '../../types/types';
+import { UserEntityRole, UserEntityStatus } from '../../utils/types/enums';
+import { MediaType } from '../../utils/types/types';
 
 export class UserDto {
   uid: string;

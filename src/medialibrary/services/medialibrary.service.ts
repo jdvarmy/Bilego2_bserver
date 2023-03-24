@@ -4,8 +4,8 @@ import { Media } from '../../typeorm';
 import { Repository } from 'typeorm';
 import { MediaDto } from '../dtos/Media.dto';
 import { FileService } from '../../file/file.service';
-import { FileType } from '../../types/enums';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { FileType } from '../../utils/types/enums';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 @Injectable()
 export class MedialibraryService {

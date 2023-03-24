@@ -1,8 +1,8 @@
-import { MediaType } from '../../types/types';
+import { MediaType } from '../../utils/types/types';
 import { Taxonomy } from '../../typeorm';
-import { TaxonomyType, TaxonomyTypeLink } from '../../types/enums';
+import { TaxonomyType, TaxonomyTypeLink } from '../../utils/types/enums';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 export class TaxonomyDto {
   uid: string | number;

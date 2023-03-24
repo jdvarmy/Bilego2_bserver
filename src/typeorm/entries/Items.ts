@@ -12,7 +12,7 @@ import { Taxonomy } from './Taxonomy';
 import { ItemClosestMetro } from './ItemClosestMetro';
 import { Media } from './Media';
 import { Events } from './Events';
-import { City } from '../../types/enums';
+import { City } from '../../utils/types/enums';
 
 @Entity()
 export class Items extends AbstractPost {

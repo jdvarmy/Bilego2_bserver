@@ -10,11 +10,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { UsersService } from './services/users.service';
 import { SaveUserDto } from './dtos/SaveUser.dto';
 import { UserDto } from './dtos/User.dto';
-import { Routs, UserEntityRole } from '../types/enums';
+import { Routs, UserEntityRole } from '../utils/types/enums';
 
 @Controller(Routs.users)
 export class UsersController {

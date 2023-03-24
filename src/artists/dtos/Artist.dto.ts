@@ -1,5 +1,5 @@
 import { Artists } from '../../typeorm';
-import { PostStatus } from '../../types/enums';
+import { PostStatus } from '../../utils/types/enums';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
 
 export class ArtistDto {

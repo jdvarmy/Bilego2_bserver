@@ -13,7 +13,7 @@ import { EventDates } from './EventDates';
 import { SEO } from './SEO';
 import { Taxonomy } from './Taxonomy';
 import { Orders } from './Orders';
-import { City, EventHeaderType } from '../../types/enums';
+import { City, EventHeaderType } from '../../utils/types/enums';
 import { Users } from './Users';
 import { Media } from './Media';
 import { Items } from './Items';

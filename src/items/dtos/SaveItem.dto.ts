@@ -1,5 +1,5 @@
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
-import { City, PostStatus } from '../../types/enums';
+import { City, PostStatus } from '../../utils/types/enums';
 
 export class SaveItemDto {
   @IsOptional()

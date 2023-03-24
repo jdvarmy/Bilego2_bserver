@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { UserEntityRole } from '../../types/enums';
+import { UserEntityRole } from '../../utils/types/enums';
 
 export class SaveUserDto {
   @IsNotEmpty({ message: 'Email должен быть заполнен' })

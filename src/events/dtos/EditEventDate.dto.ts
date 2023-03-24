@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import { TicketType } from '../../types/enums';
+import { TicketType } from '../../utils/types/enums';
 
 export class EditEventDateDto {
   @IsNotEmpty()

@@ -1,4 +1,4 @@
-import { UserDto } from '../users/dtos/User.dto';
+import { UserDto } from '../../users/dtos/User.dto';
 import { City, PostStatus } from './enums';
 
 export const CookieTokenName = 'refreshToken' as const;
@@ -10,16 +10,6 @@ export type WPError = {
     status: boolean;
     code: number;
   };
-};
-
-export type LoginUser = {
-  email: string;
-  password: string;
-  ip?: string | null;
-};
-
-export type RegisterUser = LoginUser & {
-  name: string;
 };
 
 export type UserTokens = {

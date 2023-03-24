@@ -13,7 +13,7 @@ import {
 import { EventDates } from './EventDates';
 import { TicketsSell } from './TicketsSell';
 import { OrderItems } from './OrderItems';
-import { TicketType } from '../../types/enums';
+import { TicketType } from '../../utils/types/enums';
 
 @Entity()
 export class Tickets {

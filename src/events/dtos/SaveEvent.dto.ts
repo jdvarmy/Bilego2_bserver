@@ -5,7 +5,7 @@ import {
   IsBoolean,
   IsArray,
 } from 'class-validator';
-import { City, EventHeaderType, PostStatus } from '../../types/enums';
+import { City, EventHeaderType, PostStatus } from '../../utils/types/enums';
 
 export class SaveEventDto {
   @IsOptional()

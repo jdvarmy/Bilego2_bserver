@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Exception500 } from '../../types/enums';
+import { Exception500 } from '../../utils/types/enums';
 import { Artists } from '../../typeorm';
 import { ArtistDto } from '../dtos/Artist.dto';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
-import { ItemsPageProps, PostOptions } from '../../types/types';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
+import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { DatabaseService } from '../../database/database.service';
 import { ArtistsUtilsService } from './artists.utils.service';
 

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import {
   MYSQL_DB,
   MYSQL_HOST,
@@ -10,7 +10,7 @@ import {
   MYSQL_PORT,
   MYSQL_USER,
   STATIC_FILES_DIR,
-} from './types/constants/env';
+} from './utils/types/constants/env';
 import entities from './typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
@@ -24,7 +24,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { UsersModule } from './users/users.module';
 import { SlidesModule } from './slides/slides.module';
 import { TaxonomyModule } from './taxonomy/taxonomy.module';
-import { ErrorsInterceptor } from './errors/errors.interceptor';
+import { ErrorInterceptor } from './utils/interceptors/error.interceptor.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseModule } from './database/database.module';
 import { MedialibraryModule } from './medialibrary/medialibrary.module';
@@ -33,6 +33,7 @@ import { FileModule } from './file/file.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { PassportModule } from '@nestjs/passport';
+import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,10 +74,8 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ErrorsInterceptor,
-    },
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    // { provide: APP_INTERCEPTOR, useClass: ErrorInterceptor },
   ],
 })
 export class AppModule {}

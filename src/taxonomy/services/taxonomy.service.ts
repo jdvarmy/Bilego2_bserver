@@ -8,13 +8,13 @@ import { TaxonomyDto } from '../dtos/Taxonomy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Taxonomy } from '../../typeorm';
 import { Repository } from 'typeorm';
-import { Exception500, TaxonomyTypeLink } from '../../types/enums';
+import { Exception500, TaxonomyTypeLink } from '../../utils/types/enums';
 import { EditTaxonomyDto } from '../dtos/EditTaxonomy.dto';
 import { v4 as uidv4 } from 'uuid';
-import { ItemsPageProps, PostOptions } from '../../types/types';
+import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { DatabaseService } from '../../database/database.service';
 import { TaxonomyUtilsService } from './taxonomy.utils.service';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 const scope = 'taxonomy';
 

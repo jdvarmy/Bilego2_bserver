@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TaxonomyTypeLink, TaxonomyType } from '../../types/enums';
+import { TaxonomyTypeLink, TaxonomyType } from '../../utils/types/enums';
 import { Events } from './Events';
 import { Items } from './Items';
 import { Media } from './Media';

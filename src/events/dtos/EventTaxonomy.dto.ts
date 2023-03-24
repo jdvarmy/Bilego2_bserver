@@ -1,5 +1,5 @@
 import { Taxonomy } from '../../typeorm';
-import { TaxonomyType } from '../../types/enums';
+import { TaxonomyType } from '../../utils/types/enums';
 
 export class EventTaxonomyDto {
   uid: string;

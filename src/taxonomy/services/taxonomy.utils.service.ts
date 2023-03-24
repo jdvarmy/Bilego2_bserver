@@ -3,11 +3,11 @@ import { TaxonomyDto } from '../dtos/Taxonomy.dto';
 import cloneDeep from '../../utils';
 import { Taxonomy } from '../../typeorm';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
-import { Exception500, TaxonomyType } from '../../types/enums';
+import { Exception500, TaxonomyType } from '../../utils/types/enums';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MedialibraryUtilsService } from '../../medialibrary/services/medialibrary.utils.service';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 @Injectable()
 export class TaxonomyUtilsService {

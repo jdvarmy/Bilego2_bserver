@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   InternalServerErrorException,
-  Ip,
   Param,
   Post,
   Put,
@@ -14,10 +13,10 @@ import {
 import { EventsService } from '../services/events.service';
 import { EditEventDto } from '../dtos/EditEvent.dto';
 import { EventDto } from '../dtos/Event.dto';
-import { AccessJwtAuthGuard } from '../../jwt/access-jwt-auth-guard.service';
-import { PostOptions } from '../../types/types';
-import { compareUid } from '../../helpers/compareUid';
-import { Routs } from '../../types/enums';
+import { AccessJwtAuthGuard } from '../../auth/jwt/access-jwt-auth-guard.service';
+import { PostOptions } from '../../utils/types/types';
+import { compareUid } from '../../utils/helpers/compareUid';
+import { Routs } from '../../utils/types/enums';
 
 @Controller(Routs.events)
 export class EventsController {
@@ -29,12 +28,8 @@ export class EventsController {
     @Query('offset') offset?: number,
     @Query('count') count?: number,
     @Query('filter') filter?: Record<string, string>,
-    @Ip() ip?: string,
   ) {
     try {
-      // todo !!!!!
-      console.log(ip);
-
       const props: PostOptions = {
         offset: offset ?? 0,
         count: count ?? 20,

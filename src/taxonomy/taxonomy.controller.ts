@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TaxonomyService } from './services/taxonomy.service';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { TaxonomyDto } from './dtos/Taxonomy.dto';
-import { Routs, TaxonomyType, TaxonomyTypeLink } from '../types/enums';
+import { Routs, TaxonomyType, TaxonomyTypeLink } from '../utils/types/enums';
 import { SaveTaxonomyDto } from './dtos/SaveTaxonomy.dto';
-import { ItemsPageProps, PostOptions } from '../types/types';
+import { ItemsPageProps, PostOptions } from '../utils/types/types';
 import { EditTaxonomyDto } from './dtos/EditTaxonomy.dto';
 
 @Controller(Routs.taxonomy)

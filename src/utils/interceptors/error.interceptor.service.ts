@@ -9,14 +9,13 @@ import { catchError, Observable } from 'rxjs';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 
 @Injectable()
-export class ErrorsInterceptor implements NestInterceptor {
+export class ErrorInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((error) => {
-        console.log(error);
-
+        console.log('ErrorInterceptor');
         // todo: записывать ошибки в бд для дальнейшего отлова
-        if (error.sqlState) {
+        if ('sqlState' in error) {
           switch (error.code) {
             case 'ER_DUP_ENTRY':
               throw new InternalServerErrorException(

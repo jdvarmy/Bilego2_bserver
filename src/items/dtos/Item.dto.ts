@@ -1,8 +1,8 @@
 import { Items } from '../../typeorm';
-import { City, PostStatus } from '../../types/enums';
+import { City, PostStatus } from '../../utils/types/enums';
 import { EventTaxonomyDto } from '../../events/dtos/EventTaxonomy.dto';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 export class ItemDto {
   uid: string;

@@ -9,7 +9,7 @@ import {
 import { Events } from './Events';
 import { Maps } from './Maps';
 import { Tickets } from './Tickets';
-import { TicketType } from '../../types/enums';
+import { TicketType } from '../../utils/types/enums';
 
 @Entity()
 export class EventDates {

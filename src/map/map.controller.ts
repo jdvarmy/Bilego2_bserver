@@ -8,10 +8,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { MapService } from './services/map.service';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { MapDto } from './dtos/Map.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { Exception500, Routs } from '../types/enums';
+import { Exception500, Routs } from '../utils/types/enums';
 
 @Controller(Routs.map)
 export class MapController {

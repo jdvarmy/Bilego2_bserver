@@ -1,45 +1,28 @@
 import {
   ForbiddenException,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginUser, RegisterUser, UserTokens } from 'src/types/types';
-import { checkWPErrorResponse } from '../utils';
+import { UserTokens } from 'src/utils/types/types';
 import { ApiService } from '../api/api.service';
 import { TokensService } from '../tokens/tokens.service';
-import { JWT_REFRESH_SECRET } from '../types/constants/env';
+import { JWT_REFRESH_SECRET } from '../utils/types/constants/env';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Users } from '../typeorm';
 import { Repository } from 'typeorm';
-import {
-  ForbiddenException_403,
-  UnauthorizedException_401,
-} from '../types/enums';
 import { UserDto } from '../users/dtos/User.dto';
+import { Forbidden, Unauthorized } from '../utils/types/exceptionEnums';
+import { plainToClassResponse } from '../utils/helpers/plainToClassResponse';
+import { LoginUser } from '../users/types/types';
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
-
   constructor(
     private readonly apiService: ApiService,
     private readonly tokensService: TokensService,
     @InjectRepository(Users) private usersRepo: Repository<Users>,
   ) {}
-
-  // todo: refactor
-  async register(data: RegisterUser): Promise<UserTokens> {
-    const user = await this.apiService.post<UserDto>(`auth/register`, data);
-    checkWPErrorResponse(user);
-
-    const tokens = this.tokensService.generateTokens(user);
-
-    // await this.tokensService.saveToken(user.uid, tokens.refreshToken);
-
-    return { user, ...tokens };
-  }
 
   async login(data: LoginUser): Promise<UserTokens> {
     const { email, password } = data;
@@ -48,22 +31,20 @@ export class AuthService {
     });
 
     if (!user) {
-      this.logger.error(`Нет пользователя с email ${data?.email}`);
-      throw new UnauthorizedException(UnauthorizedException_401.notFound);
+      throw new UnauthorizedException(Unauthorized.userNotFound);
     }
 
     if (!(await bcrypt.compare(password, user.pass))) {
-      this.logger.error(`Неправильный пароль пользователя ${data?.email}`);
-      throw new UnauthorizedException(UnauthorizedException_401.wrongPass);
+      throw new UnauthorizedException(Unauthorized.wrongUserLoginData);
     }
 
-    const userDto = { ...new UserDto(user) };
+    const userDto = plainToClassResponse(UserDto, user);
     const tokens = this.tokensService.generateTokens(userDto);
     await this.tokensService.saveToken(user, tokens.refreshToken, {
       ip: data.ip,
     });
 
-    this.logger.log(`Пользователь ${data?.email} вошел в систему`);
+    // this.logger.log(`Пользователь ${data?.email} вошел в систему`);
     return { user: userDto, ...tokens };
   }
 
@@ -73,8 +54,7 @@ export class AuthService {
 
   async refresh(refreshToken: string): Promise<UserTokens> {
     if (!refreshToken || refreshToken === 'undefined') {
-      this.logger.error('Нет значения в refresh token');
-      throw new ForbiddenException();
+      throw new ForbiddenException(Forbidden.noRefreshToken);
     }
 
     const verifyToken = this.tokensService.verifyToken(
@@ -84,8 +64,7 @@ export class AuthService {
     const userIdFromBd = await this.tokensService.findToken(refreshToken);
 
     if (!verifyToken || !userIdFromBd) {
-      this.logger.error('Refresh token не прошел верификацию');
-      throw new ForbiddenException();
+      throw new ForbiddenException(Forbidden.noValidToken);
     }
 
     const user: Users = await this.usersRepo.findOne({
@@ -93,8 +72,7 @@ export class AuthService {
     });
 
     if (!user) {
-      this.logger.error('Пользователь не найден');
-      throw new ForbiddenException(ForbiddenException_403.deleted);
+      throw new ForbiddenException(Forbidden.userIsDeleted);
     }
 
     const userDto = { ...new UserDto(user) };

@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { ItemsService } from './services/items.service';
 import { ItemDto } from './dtos/Item.dto';
-import { Exception500, Routs } from '../types/enums';
-import { ItemsPageProps, PostOptions } from '../types/types';
-import { AccessJwtAuthGuard } from '../jwt/access-jwt-auth-guard.service';
-import { compareUid } from '../helpers/compareUid';
+import { Exception500, Routs } from '../utils/types/enums';
+import { ItemsPageProps, PostOptions } from '../utils/types/types';
+import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
+import { compareUid } from '../utils/helpers/compareUid';
 import { SaveItemDto } from './dtos/SaveItem.dto';
 
 @Controller(Routs.items)

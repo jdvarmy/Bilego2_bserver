@@ -1,6 +1,6 @@
-import { TicketType } from '../../types/enums';
+import { TicketType } from '../../utils/types/enums';
 import { TicketSellDto } from './TicketSell.dto';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { Tickets } from '../../typeorm';
 
 export class TicketDto {

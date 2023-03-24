@@ -1,6 +1,6 @@
 import { Maps } from '../../typeorm';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
-import { plainToClassResponse } from '../../helpers/plainToClassResponse';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 export class MapDto {
   uid: string;
