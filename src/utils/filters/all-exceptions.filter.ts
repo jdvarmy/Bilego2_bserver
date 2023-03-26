@@ -14,6 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoggerEntries } from '../../typeorm';
 import { Repository } from 'typeorm';
 import { LoggerMessageType } from '../types/enums';
+import { logMessageMap } from '../../logger/logMessageMap';
 
 export interface HttpExceptionResponse {
   statusCode: HttpStatus;
@@ -25,6 +26,7 @@ export interface CustomHttpExceptionResponse extends HttpExceptionResponse {
   path: string;
   method: string;
   headers: IncomingHttpHeaders;
+  body: XMLHttpRequestBodyInit;
   timeStamp: Date;
 }
 
@@ -41,9 +43,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    const message = 'Critical internal server error occurred!';
     let errorResponse: HttpExceptionResponse = {
       statusCode: status,
-      message: 'Critical internal server error occurred!',
+      message,
       error: 'Internal Server Error',
     };
 
@@ -65,15 +68,49 @@ export class AllExceptionsFilter implements ExceptionFilter {
       method: request.method,
       ip: request.ip,
       headers: request.headers,
+      body: request.body,
       timeStamp: new Date(),
     };
-    const errorLog = this.getErrorLog(error);
 
-    // this.writeErrorLogToFile(errorLog);
     this.writeToDb(error);
 
-    response.status(status).json(errorResponse);
+    response.status(status).json({
+      ...errorResponse,
+      message:
+        errorResponse.statusCode === HttpStatus.INTERNAL_SERVER_ERROR
+          ? message
+          : errorResponse.message,
+    });
   }
+
+  private writeToDb = async (
+    props: CustomHttpExceptionResponse,
+  ): Promise<void> => {
+    const { ip, statusCode, error, message, method, path, headers, body } =
+      props;
+
+    try {
+      const log = this.loggerEntries.create({
+        type: LoggerMessageType.error,
+        ip,
+        status: `${statusCode} ${error}`,
+        message: logMessageMap(statusCode, message),
+        request: `${method} ${path}`,
+        headers: JSON.stringify(headers),
+        body: JSON.stringify(body),
+      });
+      await this.loggerEntries.save(log);
+    } catch (e) {
+      throw new InternalServerErrorException(e.message ?? e.error);
+    }
+  };
+
+  private writeErrorLogToFile = (error: CustomHttpExceptionResponse): void => {
+    const errorLog = this.getErrorLog(error);
+    fs.appendFile('error.log', errorLog, 'utf8', (err) => {
+      if (err) throw err;
+    });
+  };
 
   private getErrorLog = (
     errorResponse: CustomHttpExceptionResponse,
@@ -84,35 +121,5 @@ export class AllExceptionsFilter implements ExceptionFilter {
     return `[${ip}] Response Code: ${statusCode} - Method: ${method} - URL: ${path}
     Error: ${error} - Message: ${message} - Headers: ${JSON.stringify(headers)}
     [${timeStamp}]\n`;
-  };
-
-  private writeToDb = async ({
-    ip,
-    statusCode,
-    error,
-    message,
-    method,
-    path,
-    headers,
-  }: CustomHttpExceptionResponse): Promise<void> => {
-    try {
-      const log = this.loggerEntries.create({
-        type: LoggerMessageType.error,
-        ip,
-        status: `${statusCode} ${error}`,
-        message: message.toString(),
-        request: `${method} ${path}`,
-        headers: JSON.stringify(headers),
-      });
-      await this.loggerEntries.save(log);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message ?? e.error);
-    }
-  };
-
-  private writeErrorLogToFile = (errorLog: string): void => {
-    fs.appendFile('error.log', errorLog, 'utf8', (err) => {
-      if (err) throw err;
-    });
   };
 }

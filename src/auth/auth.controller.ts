@@ -36,7 +36,7 @@ export class AuthController {
 
       return data;
     } catch (e) {
-      const message = e.getResponse().message ?? e.message;
+      const message = 'getResponse' in e ? e.getResponse().message : e.message;
       if (e instanceof UnauthorizedException) {
         throw new UnauthorizedException(message);
       }
@@ -58,7 +58,7 @@ export class AuthController {
 
       return true;
     } catch (e) {
-      const message = e.getResponse().message ?? e.message;
+      const message = 'getResponse' in e ? e.getResponse().message : e.message;
       throw new InternalServerErrorException(message);
     }
   }
@@ -79,7 +79,7 @@ export class AuthController {
 
       return data;
     } catch (e) {
-      const message = e.getResponse().message ?? e.message;
+      const message = 'getResponse' in e ? e.getResponse().message : e.message;
       if (e instanceof ForbiddenException) {
         throw new ForbiddenException(message);
       }

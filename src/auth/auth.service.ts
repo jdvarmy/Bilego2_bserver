@@ -1,6 +1,8 @@
 import {
   ForbiddenException,
+  Inject,
   Injectable,
+  Scope,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserTokens } from 'src/utils/types/types';
@@ -15,13 +17,19 @@ import { UserDto } from '../users/dtos/User.dto';
 import { Forbidden, Unauthorized } from '../utils/types/exceptionEnums';
 import { plainToClassResponse } from '../utils/helpers/plainToClassResponse';
 import { LoginUser } from '../users/types/types';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AuthService {
   constructor(
     private readonly apiService: ApiService,
     private readonly tokensService: TokensService,
-    @InjectRepository(Users) private usersRepo: Repository<Users>,
+
+    @Inject(REQUEST) private readonly request: Request,
+
+    @InjectRepository(Users)
+    private readonly usersRepo: Repository<Users>,
   ) {}
 
   async login(data: LoginUser): Promise<UserTokens> {
@@ -38,7 +46,8 @@ export class AuthService {
       throw new UnauthorizedException(Unauthorized.wrongUserLoginData);
     }
 
-    const userDto = plainToClassResponse(UserDto, user);
+    // Нужно, что бы это был просто объект
+    const userDto = { ...plainToClassResponse(UserDto, user) };
     const tokens = this.tokensService.generateTokens(userDto);
     await this.tokensService.saveToken(user, tokens.refreshToken, {
       ip: data.ip,

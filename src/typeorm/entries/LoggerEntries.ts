@@ -33,6 +33,9 @@ export class LoggerEntries {
   @Column('text')
   headers: string;
 
+  @Column('text')
+  body: string;
+
   @CreateDateColumn()
   createDateTime;
 }

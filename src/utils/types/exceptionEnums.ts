@@ -15,7 +15,11 @@ export enum Forbidden {
 }
 
 // 404
-export enum NotFoundException {}
+export enum NotFound {
+  undefined,
+}
 
 // 400
-export enum BadRequestException {}
+export enum BadRequest {
+  undefined,
+}

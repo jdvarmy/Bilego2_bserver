@@ -51,6 +51,7 @@ export class TaxonomyService {
       .leftJoinAndSelect(`${scope}.icon`, 'icon')
       .leftJoinAndSelect(`${scope}.image`, 'image')
       .orderBy(`${scope}.overIndex`, 'ASC')
+      .addOrderBy(`${scope}.id`, 'ASC')
       .skip(options.offset)
       .take(options.count);
 

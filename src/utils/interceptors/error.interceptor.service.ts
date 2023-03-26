@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NestInterceptor,
 } from '@nestjs/common';
 import { catchError, Observable } from 'rxjs';
@@ -10,10 +11,13 @@ import { HttpException } from '@nestjs/common/exceptions/http.exception';
 
 @Injectable()
 export class ErrorInterceptor implements NestInterceptor {
+  private logger = new Logger();
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((error) => {
-        console.log('ErrorInterceptor');
+        this.logger.error(error);
+
         // todo: записывать ошибки в бд для дальнейшего отлова
         if ('sqlState' in error) {
           switch (error.code) {

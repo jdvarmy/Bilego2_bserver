@@ -10,7 +10,7 @@ ARG APP_DIR=/opt/app-root/app
 # Should not be used without extending in other phases.
 #  Usage: `FROM buildtime-base as some-buildtime` or `COPY --from=buildtime-base`.
 ###>
-FROM node:16 as buildtime-base
+FROM node:18 as buildtime-base
 
 
 # Build environment
@@ -44,7 +44,7 @@ FROM mysql:5.7 as mysql
 # Should not be used without extending in other phases.
 #  Usage: `FROM runtime-base as some-runtime` or `COPY --from=runtime-base`.
 ###>
-FROM node:16 as runtime-base
+FROM node:18 as runtime-base
 
 ARG APP_DIR
 ARG NODE_ENV
