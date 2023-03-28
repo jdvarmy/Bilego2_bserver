@@ -11,6 +11,7 @@ import { UsersModule } from '../users/users.module';
 import { EventDatesController } from './controllers/eventDates.controller';
 import { EventDatesService } from './services/eventDates.service';
 import { EventsUtilsService } from './services/events.utils.service';
+import { DataLoggerModule } from '../logger/data.logger.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EventsUtilsService } from './services/events.utils.service';
     ItemsModule,
     ArtistsModule,
     UsersModule,
+    DataLoggerModule,
   ],
   controllers: [EventsController, EventDatesController],
   providers: [EventsService, EventDatesService, EventsUtilsService],

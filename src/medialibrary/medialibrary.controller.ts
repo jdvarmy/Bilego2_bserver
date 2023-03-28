@@ -2,10 +2,11 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   InternalServerErrorException,
   Param,
   Post,
-  Req,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -15,16 +16,32 @@ import { MediaDto } from './dtos/Media.dto';
 import { MedialibraryService } from './services/medialibrary.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Routs } from '../utils/types/enums';
+import { DataLoggerService } from '../logger/data.logger.service';
+import { AuthUser } from '../utils/decorators/AuthUser';
+import { UserDto } from '../users/dtos/User.dto';
+import { PostOptions } from '../utils/types/types';
+import { Media } from '../typeorm';
 
 @Controller(Routs.media)
 export class MedialibraryController {
-  constructor(private readonly medialibraryService: MedialibraryService) {}
+  constructor(
+    private readonly medialibraryService: MedialibraryService,
+    private readonly dataLoggerService: DataLoggerService,
+  ) {}
 
   @Get()
   @UseGuards(AccessJwtAuthGuard)
-  getMedia(@Req() req): Promise<MediaDto[]> {
+  getMedia(
+    @AuthUser() user: UserDto,
+    @Query('offset') offset?: number,
+    @Query('count') count?: number,
+  ): Promise<MediaDto[]> {
     try {
-      return this.medialibraryService.fetchMedia();
+      const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
+
+      this.dataLoggerService.dbLog(`User ${user.uid} запросил список media`);
+
+      return this.medialibraryService.fetchMedia(props);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
@@ -33,8 +50,16 @@ export class MedialibraryController {
   @Post('upload')
   @UseGuards(AccessJwtAuthGuard)
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images[]', maxCount: 10 }]))
-  insertMedia(@UploadedFiles() files: Express.Multer.File[]): Promise<boolean> {
+  async insertMedia(
+    @AuthUser() user: UserDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ): Promise<boolean> {
     try {
+      this.dataLoggerService.dbLog(`User ${user.uid} добавил новые media`, [
+        HttpStatus.CREATED,
+        'Created',
+      ]);
+
       return this.medialibraryService.insertMediaData(files['images[]']);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
@@ -43,9 +68,20 @@ export class MedialibraryController {
 
   @Delete(':id')
   @UseGuards(AccessJwtAuthGuard)
-  removeMedia(@Param('id') id: number): Promise<boolean> {
+  async removeMedia(
+    @AuthUser() user: UserDto,
+    @Param('id') id: number,
+  ): Promise<Media> {
     try {
-      return this.medialibraryService.deleteMediaData(id);
+      const media = await this.medialibraryService.deleteMediaData(id);
+
+      this.dataLoggerService.dbLog(
+        `User ${user.uid} удалил media ${
+          media.originalName ?? media.name ?? media.id
+        }`,
+      );
+
+      return media;
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

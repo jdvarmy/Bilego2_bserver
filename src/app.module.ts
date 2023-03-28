@@ -34,6 +34,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { PassportModule } from '@nestjs/passport';
 import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
+import { DataLoggerModule } from './logger/data.logger.module';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,6 +60,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
     MulterModule.register({ storage: memoryStorage() }),
     ApiModule,
     DatabaseModule,
+    DataLoggerModule,
     AuthModule,
     UsersModule,
     EventsModule,

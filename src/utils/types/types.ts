@@ -1,16 +1,23 @@
 import { UserDto } from '../../users/dtos/User.dto';
 import { City, PostStatus } from './enums';
+import { HttpStatus } from '@nestjs/common';
+import { IncomingHttpHeaders } from 'http';
 
 export const CookieTokenName = 'refreshToken' as const;
 
-export type WPError = {
-  code: string;
-  message: string;
-  data: {
-    status: boolean;
-    code: number;
-  };
-};
+export interface HttpExceptionResponse {
+  statusCode: HttpStatus;
+  error: string;
+  message: string | number;
+}
+export interface CustomHttpExceptionResponse extends HttpExceptionResponse {
+  ip: string;
+  path: string;
+  method: string;
+  headers: IncomingHttpHeaders;
+  body: XMLHttpRequestBodyInit;
+  timeStamp: Date;
+}
 
 export type UserTokens = {
   accessToken: string;

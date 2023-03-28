@@ -8,27 +8,16 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as fs from 'fs';
-import { IncomingHttpHeaders } from 'http';
 import { isHttpExceptionResponse } from '../types/tsGuards';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggerEntries } from '../../typeorm';
 import { Repository } from 'typeorm';
 import { LoggerMessageType } from '../types/enums';
-import { logMessageMap } from '../../logger/logMessageMap';
-
-export interface HttpExceptionResponse {
-  statusCode: HttpStatus;
-  error: string;
-  message: string | number;
-}
-export interface CustomHttpExceptionResponse extends HttpExceptionResponse {
-  ip: string;
-  path: string;
-  method: string;
-  headers: IncomingHttpHeaders;
-  body: XMLHttpRequestBodyInit;
-  timeStamp: Date;
-}
+import { errorMessageMap } from '../../logger/errorMessageMap';
+import {
+  CustomHttpExceptionResponse,
+  HttpExceptionResponse,
+} from '../types/types';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -58,9 +47,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
         errorResponse = localErrorResponse;
       } else if (typeof localErrorResponse === 'string') {
         errorResponse.message = localErrorResponse;
+      } else {
+        errorResponse.message =
+          // @ts-ignore
+          localErrorResponse?.message ?? localErrorResponse?.error;
       }
     }
 
+    // todo: добавить контекст (в каком методе произошла ошибка)
     const error: CustomHttpExceptionResponse = {
       ...errorResponse,
       statusCode: status,
@@ -94,7 +88,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         type: LoggerMessageType.error,
         ip,
         status: `${statusCode} ${error}`,
-        message: logMessageMap(statusCode, message),
+        message: errorMessageMap(statusCode, message),
         request: `${method} ${path}`,
         headers: JSON.stringify(headers),
         body: JSON.stringify(body),

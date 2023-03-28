@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   InternalServerErrorException,
   Param,
   Post,
@@ -14,17 +15,26 @@ import { SaveTicketDto } from './dtos/SaveTicket.dto';
 import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { TicketDto } from './dtos/Ticket.dto';
 import { Routs } from '../utils/types/enums';
+import { DataLoggerService } from '../logger/data.logger.service';
+import { AuthUser } from '../utils/decorators/AuthUser';
+import { UserDto } from '../users/dtos/User.dto';
 
 @Controller(Routs.tickets)
 export class TicketsController {
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(
+    private readonly ticketsService: TicketsService,
+    private readonly dataLoggerService: DataLoggerService,
+  ) {}
 
   @Get(':eventDateUid')
   @UseGuards(AccessJwtAuthGuard)
   getTickets(
+    @AuthUser() user: UserDto,
     @Param('eventDateUid') eventDateUid: string,
   ): Promise<TicketDto[]> {
     try {
+      this.dataLoggerService.dbLog(`User ${user.uid} запросил список билетов`);
+
       return this.ticketsService.getTickets(eventDateUid);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
@@ -34,10 +44,15 @@ export class TicketsController {
   @Post(':eventDateUid')
   @UseGuards(AccessJwtAuthGuard)
   saveTickets(
+    @AuthUser() user: UserDto,
     @Param('eventDateUid') eventDateUid: string,
     @Body() data: SaveTicketDto,
   ): Promise<TicketDto[]> {
     try {
+      this.dataLoggerService.dbLog(
+        `User ${user.uid} добавил билеты к дате события ${eventDateUid}`,
+        [HttpStatus.CREATED, 'Created'],
+      );
       return this.ticketsService.saveTickets(eventDateUid, data);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
@@ -46,11 +61,15 @@ export class TicketsController {
 
   @Put(':eventDateUid')
   @UseGuards(AccessJwtAuthGuard)
-  editTickets(
+  async editTickets(
+    @AuthUser() user: UserDto,
     @Param('eventDateUid') eventDateUid: string,
     @Body() data: SaveTicketDto,
   ): Promise<TicketDto[]> {
     try {
+      this.dataLoggerService.dbLog(
+        `User ${user.uid} отредактировал билеты у даты события ${eventDateUid}`,
+      );
       return this.ticketsService.saveTickets(eventDateUid, data);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
@@ -59,8 +78,12 @@ export class TicketsController {
 
   @Delete(':eventDateUid')
   @UseGuards(AccessJwtAuthGuard)
-  deleteTickets(@Body() ticketsUid: string[]): Promise<TicketDto[]> {
+  deleteTickets(
+    @AuthUser() user: UserDto,
+    @Body() ticketsUid: string[],
+  ): Promise<TicketDto[]> {
     try {
+      this.dataLoggerService.dbLog(`User ${user.uid} удалил билеты`);
       return this.ticketsService.deleteTickets(ticketsUid);
     } catch (e) {
       throw new InternalServerErrorException(e.message);

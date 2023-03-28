@@ -1,4 +1,4 @@
-import { HttpExceptionResponse } from '../filters/all-exceptions.filter';
+import { HttpExceptionResponse } from './types';
 
 export function isObject(value: unknown): value is object {
   return typeof value === 'object' && value !== null;

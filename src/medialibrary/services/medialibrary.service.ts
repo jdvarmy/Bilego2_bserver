@@ -6,6 +6,7 @@ import { MediaDto } from '../dtos/Media.dto';
 import { FileService } from '../../file/file.service';
 import { FileType } from '../../utils/types/enums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
+import { PostOptions } from '../../utils/types/types';
 
 @Injectable()
 export class MedialibraryService {
@@ -16,7 +17,8 @@ export class MedialibraryService {
     private readonly mediaRepo: Repository<Media>,
   ) {}
 
-  async fetchMedia(): Promise<MediaDto[]> {
+  async fetchMedia(options: PostOptions): Promise<MediaDto[]> {
+    // todo: добавить пагинацию
     const media: Media[] = await this.mediaRepo.find({
       where: { mimetype: 'webp' },
       order: { id: 'DESC' },
@@ -33,13 +35,13 @@ export class MedialibraryService {
     return true;
   }
 
-  async deleteMediaData(id: number): Promise<boolean> {
+  async deleteMediaData(id: number): Promise<Media> {
     const media = await this.mediaRepo.findOne({ where: { id } });
-    await this.mediaRepo.remove(media);
+    const deleteMedia = await this.mediaRepo.remove(media);
 
     this.fileService.removeFile(JSON.parse(media.path));
 
-    return true;
+    return deleteMedia;
   }
 
   async saveImage(file: Express.Multer.File, type: FileType) {

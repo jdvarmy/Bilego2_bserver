@@ -5,9 +5,15 @@ import { DatabaseModule } from '../database/database.module';
 import { TaxonomyModule } from '../taxonomy/taxonomy.module';
 import { MedialibraryModule } from '../medialibrary/medialibrary.module';
 import { ItemsUtilsService } from './services/items.utils.service';
+import { DataLoggerModule } from '../logger/data.logger.module';
 
 @Module({
-  imports: [DatabaseModule, TaxonomyModule, MedialibraryModule],
+  imports: [
+    DatabaseModule,
+    TaxonomyModule,
+    MedialibraryModule,
+    DataLoggerModule,
+  ],
   controllers: [ItemsController],
   providers: [ItemsService, ItemsUtilsService],
   exports: [ItemsService, ItemsUtilsService],

@@ -21,7 +21,10 @@ const ForbiddenMessage: Record<Forbidden, string> = {
   [Forbidden.noValidToken]: 'Refresh token не прошел верификацию',
 };
 
-export const logMessageMap = (status: HttpStatus, message: string | number) => {
+export const errorMessageMap = (
+  status: HttpStatus,
+  message: string | number,
+) => {
   if (typeof message === 'string') {
     return message;
   }

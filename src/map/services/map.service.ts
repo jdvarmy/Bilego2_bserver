@@ -33,7 +33,7 @@ export class MapService {
   async insertMapData(files: {
     map: Express.Multer.File;
     minimap: Express.Multer.File;
-  }): Promise<boolean> {
+  }): Promise<Maps> {
     const { map, minimap } = files;
 
     if (map.mimetype !== 'image/svg+xml') {
@@ -59,7 +59,6 @@ export class MapService {
       ...mapData,
     });
 
-    await this.mapRepo.save(mapRepo);
-    return true;
+    return this.mapRepo.save(mapRepo);
   }
 }

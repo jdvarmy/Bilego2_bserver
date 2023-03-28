@@ -18,22 +18,25 @@ export class LoggerEntries {
   })
   type: LoggerMessageType;
 
-  @Column('varchar', { length: 50 })
+  @Column('varchar', { length: 50, nullable: true })
   ip: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   status: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
+  context: string;
+
+  @Column('varchar', { nullable: true })
   message: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   request: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   headers: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   body: string;
 
   @CreateDateColumn()
