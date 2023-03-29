@@ -98,22 +98,4 @@ export class AllExceptionsFilter implements ExceptionFilter {
       throw new InternalServerErrorException(e.message ?? e.error);
     }
   };
-
-  private writeErrorLogToFile = (error: CustomHttpExceptionResponse): void => {
-    const errorLog = this.getErrorLog(error);
-    fs.appendFile('error.log', errorLog, 'utf8', (err) => {
-      if (err) throw err;
-    });
-  };
-
-  private getErrorLog = (
-    errorResponse: CustomHttpExceptionResponse,
-  ): string => {
-    const { statusCode, path, method, message, error, ip, headers, timeStamp } =
-      errorResponse;
-
-    return `[${ip}] Response Code: ${statusCode} - Method: ${method} - URL: ${path}
-    Error: ${error} - Message: ${message} - Headers: ${JSON.stringify(headers)}
-    [${timeStamp}]\n`;
-  };
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -35,6 +35,7 @@ import { memoryStorage } from 'multer';
 import { PassportModule } from '@nestjs/passport';
 import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
 import { DataLoggerModule } from './logger/data.logger.module';
+import { HttpsRedirectMiddleware } from './utils/middleware/https.redirect.middleware';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,4 +81,8 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
     { provide: APP_INTERCEPTOR, useClass: ErrorInterceptor },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(HttpsRedirectMiddleware).forRoutes('*');
+  }
+}

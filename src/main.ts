@@ -7,19 +7,18 @@ import { CLIENT_URL, ADMIN_URL, PORT } from './utils/types/constants/env';
 import { NestExpressApplication } from '@nestjs/platform-express';
 // import passport from 'passport';
 
-const whitelist = [
-  CLIENT_URL,
-  ADMIN_URL,
-  'https://admin.test.bilego.ru',
-  'http://admin.test.bilego.ru',
-];
+const whitelist = [CLIENT_URL, ADMIN_URL];
 
 async function bootstrap() {
   try {
     const port = PORT || 3000;
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
     app.getHttpAdapter().getInstance().disable('x-powered-by');
-    app.enableCors({ credentials: true, origin: whitelist });
+    app.enableCors({
+      credentials: true,
+      origin: whitelist,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'],
+    });
 
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
