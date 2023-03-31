@@ -7,6 +7,7 @@ export const setCookieRefreshToken = (
 ): void => {
   response.cookie(CookieTokenName, token, {
     httpOnly: true,
+    secure: true,
     maxAge: 30 * 86400e3,
   });
 };
