@@ -1,24 +1,42 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import sharp from 'sharp';
-import { FileType, Exception500, ImageSizes } from '../utils/types/enums';
-import * as path from 'path';
-import * as fs from 'fs';
+import { FileType, Exception500, ImageSizes } from '../../utils/types/enums';
+import path from 'path';
+import fs from 'fs';
 import { v4 as uidv4 } from 'uuid';
-import { STATIC_FILES_DIR } from '../utils/types/constants/env';
-import { SharpType } from '../utils/types/types';
+import { STATIC_FILES_DIR } from '../../utils/types/constants/env';
+import { SharpType } from '../../utils/types/types';
+import { FileUtilsService } from './file.utils.service';
+import { FileS3Service } from './file.s3.service';
+import { mainDir } from '../../main';
 
 @Injectable()
 export class FileService {
+  constructor(
+    @Inject(FileUtilsService)
+    private readonly fileUtilsService: FileUtilsService,
+
+    @Inject(FileS3Service)
+    private readonly fileS3Service: FileS3Service,
+  ) {}
+
   async createImageWebP(
     file: Express.Multer.File,
     type: FileType,
   ): Promise<SharpType> {
     try {
-      const { absolutePath, relativePath } = this.createUploadPath(type);
+      const { absolutePath, relativePath } =
+        this.fileUtilsService.createUploadPath(type);
       const image: SharpType = {
         name: `${uidv4()}.webp`,
         format: 'webp',
         path: [],
+        s3location: [],
+        s3key: [],
       };
 
       for (const [name, size] of Object.entries(ImageSizes)) {
@@ -28,15 +46,25 @@ export class FileService {
 
         if (name === ImageSizes.origin) {
           sharpFn = sharp(file.buffer);
+
+          await sharpFn.webp({ effort: 3, quality: 80 }).toFile(imagePath);
         } else {
           sharpFn = sharp(file.buffer).resize(
             // просо достаем размеры изображения
             ...size.split('x').map(Number),
           );
         }
-        await sharpFn.webp({ effort: 3, quality: 80 }).toFile(imagePath);
+
+        const buffer = await sharpFn
+          .webp({ effort: 3, quality: 80 })
+          .toBuffer();
+        const { Location, Key } = await this.fileS3Service
+          .saveToS3(buffer, fileName, relativePath)
+          .promise();
 
         image.path.push(`${relativePath}/${fileName}`);
+        image.s3location.push(Location);
+        image.s3key.push(Key);
       }
 
       return image;
@@ -49,7 +77,8 @@ export class FileService {
 
   createFileMap(file: Express.Multer.File, type: FileType): string {
     try {
-      const { absolutePath, relativePath } = this.createUploadPath(type);
+      const { absolutePath, relativePath } =
+        this.fileUtilsService.createUploadPath(type);
       const fileExtension = file.originalname.split('.').pop();
       const fileName = uidv4() + '.' + fileExtension;
 
@@ -65,8 +94,8 @@ export class FileService {
 
   removeFile(paths: string[]) {
     try {
-      paths.forEach((path) => {
-        const filePath = `${__dirname}/../${STATIC_FILES_DIR}/${path}`;
+      paths.forEach((p) => {
+        const filePath = path.resolve(mainDir, STATIC_FILES_DIR, p);
 
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
@@ -79,25 +108,17 @@ export class FileService {
     }
   }
 
-  // UTILS
-  createUploadPath(type: FileType) {
-    const date = new Date();
+  removeFilesFromS3(keys: string[]) {
+    try {
+      if (!keys || !Array.isArray(keys) || !keys.length) {
+        return;
+      }
 
-    const relativePath = path.join(
-      `${date.getFullYear()}-${date.getMonth() + 1}`,
-      type,
-    );
-    const absolutePath = path.resolve(
-      __dirname,
-      '..',
-      STATIC_FILES_DIR,
-      relativePath,
-    );
-
-    if (!fs.existsSync(absolutePath)) {
-      fs.mkdirSync(absolutePath, { recursive: true });
+      this.fileS3Service.removeFromS3(keys);
+    } catch (e) {
+      throw new InternalServerErrorException(
+        Exception500.uploadFile + '. ' + e.message,
+      );
     }
-
-    return { absolutePath, relativePath };
   }
 }

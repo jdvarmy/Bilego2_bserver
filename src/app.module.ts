@@ -10,6 +10,9 @@ import {
   MYSQL_PORT,
   MYSQL_USER,
   STATIC_FILES_DIR,
+  CLOUD_S3_ACCESS,
+  CLOUD_S3_SECRET,
+  CLOUD_S3_ENDPOINT,
 } from './utils/types/constants/env';
 import entities from './typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -36,6 +39,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
 import { DataLoggerModule } from './logger/data.logger.module';
 import { HttpsRedirectMiddleware } from './utils/middleware/https.redirect.middleware';
+import { S3Module } from 'nestjs-s3';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,6 +60,15 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
       password: MYSQL_PASS,
       entities: entities,
       synchronize: true, // todo: убрать на проде
+    }),
+    S3Module.forRoot({
+      config: {
+        accessKeyId: CLOUD_S3_ACCESS,
+        secretAccessKey: CLOUD_S3_SECRET,
+        endpoint: CLOUD_S3_ENDPOINT,
+        s3ForcePathStyle: true,
+        signatureVersion: 'v4',
+      },
     }),
     PassportModule.register({ session: true }),
     MulterModule.register({ storage: memoryStorage() }),

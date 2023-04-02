@@ -7,6 +7,8 @@ import { CLIENT_URL, ADMIN_URL, PORT } from './utils/types/constants/env';
 import { NestExpressApplication } from '@nestjs/platform-express';
 // import passport from 'passport';
 
+export const mainDir = __dirname;
+
 const whitelist = [CLIENT_URL, ADMIN_URL];
 
 async function bootstrap() {

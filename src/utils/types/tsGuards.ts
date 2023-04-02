@@ -4,6 +4,10 @@ export function isObject(value: unknown): value is object {
   return typeof value === 'object' && value !== null;
 }
 
+export function isString(value: unknown): value is string {
+  return value && typeof value === 'string';
+}
+
 export function isHttpExceptionResponse(
   value: unknown,
 ): value is HttpExceptionResponse {

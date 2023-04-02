@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from '../../typeorm';
 import { Repository } from 'typeorm';
 import { MediaDto } from '../dtos/Media.dto';
-import { FileService } from '../../file/file.service';
+import { FileService } from '../../file/services/file.service';
 import { FileType } from '../../utils/types/enums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { PostOptions } from '../../utils/types/types';
@@ -40,6 +40,7 @@ export class MedialibraryService {
     const deleteMedia = await this.mediaRepo.remove(media);
 
     this.fileService.removeFile(JSON.parse(media.path));
+    this.fileService.removeFilesFromS3(JSON.parse(media.s3key));
 
     return deleteMedia;
   }
@@ -50,9 +51,11 @@ export class MedialibraryService {
     const media = this.mediaRepo.create({
       name: image.name,
       originalName: file.originalname,
-      path: JSON.stringify(image.path),
       mimetype: image.format,
       size: file.size,
+      path: JSON.stringify(image.path),
+      s3location: JSON.stringify(image.s3location),
+      s3key: JSON.stringify(image.s3key),
     });
 
     return this.mediaRepo.save(media);

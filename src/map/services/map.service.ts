@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { MapDto } from '../dtos/Map.dto';
-import { FileService } from '../../file/file.service';
+import { FileService } from '../../file/services/file.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Maps } from '../../typeorm';
 import { Repository } from 'typeorm';

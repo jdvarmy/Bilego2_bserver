@@ -53,4 +53,10 @@ export class Media {
 
   @Column()
   size: number;
+
+  @Column({ type: 'longtext', nullable: true })
+  s3location: string;
+
+  @Column({ type: 'longtext', nullable: true })
+  s3key: string;
 }

@@ -111,7 +111,7 @@ export class EventsService {
 
     const event = this.eventsRepo.create({
       uid,
-      slug: `new-event-${+new Date()}`,
+      slug: `event-${+new Date()}`,
     });
     await this.eventsRepo.save(event);
 

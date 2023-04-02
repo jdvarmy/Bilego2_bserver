@@ -84,7 +84,7 @@ export class ItemsService {
 
     const item = this.itemsRepo.create({
       uid,
-      slug: `new-item-${+new Date()}`,
+      slug: `item-${+new Date()}`,
     });
 
     return plainToClassResponse(ItemDto, await this.itemsRepo.save(item));

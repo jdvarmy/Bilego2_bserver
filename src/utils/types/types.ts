@@ -48,7 +48,13 @@ export type ItemsPageProps = {
   total: number;
 };
 
-export type SharpType = { name: string; format: 'webp'; path: string[] };
+export type SharpType = {
+  name: string;
+  format: 'webp';
+  path: string[];
+  s3location?: string[];
+  s3key?: string[];
+};
 
 export function exhaustiveCheck(value: never) {
   return value;

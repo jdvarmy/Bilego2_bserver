@@ -1,4 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+import * as process from 'process';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
 export const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -23,3 +26,7 @@ export const MYSQL_PASS = process.env.MYSQL_PASS || 'pass';
 export const MYSQL_DB = process.env.MYSQL_DB || MYSQL_USER;
 
 export const STATIC_FILES_DIR = process.env.STATIC_FILES_DIR || 'upload';
+export const CLOUD_S3_ACCESS = process.env.CLOUD_S3_ACCESS || '';
+export const CLOUD_S3_SECRET = process.env.CLOUD_S3_SECRET || '';
+export const CLOUD_S3_ENDPOINT = process.env.CLOUD_S3_ENDPOINT || '';
+export const CLOUD_S3_BUCKET = process.env.CLOUD_S3_BUCKET || '';
