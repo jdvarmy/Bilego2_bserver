@@ -19,7 +19,7 @@ import { Routs } from '../utils/types/enums';
 import { DataLoggerService } from '../logger/data.logger.service';
 import { AuthUser } from '../utils/decorators/AuthUser';
 import { UserDto } from '../users/dtos/User.dto';
-import { PostOptions } from '../utils/types/types';
+import { ItemsPageProps, PostOptions } from '../utils/types/types';
 import { Media } from '../typeorm';
 
 @Controller(Routs.media)
@@ -35,7 +35,7 @@ export class MedialibraryController {
     @AuthUser() user: UserDto,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
-  ): Promise<MediaDto[]> {
+  ): Promise<{ items: MediaDto[]; props: ItemsPageProps }> {
     try {
       const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
 

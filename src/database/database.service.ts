@@ -25,29 +25,40 @@ import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 @Injectable()
 export class DatabaseService {
   constructor(
-    @InjectRepository(Artists) private artistsRepo: Repository<Artists>,
-    @InjectRepository(Events) private eventsRepo: Repository<Events>,
+    @InjectRepository(Artists)
+    private readonly artistsRepo: Repository<Artists>,
+    @InjectRepository(Events)
+    private readonly eventsRepo: Repository<Events>,
     @InjectRepository(EventDates)
-    private eventDatesRepo: Repository<EventDates>,
-    @InjectRepository(Items) private itemsRepo: Repository<Items>,
+    private readonly eventDatesRepo: Repository<EventDates>,
+    @InjectRepository(Items)
+    private readonly itemsRepo: Repository<Items>,
     @InjectRepository(ItemClosestMetro)
-    private itemClosestMetroRepo: Repository<ItemClosestMetro>,
+    private readonly itemClosestMetroRepo: Repository<ItemClosestMetro>,
     @InjectRepository(LoggerEntries)
-    private loggerEntriesRepo: Repository<LoggerEntries>,
-    @InjectRepository(Maps) private mapsRepo: Repository<Maps>,
-    @InjectRepository(Media) private mediaRepo: Repository<Media>,
-    @InjectRepository(Orders) private ordersRepo: Repository<Orders>,
+    private readonly loggerEntriesRepo: Repository<LoggerEntries>,
+    @InjectRepository(Maps)
+    private readonly mapsRepo: Repository<Maps>,
+    @InjectRepository(Media)
+    private readonly mediaRepo: Repository<Media>,
+    @InjectRepository(Orders)
+    private readonly ordersRepo: Repository<Orders>,
     @InjectRepository(OrderItems)
-    private orderItemsRepo: Repository<OrderItems>,
-    @InjectRepository(SEO) private seoRepo: Repository<SEO>,
-    @InjectRepository(Session) private sessionRepo: Repository<Session>,
-    @InjectRepository(Taxonomy) private taxonomyRepo: Repository<Taxonomy>,
-    @InjectRepository(Tickets) private ticketsRepo: Repository<Tickets>,
+    private readonly orderItemsRepo: Repository<OrderItems>,
+    @InjectRepository(SEO)
+    private readonly seoRepo: Repository<SEO>,
+    @InjectRepository(Session)
+    private readonly sessionRepo: Repository<Session>,
+    @InjectRepository(Taxonomy)
+    private readonly taxonomyRepo: Repository<Taxonomy>,
+    @InjectRepository(Tickets)
+    private readonly ticketsRepo: Repository<Tickets>,
     @InjectRepository(TicketsSell)
-    private ticketsSellRepo: Repository<TicketsSell>,
-    @InjectRepository(Users) private usersRepo: Repository<Users>,
+    private readonly ticketsSellRepo: Repository<TicketsSell>,
+    @InjectRepository(Users)
+    private readonly usersRepo: Repository<Users>,
     @InjectRepository(UserAccess)
-    private userAccessRepo: Repository<UserAccess>,
+    private readonly userAccessRepo: Repository<UserAccess>,
   ) {}
 
   andWhereFilterCondition<T>(
@@ -74,7 +85,7 @@ export class DatabaseService {
   }
 
   async getTotal<T>(
-    params: FindOptionsWhere<T>,
+    params: FindOptionsWhere<T> | undefined,
     scope: string,
   ): Promise<number> {
     const query = this[`${scope}Repo`].createQueryBuilder(scope).select('id');

@@ -46,6 +46,7 @@ export type PostOptions = {
 
 export type ItemsPageProps = {
   total: number;
+  offset?: number;
 };
 
 export type SharpType = {

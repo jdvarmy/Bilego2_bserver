@@ -6,25 +6,50 @@ import { MediaDto } from '../dtos/Media.dto';
 import { FileService } from '../../file/services/file.service';
 import { FileType } from '../../utils/types/enums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
-import { PostOptions } from '../../utils/types/types';
+import { ItemsPageProps, PostOptions } from '../../utils/types/types';
+import { DatabaseService } from '../../database/database.service';
+
+const scope = 'media';
 
 @Injectable()
 export class MedialibraryService {
   constructor(
     private readonly fileService: FileService,
+    private readonly databaseService: DatabaseService,
 
     @InjectRepository(Media)
     private readonly mediaRepo: Repository<Media>,
   ) {}
 
-  async fetchMedia(options: PostOptions): Promise<MediaDto[]> {
-    // todo: добавить пагинацию
-    const media: Media[] = await this.mediaRepo.find({
-      where: { mimetype: 'webp' },
-      order: { id: 'DESC' },
-    });
+  async fetchMedia(
+    options: PostOptions,
+  ): Promise<{ items: MediaDto[]; props: ItemsPageProps }> {
+    const query = await this.mediaRepo
+      .createQueryBuilder(scope)
+      .select([
+        `${scope}.id`,
+        `${scope}.name`,
+        `${scope}.originalName`,
+        `${scope}.path`,
+        `${scope}.mimetype`,
+        `${scope}.size`,
+        `${scope}.s3location`,
+        `${scope}.s3key`,
+      ])
+      .where(`${scope}.mimetype = :mime`, { mime: 'webp' })
+      .orderBy(`${scope}.id`, 'DESC')
+      .skip(options.offset)
+      .take(options.count);
 
-    return plainToClassResponse(MediaDto, media);
+    const media = await query.getMany();
+
+    return {
+      items: plainToClassResponse(MediaDto, media),
+      props: {
+        total: await this.databaseService.getTotal(options.filter, scope),
+        offset: +options.offset + +options.count,
+      },
+    };
   }
 
   async insertMediaData(files: Express.Multer.File[]): Promise<boolean> {
