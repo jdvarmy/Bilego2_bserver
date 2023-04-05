@@ -38,7 +38,9 @@ export class ArtistsController {
         props.filter = filter;
       }
 
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил список артистов`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил список артистов`,
+      );
 
       return this.artistsService.fetchArtists(props);
     } catch (e) {

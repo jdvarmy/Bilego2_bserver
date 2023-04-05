@@ -43,7 +43,9 @@ export class EventsController {
         props.filter = filter;
       }
 
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил список событий`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил список событий`,
+      );
 
       return this.eventService.fetchEvents(props);
     } catch (e) {
@@ -58,7 +60,9 @@ export class EventsController {
     @Param('uid') uid: string,
   ): Promise<EventDto> {
     try {
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил событие ${uid}`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил событие ${uid}`,
+      );
 
       return this.eventService.getEvent(uid);
     } catch (e) {
@@ -72,7 +76,7 @@ export class EventsController {
     try {
       const template = await this.eventService.saveEventTemplate();
       this.dataLoggerService.dbLog(
-        `User ${user.uid} создал шаблон события ${template.uid}`,
+        `User ${user.email ?? user.uid} создал шаблон события ${template.uid}`,
         [HttpStatus.CREATED, 'Created'],
       );
       return template;
@@ -93,7 +97,7 @@ export class EventsController {
       const event = await this.eventService.saveEvent(eventDto);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} отредактировал событие ${event.uid}`,
+        `User ${user.email ?? user.uid} отредактировал событие ${event.uid}`,
       );
 
       return event;
@@ -112,7 +116,9 @@ export class EventsController {
       const event = await this.eventService.deleteEvent(uid);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} удалил событие ${event.title ?? event.uid}`,
+        `User ${user.email ?? user.uid} удалил событие ${
+          event.title ?? event.uid
+        }`,
       );
 
       return event;

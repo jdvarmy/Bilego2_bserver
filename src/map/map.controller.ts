@@ -30,7 +30,7 @@ export class MapController {
   getMapItems(@AuthUser() user: UserDto): Promise<MapDto[]> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} запросил список карт мероприятий`,
+        `User ${user.email ?? user.uid} запросил список карт мероприятий`,
       );
       return this.mapService.fetchMapItems();
     } catch (e) {
@@ -73,7 +73,7 @@ export class MapController {
       });
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} добавил карту ${mapData.uid}`,
+        `User ${user.email ?? user.uid} добавил карту ${mapData.uid}`,
         [HttpStatus.CREATED, 'Created'],
       );
 

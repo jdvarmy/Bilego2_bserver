@@ -39,7 +39,9 @@ export class MedialibraryController {
     try {
       const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
 
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил список media`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил список media`,
+      );
 
       return this.medialibraryService.fetchMedia(props);
     } catch (e) {
@@ -55,10 +57,10 @@ export class MedialibraryController {
     @UploadedFiles() files: Express.Multer.File[],
   ): Promise<boolean> {
     try {
-      this.dataLoggerService.dbLog(`User ${user.uid} добавил новые media`, [
-        HttpStatus.CREATED,
-        'Created',
-      ]);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} добавил новые media`,
+        [HttpStatus.CREATED, 'Created'],
+      );
 
       return this.medialibraryService.insertMediaData(files['images[]']);
     } catch (e) {
@@ -76,7 +78,7 @@ export class MedialibraryController {
       const media = await this.medialibraryService.deleteMediaData(id);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} удалил media ${
+        `User ${user.email ?? user.uid} удалил media ${
           media.originalName ?? media.name ?? media.id
         }`,
       );

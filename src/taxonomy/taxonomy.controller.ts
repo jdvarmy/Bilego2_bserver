@@ -47,7 +47,7 @@ export class TaxonomyController {
       }
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} запросил список таксономий`,
+        `User ${user.email ?? user.uid} запросил список таксономий`,
       );
 
       return this.taxonomyService.getTaxonomyList(link, props);
@@ -66,7 +66,7 @@ export class TaxonomyController {
       const taxonomy = await this.taxonomyService.saveTaxonomy(taxonomyDto);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} создал таксономию ${taxonomy.uid}`,
+        `User ${user.email ?? user.uid} создал таксономию ${taxonomy.uid}`,
         [HttpStatus.CREATED, 'Created'],
       );
 
@@ -90,7 +90,9 @@ export class TaxonomyController {
       });
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} отредактировал таксономию ${taxonomy.uid}`,
+        `User ${user.email ?? user.uid} отредактировал таксономию ${
+          taxonomy.uid
+        }`,
       );
 
       return taxonomy;
@@ -109,7 +111,9 @@ export class TaxonomyController {
       const taxonomy = await this.taxonomyService.deleteTaxonomy(uid);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} удалил таксономию ${taxonomy.name ?? taxonomy.uid}`,
+        `User ${user.email ?? user.uid} удалил таксономию ${
+          taxonomy.name ?? taxonomy.uid
+        }`,
       );
 
       return taxonomy;

@@ -43,7 +43,9 @@ export class ItemsController {
         props.filter = filter;
       }
 
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил список площадок`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил список площадок`,
+      );
 
       return this.itemsService.fetchItems(props);
     } catch (e) {
@@ -58,7 +60,9 @@ export class ItemsController {
     @Param('uid') uid: string,
   ): Promise<ItemDto> {
     try {
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил площадку ${uid}`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил площадку ${uid}`,
+      );
 
       return this.itemsService.getItem(uid);
     } catch (e) {
@@ -72,7 +76,7 @@ export class ItemsController {
     try {
       const template = await this.itemsService.saveItemTemplate();
       this.dataLoggerService.dbLog(
-        `User ${user.uid} создал шаблон площадки ${template.uid}`,
+        `User ${user.email ?? user.uid} создал шаблон площадки ${template.uid}`,
         [HttpStatus.CREATED, 'Created'],
       );
       return template;
@@ -93,7 +97,7 @@ export class ItemsController {
       const item = await this.itemsService.saveItem(itemDto);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} отредактировал площадку ${item.uid}`,
+        `User ${user.email ?? user.uid} отредактировал площадку ${item.uid}`,
       );
 
       return item;
@@ -112,7 +116,9 @@ export class ItemsController {
       const item = await this.itemsService.deleteItem(uid);
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} удалил площадку ${item.title ?? item.uid}`,
+        `User ${user.email ?? user.uid} удалил площадку ${
+          item.title ?? item.uid
+        }`,
       );
 
       return item;

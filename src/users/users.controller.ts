@@ -38,7 +38,7 @@ export class UsersController {
       }
 
       this.dataLoggerService.dbLog(
-        `User ${user.uid} запросил список пользователей`,
+        `User ${user.email ?? user.uid} запросил список пользователей`,
       );
 
       return this.usersService.fetchUsers();
@@ -55,7 +55,7 @@ export class UsersController {
   ): Promise<UserDto> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} запросил данные пользователя`,
+        `User ${user.email ?? user.uid} запросил данные пользователя`,
       );
 
       return this.usersService.getUserData(uid);
@@ -72,7 +72,7 @@ export class UsersController {
   ): Promise<UserDto> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} добавил нового пользователя`,
+        `User ${user.email ?? user.uid} добавил нового пользователя`,
       );
 
       return this.usersService.saveUserData(userDto);
@@ -90,7 +90,7 @@ export class UsersController {
   ): Promise<UserDto> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} обновил данные пользователя ${uid}`,
+        `User ${user.email ?? user.uid} обновил данные пользователя ${uid}`,
       );
 
       return this.usersService.saveUserData(userDto, uid);
@@ -107,7 +107,7 @@ export class UsersController {
   ): Promise<UserDto> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} удалил пользователя ${uid}`,
+        `User ${user.email ?? user.uid} удалил пользователя ${uid}`,
       );
 
       return this.usersService.deleteUserData(uid);

@@ -33,7 +33,9 @@ export class TicketsController {
     @Param('eventDateUid') eventDateUid: string,
   ): Promise<TicketDto[]> {
     try {
-      this.dataLoggerService.dbLog(`User ${user.uid} запросил список билетов`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} запросил список билетов`,
+      );
 
       return this.ticketsService.getTickets(eventDateUid);
     } catch (e) {
@@ -50,7 +52,9 @@ export class TicketsController {
   ): Promise<TicketDto[]> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} добавил билеты к дате события ${eventDateUid}`,
+        `User ${
+          user.email ?? user.uid
+        } добавил билеты к дате события ${eventDateUid}`,
         [HttpStatus.CREATED, 'Created'],
       );
       return this.ticketsService.saveTickets(eventDateUid, data);
@@ -68,7 +72,9 @@ export class TicketsController {
   ): Promise<TicketDto[]> {
     try {
       this.dataLoggerService.dbLog(
-        `User ${user.uid} отредактировал билеты у даты события ${eventDateUid}`,
+        `User ${
+          user.email ?? user.uid
+        } отредактировал билеты у даты события ${eventDateUid}`,
       );
       return this.ticketsService.saveTickets(eventDateUid, data);
     } catch (e) {
@@ -83,7 +89,9 @@ export class TicketsController {
     @Body() ticketsUid: string[],
   ): Promise<TicketDto[]> {
     try {
-      this.dataLoggerService.dbLog(`User ${user.uid} удалил билеты`);
+      this.dataLoggerService.dbLog(
+        `User ${user.email ?? user.uid} удалил билеты`,
+      );
       return this.ticketsService.deleteTickets(ticketsUid);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
