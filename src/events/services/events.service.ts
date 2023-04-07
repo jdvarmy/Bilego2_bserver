@@ -64,7 +64,7 @@ export class EventsService {
       .leftJoinAndSelect(`${scope}.item`, 'item')
       .leftJoinAndSelect(`${scope}.artist`, 'artist')
       .leftJoinAndSelect(`${scope}.eventManager`, 'eventManager')
-      .orderBy(`${scope}.id`, 'ASC')
+      .orderBy(`${scope}.id`, 'DESC')
       .skip(options.offset)
       .take(options.count);
 

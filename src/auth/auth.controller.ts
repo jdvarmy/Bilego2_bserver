@@ -65,11 +65,11 @@ export class AuthController {
 
   @Get('refresh')
   public async refresh(
-    @Req() req: Request,
+    @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<Omit<UserTokens, 'refreshToken'>> {
     try {
-      const { refreshToken } = req.cookies;
+      const { refreshToken } = request.cookies;
 
       const { refreshToken: refresh, ...data } = await this.authService.refresh(
         refreshToken,

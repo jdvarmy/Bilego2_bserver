@@ -39,7 +39,7 @@ export class ArtistsService {
         `${scope}.title`,
         `${scope}.city`,
       ])
-      .orderBy(`${scope}.id`, 'ASC')
+      .orderBy(`${scope}.id`, 'DESC')
       .skip(options.offset)
       .take(options.count);
 
