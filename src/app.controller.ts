@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get('version')
+  @Get('v1/version')
   async version() {
     try {
       return this.appService.getVersion();

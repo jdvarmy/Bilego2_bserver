@@ -13,6 +13,7 @@ import {
   CLOUD_S3_ACCESS,
   CLOUD_S3_SECRET,
   CLOUD_S3_ENDPOINT,
+  NODE_ENV,
 } from './utils/types/constants/env';
 import entities from './typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -43,7 +44,7 @@ import { S3Module } from 'nestjs-s3';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
+if (NODE_ENV === 'production') envFilePath = '.env';
 
 @Module({
   imports: [
@@ -59,7 +60,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') envFilePath = '.env';
       username: MYSQL_USER,
       password: MYSQL_PASS,
       entities: entities,
-      synchronize: true, // todo: убрать на проде
+      synchronize: NODE_ENV === 'development', // todo: убрать на проде
     }),
     S3Module.forRoot({
       config: {
