@@ -1,9 +1,14 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JWT_ACCESS_SECRET } from '../../utils/types/constants/env';
 import { Users } from '../../database/entity';
 import { UsersUtilsService } from '../../users/services/users.utils.service';
+import { UserEntityRole } from '../../utils/types/enums';
 
 @Injectable()
 export class AccessJwtStrategy extends PassportStrategy(Strategy, 'accessjwt') {
@@ -20,6 +25,10 @@ export class AccessJwtStrategy extends PassportStrategy(Strategy, 'accessjwt') {
 
     if (!user) {
       throw new UnauthorizedException();
+    }
+
+    if (![UserEntityRole.admin, UserEntityRole.manager].includes(user.role)) {
+      throw new ForbiddenException();
     }
 
     return user;
