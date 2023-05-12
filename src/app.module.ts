@@ -4,18 +4,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import {
-  MYSQL_DB,
-  MYSQL_HOST,
-  MYSQL_PASS,
-  MYSQL_PORT,
-  MYSQL_USER,
   STATIC_FILES_DIR,
   CLOUD_S3_ACCESS,
   CLOUD_S3_SECRET,
   CLOUD_S3_ENDPOINT,
   NODE_ENV,
 } from './utils/types/constants/env';
-import entities from './typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 
@@ -41,6 +35,7 @@ import { AllExceptionsFilter } from './utils/filters/all-exceptions.filter';
 import { DataLoggerModule } from './logger/data.logger.module';
 import { HttpsRedirectMiddleware } from './utils/middleware/https.redirect.middleware';
 import { S3Module } from 'nestjs-s3';
+import { databaseConfig } from './database/database.config';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,16 +47,7 @@ if (NODE_ENV === 'production') envFilePath = '.env';
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, STATIC_FILES_DIR),
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: MYSQL_HOST,
-      port: MYSQL_PORT,
-      database: MYSQL_DB,
-      username: MYSQL_USER,
-      password: MYSQL_PASS,
-      entities: entities,
-      synchronize: NODE_ENV === 'development', // todo: убрать на проде
-    }),
+    TypeOrmModule.forRoot(databaseConfig),
     S3Module.forRoot({
       config: {
         accessKeyId: CLOUD_S3_ACCESS,
