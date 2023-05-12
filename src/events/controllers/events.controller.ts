@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   InternalServerErrorException,
   Param,
   Post,
@@ -30,7 +29,6 @@ export class EventsController {
   ) {}
 
   @Get()
-  @UseGuards(AccessJwtAuthGuard)
   getEventList(
     @AuthUser() user: UserDto,
     @Query('offset') offset?: number,
@@ -43,10 +41,6 @@ export class EventsController {
         props.filter = filter;
       }
 
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил список событий`,
-      );
-
       return this.eventService.fetchEvents(props);
     } catch (e) {
       throw new InternalServerErrorException(e.messagemessagemessage);
@@ -54,16 +48,11 @@ export class EventsController {
   }
 
   @Get(':uid')
-  @UseGuards(AccessJwtAuthGuard)
   getEvent(
     @AuthUser() user: UserDto,
     @Param('uid') uid: string,
   ): Promise<EventDto> {
     try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил событие ${uid}`,
-      );
-
       return this.eventService.getEvent(uid);
     } catch (e) {
       throw new InternalServerErrorException(e.messagemessagemessage);
@@ -72,14 +61,9 @@ export class EventsController {
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  async saveEventTemplate(@AuthUser() user: UserDto): Promise<EventDto> {
+  async saveEventTemplate(): Promise<EventDto> {
     try {
-      const template = await this.eventService.saveEventTemplate();
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} создал шаблон события ${template.uid}`,
-        [HttpStatus.CREATED, 'Created'],
-      );
-      return template;
+      return await this.eventService.saveEventTemplate();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

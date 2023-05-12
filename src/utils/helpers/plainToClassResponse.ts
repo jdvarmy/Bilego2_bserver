@@ -15,8 +15,8 @@ export function plainToClassResponse<C, T>(
 
 export function plainToClassResponse(cls, plain, short) {
   if (Array.isArray(plain)) {
-    return plain.map((pl) => new cls(pl, short));
+    return plain.map((pl) => Object.assign({}, new cls(pl, short)));
   }
 
-  return new cls(plain);
+  return Object.assign({}, new cls(plain));
 }

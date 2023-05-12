@@ -27,16 +27,10 @@ export class TicketsController {
   ) {}
 
   @Get(':eventDateUid')
-  @UseGuards(AccessJwtAuthGuard)
   getTickets(
-    @AuthUser() user: UserDto,
     @Param('eventDateUid') eventDateUid: string,
   ): Promise<TicketDto[]> {
     try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил список билетов`,
-      );
-
       return this.ticketsService.getTickets(eventDateUid);
     } catch (e) {
       throw new InternalServerErrorException(e.message);

@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   InternalServerErrorException,
   Param,
   Post,
@@ -30,9 +29,7 @@ export class ItemsController {
   ) {}
 
   @Get()
-  @UseGuards(AccessJwtAuthGuard)
   getItemList(
-    @AuthUser() user: UserDto,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
     @Query('filter') filter?: Record<string, string>,
@@ -43,10 +40,6 @@ export class ItemsController {
         props.filter = filter;
       }
 
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил список площадок`,
-      );
-
       return this.itemsService.fetchItems(props);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
@@ -54,16 +47,11 @@ export class ItemsController {
   }
 
   @Get(':uid')
-  @UseGuards(AccessJwtAuthGuard)
   getItem(
     @AuthUser() user: UserDto,
     @Param('uid') uid: string,
   ): Promise<ItemDto> {
     try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил площадку ${uid}`,
-      );
-
       return this.itemsService.getItem(uid);
     } catch (e) {
       throw new InternalServerErrorException(e.message);
@@ -72,14 +60,9 @@ export class ItemsController {
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  async saveItemTemplate(@AuthUser() user: UserDto): Promise<ItemDto> {
+  async saveItemTemplate(): Promise<ItemDto> {
     try {
-      const template = await this.itemsService.saveItemTemplate();
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} создал шаблон площадки ${template.uid}`,
-        [HttpStatus.CREATED, 'Created'],
-      );
-      return template;
+      return await this.itemsService.saveItemTemplate();
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

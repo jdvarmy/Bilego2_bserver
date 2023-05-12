@@ -1,6 +1,5 @@
 import {
   ForbiddenException,
-  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -43,15 +42,10 @@ export class AuthService {
       throw new UnauthorizedException(Unauthorized.wrongUserLoginData);
     }
 
-    // Нужно, что бы это был просто объект
-    const userDto = { ...plainToClassResponse(UserDto, user) };
+    const userDto = plainToClassResponse(UserDto, user);
     const tokens = this.tokensService.generateTokens(userDto);
     await this.tokensService.saveToken(user, tokens.refreshToken, { ip });
 
-    this.dataLoggerService.dbLog(
-      `Пользователь ${data?.email} вошел в систему`,
-      [HttpStatus.CREATED, 'Created'],
-    );
     return { user: userDto, ...tokens };
   }
 
