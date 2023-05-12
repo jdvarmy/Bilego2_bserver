@@ -55,4 +55,35 @@ export class UsersUtilsService {
 
     return user;
   }
+
+  async findOneUserById(
+    id: number,
+    relations?: FindOptionsRelations<Users>,
+  ): Promise<Users | null> {
+    return this.findOneUser({ id }, relations);
+  }
+
+  async findOneUserByUid(
+    uid: string,
+    relations?: FindOptionsRelations<Users>,
+  ): Promise<Users | null> {
+    return this.findOneUser({ uid }, relations);
+  }
+
+  async findOneUserByEmail(
+    email: string,
+    relations?: FindOptionsRelations<Users>,
+  ): Promise<Users | null> {
+    return this.findOneUser({ email }, relations);
+  }
+
+  private async findOneUser(
+    where: Record<string, string | number>,
+    relations?: FindOptionsRelations<Users>,
+  ): Promise<Users | null> {
+    return await this.usersRepo.findOne({
+      where,
+      relations,
+    });
+  }
 }
