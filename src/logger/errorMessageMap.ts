@@ -1,9 +1,4 @@
-import {
-  BadRequest,
-  Forbidden,
-  NotFound,
-  Unauthorized,
-} from '../utils/types/exceptionEnums';
+import { Forbidden, Unauthorized } from '../utils/types/exceptionEnums';
 import { HttpStatus } from '@nestjs/common';
 
 const undefinedMessage = 'undefined message';

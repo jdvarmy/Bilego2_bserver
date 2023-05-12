@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { CLIENT_URL, ADMIN_URL, PORT } from './utils/types/constants/env';
 import { NestExpressApplication } from '@nestjs/platform-express';
-// import passport from 'passport';
 
 export const mainDir = __dirname;
 
@@ -24,9 +23,6 @@ async function bootstrap() {
 
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
-    // app.use(passport.initialize());
-    // app.use(passport.session());
 
     await app.listen(port, async () => {
       console.log(`Server start on port ${await app.getUrl()}`);

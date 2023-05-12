@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Scope } from '@nestjs/common';
 import { ApiService } from '../api/api.service';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -11,15 +11,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserAccess, Users } from '../typeorm';
 import { Repository } from 'typeorm';
 import { UserDto } from '../users/dtos/User.dto';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TokensService {
   constructor(
     private readonly apiService: ApiService,
     private readonly jwtService: JwtService,
-    @InjectRepository(Users) private usersRepo: Repository<Users>,
+
+    @Inject(REQUEST) private readonly request: Request,
+
+    @InjectRepository(Users)
+    private readonly usersRepo: Repository<Users>,
+
     @InjectRepository(UserAccess)
-    private userAccessRepo: Repository<UserAccess>,
+    private readonly userAccessRepo: Repository<UserAccess>,
   ) {}
 
   async saveToken(
@@ -28,7 +35,7 @@ export class TokensService {
     meta?: { ip?: string | null },
   ): Promise<UserAccess> {
     const metaIp = '0.0.0.0';
-    const metaDevice = 'desktop';
+    const metaDevice = this.request.get('User-Agent') || 'undefined';
     const userAccess: UserAccess = await this.userAccessRepo
       .createQueryBuilder('userAccess')
       .where('userAccess.user = :id', { id: user.id })

@@ -21,7 +21,6 @@ import { EditTaxonomyDto } from './dtos/EditTaxonomy.dto';
 import { DataLoggerService } from '../logger/data.logger.service';
 import { AuthUser } from '../utils/decorators/AuthUser';
 import { UserDto } from '../users/dtos/User.dto';
-import { compareUid } from '../utils/helpers/compareUid';
 
 @Controller(Routs.taxonomy)
 export class TaxonomyController {
@@ -31,9 +30,7 @@ export class TaxonomyController {
   ) {}
 
   @Get([':link', ':link/:type'])
-  @UseGuards(AccessJwtAuthGuard)
   getTaxonomyListByType(
-    @AuthUser() user: UserDto,
     @Param('link') link: TaxonomyTypeLink,
     @Param('type') type?: TaxonomyType,
     @Query('offset') offset?: number,
@@ -45,10 +42,6 @@ export class TaxonomyController {
       if (filter) {
         props.filter = filter;
       }
-
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил список таксономий`,
-      );
 
       return this.taxonomyService.getTaxonomyList(link, props);
     } catch (e) {
