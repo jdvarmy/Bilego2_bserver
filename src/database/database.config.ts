@@ -8,7 +8,7 @@ import {
   MYSQL_USER,
   NODE_ENV,
 } from '../utils/types/constants/env';
-import entities from '../typeorm';
+import entities from './entity';
 
 export const databaseConfig = {
   type: 'mysql',

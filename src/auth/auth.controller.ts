@@ -9,7 +9,7 @@ import {
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from './servises/auth.service';
 import { CookieTokenName, UserTokens } from '../utils/types/types';
 import { Request, Response } from 'express';
 import { LoginDto } from '../users/dtos/Login.dto';

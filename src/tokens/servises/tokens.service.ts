@@ -1,16 +1,16 @@
 import { ForbiddenException, Inject, Injectable, Scope } from '@nestjs/common';
-import { ApiService } from '../api/api.service';
+import { ApiService } from '../../api/api.service';
 import { JwtService } from '@nestjs/jwt';
 import {
   JWT_ACCESS_EXPIRES,
   JWT_ACCESS_SECRET,
   JWT_REFRESH_EXPIRES,
   JWT_REFRESH_SECRET,
-} from '../utils/types/constants/env';
+} from '../../utils/types/constants/env';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserAccess, Users } from '../typeorm';
+import { UserAccess, Users } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { UserDto } from '../users/dtos/User.dto';
+import { UserDto } from '../../users/dtos/User.dto';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 

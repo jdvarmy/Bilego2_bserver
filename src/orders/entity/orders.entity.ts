@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderStatus } from '../../utils/types/enums';
-import { Events } from './Events';
-import { Users } from './Users';
-import { OrderItems } from './OrderItems';
+import { Events } from '../../events/entity/events.entity';
+import { Users } from '../../users/entity/users.entity';
+import { OrderItems } from './order-items.entity';
 
 @Entity()
 export class Orders {

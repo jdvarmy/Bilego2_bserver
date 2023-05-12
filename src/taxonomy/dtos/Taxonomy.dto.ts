@@ -1,5 +1,5 @@
 import { MediaType } from '../../utils/types/types';
-import { Taxonomy } from '../../typeorm';
+import { Taxonomy } from '../../database/entity';
 import { TaxonomyType, TaxonomyTypeLink } from '../../utils/types/enums';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';

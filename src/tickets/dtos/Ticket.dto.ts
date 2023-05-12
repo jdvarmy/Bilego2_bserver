@@ -1,7 +1,7 @@
 import { TicketType } from '../../utils/types/enums';
 import { TicketSellDto } from './TicketSell.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
-import { Tickets } from '../../typeorm';
+import { Tickets } from '../../database/entity';
 
 export class TicketDto {
   uid: string;

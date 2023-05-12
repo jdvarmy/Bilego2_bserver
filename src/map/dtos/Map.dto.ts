@@ -1,4 +1,4 @@
-import { Maps } from '../../typeorm';
+import { Maps } from '../../database/entity';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 

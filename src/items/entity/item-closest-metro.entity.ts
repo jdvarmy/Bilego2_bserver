@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Items } from './Items';
+import { Items } from './items.entity';
 
 @Entity()
 export class ItemClosestMetro {

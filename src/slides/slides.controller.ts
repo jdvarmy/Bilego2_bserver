@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { SlidesService } from './slides.service';
+import { SlidesService } from './servises/slides.service';
 import { City, Routs } from '../utils/types/enums';
 
 @Controller(Routs.slides)

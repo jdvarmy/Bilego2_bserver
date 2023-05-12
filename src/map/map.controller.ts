@@ -15,8 +15,8 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Exception500, Routs } from '../utils/types/enums';
 import { AuthUser } from '../utils/decorators/AuthUser';
 import { UserDto } from '../users/dtos/User.dto';
-import { DataLoggerService } from '../logger/data.logger.service';
-import { Maps } from '../typeorm';
+import { DataLoggerService } from '../logger/servises/data.logger.service';
+import { Maps } from '../database/entity';
 
 @Controller(Routs.map)
 export class MapController {

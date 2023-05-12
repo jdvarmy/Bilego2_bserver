@@ -1,8 +1,8 @@
 import { Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
-import { AbstractPost } from './AbstractPost';
-import { Events } from './Events';
-import { SEO } from './SEO';
-import { Media } from './Media';
+import { AbstractPost } from '../../database/entity/abstract-post.entity';
+import { Events } from '../../events/entity/events.entity';
+import { SEO } from '../../database/entity/seo.entity';
+import { Media } from '../../medialibrary/entity/media.entity';
 
 @Entity()
 export class Artists extends AbstractPost {

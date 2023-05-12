@@ -6,12 +6,12 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { AbstractPost } from './AbstractPost';
-import { SEO } from './SEO';
-import { Taxonomy } from './Taxonomy';
-import { ItemClosestMetro } from './ItemClosestMetro';
-import { Media } from './Media';
-import { Events } from './Events';
+import { AbstractPost } from '../../database/entity/abstract-post.entity';
+import { SEO } from '../../database/entity/seo.entity';
+import { Taxonomy } from '../../taxonomy/entity/taxonomy.entity';
+import { ItemClosestMetro } from './item-closest-metro.entity';
+import { Media } from '../../medialibrary/entity/media.entity';
+import { Events } from '../../events/entity/events.entity';
 import { City } from '../../utils/types/enums';
 
 @Entity()

@@ -1,5 +1,5 @@
 import { TicketType } from '../../utils/types/enums';
-import { EventDates } from '../../typeorm';
+import { EventDates } from '../../database/entity';
 import { MapDto } from '../../map/dtos/Map.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 

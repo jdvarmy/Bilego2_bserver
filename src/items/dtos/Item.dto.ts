@@ -1,4 +1,4 @@
-import { Items } from '../../typeorm';
+import { Items } from '../../database/entity';
 import { City, PostStatus } from '../../utils/types/enums';
 import { EventTaxonomyDto } from '../../events/dtos/EventTaxonomy.dto';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';

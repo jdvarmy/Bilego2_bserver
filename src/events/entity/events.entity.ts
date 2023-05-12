@@ -7,16 +7,16 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Artists } from './Artists';
-import { AbstractPost } from './AbstractPost';
-import { EventDates } from './EventDates';
-import { SEO } from './SEO';
-import { Taxonomy } from './Taxonomy';
-import { Orders } from './Orders';
+import { Artists } from '../../artists/entity/artists.entity';
+import { AbstractPost } from '../../database/entity/abstract-post.entity';
+import { EventDates } from './event-dates.entity';
+import { SEO } from '../../database/entity/seo.entity';
+import { Taxonomy } from '../../taxonomy/entity/taxonomy.entity';
+import { Orders } from '../../orders/entity/orders.entity';
 import { City, EventHeaderType } from '../../utils/types/enums';
-import { Users } from './Users';
-import { Media } from './Media';
-import { Items } from './Items';
+import { Users } from '../../users/entity/users.entity';
+import { Media } from '../../medialibrary/entity/media.entity';
+import { Items } from '../../items/entity/items.entity';
 
 @Entity()
 export class Events extends AbstractPost {

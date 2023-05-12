@@ -10,7 +10,7 @@ import { Request, Response } from 'express';
 import * as fs from 'fs';
 import { isHttpExceptionResponse } from '../types/tsGuards';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggerEntries } from '../../typeorm';
+import { LoggerEntries } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { LoggerMessageType } from '../types/enums';
 import { errorMessageMap } from '../../logger/errorMessageMap';

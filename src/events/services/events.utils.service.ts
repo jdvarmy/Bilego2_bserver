@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
-import { Artists, EventDates, Events } from '../../typeorm';
+import { Artists, EventDates, Events } from '../../database/entity';
 import { Exception500 } from '../../utils/types/enums';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';

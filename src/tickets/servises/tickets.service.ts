@@ -1,12 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { SaveTicketDto } from './dtos/SaveTicket.dto';
+import { SaveTicketDto } from '../dtos/SaveTicket.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventDates, Tickets, TicketsSell } from '../typeorm';
+import { EventDates, Tickets, TicketsSell } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { TicketDto } from './dtos/Ticket.dto';
-import { Exception500 } from '../utils/types/enums';
-import { TicketSellDto } from './dtos/TicketSell.dto';
-import { EventsUtilsService } from '../events/services/events.utils.service';
+import { TicketDto } from '../dtos/Ticket.dto';
+import { Exception500 } from '../../utils/types/enums';
+import { TicketSellDto } from '../dtos/TicketSell.dto';
+import { EventsUtilsService } from '../../events/services/events.utils.service';
 
 @Injectable()
 export class TicketsService {

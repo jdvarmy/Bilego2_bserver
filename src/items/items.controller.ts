@@ -19,7 +19,7 @@ import { compareUid } from '../utils/helpers/compareUid';
 import { SaveItemDto } from './dtos/SaveItem.dto';
 import { AuthUser } from '../utils/decorators/AuthUser';
 import { UserDto } from '../users/dtos/User.dto';
-import { DataLoggerService } from '../logger/data.logger.service';
+import { DataLoggerService } from '../logger/servises/data.logger.service';
 
 @Controller(Routs.items)
 export class ItemsController {

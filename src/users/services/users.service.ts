@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { ApiService } from '../../api/api.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserAccess, Users } from '../../typeorm';
+import { UserAccess, Users } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { SaveUserDto } from '../dtos/SaveUser.dto';
 import { Exception500 } from '../../utils/types/enums';

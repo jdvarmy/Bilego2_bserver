@@ -8,7 +8,7 @@ import { ArtistsService } from './services/artists.service';
 import { ArtistDto } from './dtos/Artist.dto';
 import { Routs } from '../utils/types/enums';
 import { ItemsPageProps, PostOptions } from '../utils/types/types';
-import { DataLoggerService } from '../logger/data.logger.service';
+import { DataLoggerService } from '../logger/servises/data.logger.service';
 import { AuthUser } from '../utils/decorators/AuthUser';
 import { UserDto } from '../users/dtos/User.dto';
 

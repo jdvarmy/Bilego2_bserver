@@ -16,11 +16,11 @@ import { MediaDto } from './dtos/Media.dto';
 import { MedialibraryService } from './services/medialibrary.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Routs } from '../utils/types/enums';
-import { DataLoggerService } from '../logger/data.logger.service';
+import { DataLoggerService } from '../logger/servises/data.logger.service';
 import { AuthUser } from '../utils/decorators/AuthUser';
 import { UserDto } from '../users/dtos/User.dto';
 import { ItemsPageProps, PostOptions } from '../utils/types/types';
-import { Media } from '../typeorm';
+import { Media } from '../database/entity';
 
 @Controller(Routs.media)
 export class MedialibraryController {

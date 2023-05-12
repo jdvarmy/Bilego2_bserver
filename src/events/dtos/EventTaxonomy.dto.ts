@@ -1,4 +1,4 @@
-import { Taxonomy } from '../../typeorm';
+import { Taxonomy } from '../../database/entity';
 import { TaxonomyType } from '../../utils/types/enums';
 
 export class EventTaxonomyDto {

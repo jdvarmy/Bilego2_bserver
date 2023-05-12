@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
-import { LoggerMessageType } from '../utils/types/enums';
+import { LoggerMessageType } from '../../utils/types/enums';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggerEntries } from '../typeorm';
+import { LoggerEntries } from '../../database/entity';
 import { Repository } from 'typeorm';
 
 @Injectable({ scope: Scope.REQUEST })

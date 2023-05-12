@@ -1,4 +1,4 @@
-import { Artists } from '../../typeorm';
+import { Artists } from '../../database/entity';
 import { PostStatus } from '../../utils/types/enums';
 import { MediaDto } from '../../medialibrary/dtos/Media.dto';
 

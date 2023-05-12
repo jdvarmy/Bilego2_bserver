@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ApiModule } from '../api/api.module';
 import { SlidesController } from './slides.controller';
-import { SlidesService } from './slides.service';
+import { SlidesService } from './servises/slides.service';
 import { DataLoggerModule } from '../logger/data.logger.module';
 
 @Module({

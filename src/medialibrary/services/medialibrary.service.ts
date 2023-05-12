@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Media } from '../../typeorm';
+import { Media } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { MediaDto } from '../dtos/Media.dto';
 import { FileService } from '../../file/services/file.service';
 import { FileType } from '../../utils/types/enums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { ItemsPageProps, PostOptions } from '../../utils/types/types';
-import { DatabaseService } from '../../database/database.service';
+import { DatabaseService } from '../../database/servises/database.service';
 
 const scope = 'media';
 

@@ -1,4 +1,4 @@
-import { Users } from '../../typeorm';
+import { Users } from '../../database/entity';
 import { UserEntityRole, UserEntityStatus } from '../../utils/types/enums';
 import { MediaType } from '../../utils/types/types';
 

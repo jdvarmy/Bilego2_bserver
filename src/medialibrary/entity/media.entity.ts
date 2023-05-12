@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Users } from './Users';
-import { Artists } from './Artists';
-import { Items } from './Items';
-import { Events } from './Events';
-import { Maps } from './Maps';
-import { Taxonomy } from './Taxonomy';
+import { Users } from '../../users/entity/users.entity';
+import { Artists } from '../../artists/entity/artists.entity';
+import { Items } from '../../items/entity/items.entity';
+import { Events } from '../../events/entity/events.entity';
+import { Maps } from '../../map/entity/maps.entity';
+import { Taxonomy } from '../../taxonomy/entity/taxonomy.entity';
 
 @Entity()
 export class Media {

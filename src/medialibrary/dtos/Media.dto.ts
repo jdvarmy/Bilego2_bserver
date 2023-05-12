@@ -1,4 +1,4 @@
-import { Media } from '../../typeorm';
+import { Media } from '../../database/entity';
 import { isString } from '../../utils/types/tsGuards';
 
 export class MediaDto {

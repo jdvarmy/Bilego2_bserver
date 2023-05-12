@@ -10,9 +10,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EventDates } from './EventDates';
-import { TicketsSell } from './TicketsSell';
-import { OrderItems } from './OrderItems';
+import { EventDates } from '../../events/entity/event-dates.entity';
+import { TicketsSell } from './tickets-sell.entity';
+import { OrderItems } from '../../orders/entity/order-items.entity';
 import { TicketType } from '../../utils/types/enums';
 
 @Entity()

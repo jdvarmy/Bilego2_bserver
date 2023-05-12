@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Users } from '../../typeorm';
+import { Users } from '../../database/entity';
 
 interface AuthenticatedRequest extends Request {
   user: Users;

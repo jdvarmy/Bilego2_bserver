@@ -6,9 +6,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Events } from './Events';
-import { Maps } from './Maps';
-import { Tickets } from './Tickets';
+import { Events } from './events.entity';
+import { Maps } from '../../map/entity/maps.entity';
+import { Tickets } from '../../tickets/entity/tickets.entity';
 import { TicketType } from '../../utils/types/enums';
 
 @Entity()

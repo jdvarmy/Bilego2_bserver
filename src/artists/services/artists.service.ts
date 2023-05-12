@@ -6,11 +6,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Exception500 } from '../../utils/types/enums';
-import { Artists } from '../../typeorm';
+import { Artists } from '../../database/entity';
 import { ArtistDto } from '../dtos/Artist.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { ItemsPageProps, PostOptions } from '../../utils/types/types';
-import { DatabaseService } from '../../database/database.service';
+import { DatabaseService } from '../../database/servises/database.service';
 import { ArtistsUtilsService } from './artists.utils.service';
 
 const scope = 'artists';

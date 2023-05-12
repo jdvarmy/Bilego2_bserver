@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Items } from '../../typeorm';
+import { Items } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 import { Exception500 } from '../../utils/types/enums';

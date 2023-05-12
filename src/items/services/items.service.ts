@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Items } from '../../typeorm';
+import { Items } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { Exception500 } from '../../utils/types/enums';
 import { ItemDto } from '../dtos/Item.dto';
@@ -12,7 +12,7 @@ import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { v4 as uidv4 } from 'uuid';
 import { SaveItemDto } from '../dtos/SaveItem.dto';
 import { ItemsUtilsService } from './items.utils.service';
-import { DatabaseService } from '../../database/database.service';
+import { DatabaseService } from '../../database/servises/database.service';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 const scope = 'items';

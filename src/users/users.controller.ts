@@ -16,7 +16,7 @@ import { SaveUserDto } from './dtos/SaveUser.dto';
 import { UserDto } from './dtos/User.dto';
 import { Routs, UserEntityRole } from '../utils/types/enums';
 import { AuthUser } from '../utils/decorators/AuthUser';
-import { DataLoggerService } from '../logger/data.logger.service';
+import { DataLoggerService } from '../logger/servises/data.logger.service';
 
 @Controller(Routs.users)
 export class UsersController {

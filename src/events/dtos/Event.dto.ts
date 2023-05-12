@@ -1,4 +1,4 @@
-import { Events } from '../../typeorm';
+import { Events } from '../../database/entity';
 import { City, EventHeaderType, PostStatus } from '../../utils/types/enums';
 import { EventDatesDto } from './EventDates.dto';
 import { EventTaxonomyDto } from './EventTaxonomy.dto';

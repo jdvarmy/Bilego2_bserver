@@ -10,10 +10,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserAccess } from './UserAccess';
-import { Orders } from './Orders';
-import { Media } from './Media';
-import { Events } from './Events';
+import { UserAccess } from './user-access.entity';
+import { Orders } from '../../orders/entity/orders.entity';
+import { Media } from '../../medialibrary/entity/media.entity';
+import { Events } from '../../events/entity/events.entity';
 
 @Entity()
 export class Users {

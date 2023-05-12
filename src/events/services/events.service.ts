@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventDates, Events } from '../../typeorm';
+import { EventDates, Events } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { EventDto } from '../dtos/Event.dto';
 import { v4 as uidv4 } from 'uuid';
@@ -14,7 +14,7 @@ import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { ItemsUtilsService } from '../../items/services/items.utils.service';
 import { EventDatesService } from './eventDates.service';
 import { EventsUtilsService } from './events.utils.service';
-import { DatabaseService } from '../../database/database.service';
+import { DatabaseService } from '../../database/servises/database.service';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { MedialibraryUtilsService } from '../../medialibrary/services/medialibrary.utils.service';
 import { TaxonomyUtilsService } from '../../taxonomy/services/taxonomy.utils.service';

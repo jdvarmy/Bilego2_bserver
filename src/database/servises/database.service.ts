@@ -19,7 +19,7 @@ import {
   Media,
   Session,
   LoggerEntries,
-} from '../typeorm';
+} from '../entity';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 
 @Injectable()

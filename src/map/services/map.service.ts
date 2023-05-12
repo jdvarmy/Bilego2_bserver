@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { MapDto } from '../dtos/Map.dto';
 import { FileService } from '../../file/services/file.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Maps } from '../../typeorm';
+import { Maps } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { Exception500 } from '../../utils/types/enums';
 import { MedialibraryService } from '../../medialibrary/services/medialibrary.service';

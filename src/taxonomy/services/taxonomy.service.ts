@@ -6,13 +6,13 @@ import {
 import { SaveTaxonomyDto } from '../dtos/SaveTaxonomy.dto';
 import { TaxonomyDto } from '../dtos/Taxonomy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Taxonomy } from '../../typeorm';
+import { Taxonomy } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { Exception500, TaxonomyTypeLink } from '../../utils/types/enums';
 import { EditTaxonomyDto } from '../dtos/EditTaxonomy.dto';
 import { v4 as uidv4 } from 'uuid';
 import { ItemsPageProps, PostOptions } from '../../utils/types/types';
-import { DatabaseService } from '../../database/database.service';
+import { DatabaseService } from '../../database/servises/database.service';
 import { TaxonomyUtilsService } from './taxonomy.utils.service';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 

@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaxonomyTypeLink, TaxonomyType } from '../../utils/types/enums';
-import { Events } from './Events';
-import { Items } from './Items';
-import { Media } from './Media';
+import { Events } from '../../events/entity/events.entity';
+import { Items } from '../../items/entity/items.entity';
+import { Media } from '../../medialibrary/entity/media.entity';
 
 @Entity()
 export class Taxonomy {

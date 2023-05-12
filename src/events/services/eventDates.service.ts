@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { v4 as uidv4 } from 'uuid';
-import { EventDates } from '../../typeorm';
+import { EventDates } from '../../database/entity';
 import { EventDatesDto } from '../dtos/EventDates.dto';
 import { EditEventDateDto } from '../dtos/EditEventDate.dto';
 import { Exception500 } from '../../utils/types/enums';

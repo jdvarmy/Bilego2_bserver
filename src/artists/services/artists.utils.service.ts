@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Exception500 } from '../../utils/types/enums';
-import { Artists } from '../../typeorm';
+import { Artists } from '../../database/entity';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';
 
 @Injectable()

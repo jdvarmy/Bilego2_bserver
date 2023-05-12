@@ -1,4 +1,4 @@
-import { TicketsSell } from '../../typeorm';
+import { TicketsSell } from '../../database/entity';
 
 export class TicketSellDto {
   uid: string;

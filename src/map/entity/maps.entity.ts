@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { EventDates } from './EventDates';
-import { Media } from './Media';
+import { EventDates } from '../../events/entity/event-dates.entity';
+import { Media } from '../../medialibrary/entity/media.entity';
 
 @Entity()
 export class Maps {
