@@ -3,22 +3,19 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ApiService } from '../../api/api.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserAccess, Users } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { SaveUserDto } from '../dtos/SaveUser.dto';
+import { SaveUserDto } from '../dtos/save-user.dto';
 import { Exception500 } from '../../utils/types/enums';
-import { UserDto } from '../dtos/User.dto';
+import { UserDto } from '../dtos/user.dto';
 import { UsersUtilsService } from './users.utils.service';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
-import { SearchProps } from '../types/types';
+import { SearchProps } from '../types';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly apiService: ApiService,
-
     @Inject(UsersUtilsService)
     private readonly usersUtilsService: UsersUtilsService,
 

@@ -1,9 +1,9 @@
 import { Events } from '../../database/entity';
 import { City, EventHeaderType, PostStatus } from '../../utils/types/enums';
-import { EventDatesDto } from './EventDates.dto';
-import { EventTaxonomyDto } from './EventTaxonomy.dto';
-import { MediaDto } from '../../medialibrary/dtos/Media.dto';
-import { UserDto } from '../../users/dtos/User.dto';
+import { EventDatesDto } from './event-dates.dto';
+import { EventTaxonomyDto } from './event-taxonomy.dto';
+import { MediaDto } from '../../medialibrary/dtos/media.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 export class EventDto {

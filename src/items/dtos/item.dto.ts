@@ -1,7 +1,7 @@
 import { Items } from '../../database/entity';
 import { City, PostStatus } from '../../utils/types/enums';
-import { EventTaxonomyDto } from '../../events/dtos/EventTaxonomy.dto';
-import { MediaDto } from '../../medialibrary/dtos/Media.dto';
+import { EventTaxonomyDto } from '../../events/dtos/event-taxonomy.dto';
+import { MediaDto } from '../../medialibrary/dtos/media.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 export class ItemDto {

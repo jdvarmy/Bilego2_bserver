@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { TaxonomyDto } from '../dtos/Taxonomy.dto';
+import { TaxonomyDto } from '../dtos/taxonomy.dto';
 import cloneDeep from '../../utils';
 import { Taxonomy } from '../../database/entity';
 import { FindOptionsRelations } from 'typeorm/find-options/FindOptionsRelations';

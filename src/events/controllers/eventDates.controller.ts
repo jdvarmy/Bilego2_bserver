@@ -12,8 +12,8 @@ import {
 import { Routs } from '../../utils/types/enums';
 import { AccessJwtAuthGuard } from '../../auth/jwt/access-jwt-auth-guard.service';
 import { EventDates } from '../../database/entity';
-import { EventDatesDto } from '../dtos/EventDates.dto';
-import { EditEventDateDto } from '../dtos/EditEventDate.dto';
+import { EventDatesDto } from '../dtos/event-dates.dto';
+import { EditEventDateDto } from '../dtos/edit-event-date.dto';
 import { compareUid } from '../../utils/helpers/compareUid';
 import { EventDatesService } from '../services/eventDates.service';
 
@@ -24,31 +24,19 @@ export class EventDatesController {
   @Get(':eventUid/dates')
   @UseGuards(AccessJwtAuthGuard)
   getEventDates(@Param('eventUid') eventUid: string): Promise<EventDates[]> {
-    try {
-      return this.eventDatsService.getEventDates(eventUid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    return this.eventDatsService.getEventDates(eventUid);
   }
 
   @Post(':eventUid/dates')
   @UseGuards(AccessJwtAuthGuard)
   saveEventDate(@Param('eventUid') eventUid: string): Promise<EventDatesDto> {
-    try {
-      return this.eventDatsService.saveTemplateEventDate(eventUid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    return this.eventDatsService.saveTemplateEventDate(eventUid);
   }
 
   @Delete(':eventUid/dates/:uid')
   @UseGuards(AccessJwtAuthGuard)
   deleteEventDate(@Param('uid') uid: string): Promise<EventDatesDto> {
-    try {
-      return this.eventDatsService.deleteEventDate(uid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    return this.eventDatsService.deleteEventDate(uid);
   }
 
   @Put(':eventUid/dates/:uid')
@@ -57,12 +45,8 @@ export class EventDatesController {
     @Param('uid') uid: string,
     @Body() eventDateDto: EditEventDateDto,
   ): Promise<EventDatesDto> {
-    try {
-      compareUid(uid, eventDateDto.uid);
+    compareUid(uid, eventDateDto.uid);
 
-      return this.eventDatsService.editEventDate(eventDateDto);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    return this.eventDatsService.editEventDate(eventDateDto);
   }
 }

@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { v4 as uidv4 } from 'uuid';
 import { EventDates } from '../../database/entity';
-import { EventDatesDto } from '../dtos/EventDates.dto';
-import { EditEventDateDto } from '../dtos/EditEventDate.dto';
+import { EventDatesDto } from '../dtos/event-dates.dto';
+import { EditEventDateDto } from '../dtos/edit-event-date.dto';
 import { Exception500 } from '../../utils/types/enums';
 import { EventsUtilsService } from './events.utils.service';
 import { InjectRepository } from '@nestjs/typeorm';

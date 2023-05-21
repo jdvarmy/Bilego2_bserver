@@ -1,6 +1,6 @@
 import { ArrayNotEmpty, IsArray } from 'class-validator';
-import { TicketDto } from './Ticket.dto';
-import { TicketSellDto } from './TicketSell.dto';
+import { TicketDto } from './ticket.dto';
+import { TicketSellDto } from './ticket-sell.dto';
 
 export class SaveTicketDto {
   @IsArray()

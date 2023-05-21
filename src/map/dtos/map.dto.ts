@@ -1,5 +1,5 @@
 import { Maps } from '../../database/entity';
-import { MediaDto } from '../../medialibrary/dtos/Media.dto';
+import { MediaDto } from '../../medialibrary/dtos/media.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 
 export class MapDto {

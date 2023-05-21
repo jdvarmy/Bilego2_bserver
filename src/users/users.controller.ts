@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
   Param,
   Post,
   Put,
@@ -12,107 +11,51 @@ import {
 } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { UsersService } from './services/users.service';
-import { SaveUserDto } from './dtos/SaveUser.dto';
-import { UserDto } from './dtos/User.dto';
+import { SaveUserDto } from './dtos/save-user.dto';
+import { UserDto } from './dtos/user.dto';
 import { Routs, UserEntityRole } from '../utils/types/enums';
-import { AuthUser } from '../utils/decorators/AuthUser';
-import { DataLoggerService } from '../logger/servises/data.logger.service';
 
 @Controller(Routs.users)
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly dataLoggerService: DataLoggerService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @UseGuards(AccessJwtAuthGuard)
-  public async getUsers(
-    @AuthUser() user: UserDto,
+  getUsers(
     @Query('search') search?: string,
     @Query('role') role?: UserEntityRole,
   ): Promise<UserDto[]> {
-    try {
-      if (search || role) {
-        return this.usersService.searchUsers({ search, role });
-      }
-
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил список пользователей`,
-      );
-
-      return this.usersService.fetchUsers();
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
+    if (search || role) {
+      return this.usersService.searchUsers({ search, role });
     }
+
+    return this.usersService.fetchUsers();
   }
 
   @Get(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  public async getUser(
-    @AuthUser() user: UserDto,
-    @Param('uid') uid: string,
-  ): Promise<UserDto> {
-    try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил данные пользователя`,
-      );
-
-      return this.usersService.getUserData(uid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  getUser(@Param('uid') uid: string): Promise<UserDto> {
+    return this.usersService.getUserData(uid);
   }
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  public async saveUser(
-    @AuthUser() user: UserDto,
-    @Body() userDto: SaveUserDto,
-  ): Promise<UserDto> {
-    try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} добавил нового пользователя`,
-      );
-
-      return this.usersService.saveUserData(userDto);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  saveUser(@Body() userDto: SaveUserDto): Promise<UserDto> {
+    return this.usersService.saveUserData(userDto);
   }
 
   @Put(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  public async saveEditUser(
-    @AuthUser() user: UserDto,
+  saveEditUser(
     @Param('uid') uid: string,
     @Body() userDto: SaveUserDto,
   ): Promise<UserDto> {
-    try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} обновил данные пользователя ${uid}`,
-      );
-
-      return this.usersService.saveUserData(userDto, uid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    return this.usersService.saveUserData(userDto, uid);
   }
 
   @Delete(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  public async removeUser(
-    @AuthUser() user: UserDto,
-    @Param('uid') uid: string,
-  ): Promise<UserDto> {
-    try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} удалил пользователя ${uid}`,
-      );
-
-      return this.usersService.deleteUserData(uid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  public async removeUser(@Param('uid') uid: string): Promise<UserDto> {
+    return this.usersService.deleteUserData(uid);
   }
 }

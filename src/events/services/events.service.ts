@@ -6,10 +6,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventDates, Events } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { EventDto } from '../dtos/Event.dto';
+import { EventDto } from '../dtos/event.dto';
 import { v4 as uidv4 } from 'uuid';
 import { Exception500 } from '../../utils/types/enums';
-import { EditEventDto } from '../dtos/EditEvent.dto';
+import { EditEventDto } from '../dtos/edit-event.dto';
 import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { ItemsUtilsService } from '../../items/services/items.utils.service';
 import { EventDatesService } from './eventDates.service';

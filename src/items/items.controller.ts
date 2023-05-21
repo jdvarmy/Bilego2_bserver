@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  InternalServerErrorException,
   Param,
   Post,
   Put,
@@ -11,22 +10,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ItemsService } from './services/items.service';
-import { ItemDto } from './dtos/Item.dto';
+import { ItemDto } from './dtos/item.dto';
 import { Routs } from '../utils/types/enums';
 import { ItemsPageProps, PostOptions } from '../utils/types/types';
 import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
 import { compareUid } from '../utils/helpers/compareUid';
-import { SaveItemDto } from './dtos/SaveItem.dto';
-import { AuthUser } from '../utils/decorators/AuthUser';
-import { UserDto } from '../users/dtos/User.dto';
-import { DataLoggerService } from '../logger/servises/data.logger.service';
+import { SaveItemDto } from './dtos/save-item.dto';
 
 @Controller(Routs.items)
 export class ItemsController {
-  constructor(
-    private readonly itemsService: ItemsService,
-    private readonly dataLoggerService: DataLoggerService,
-  ) {}
+  constructor(private readonly itemsService: ItemsService) {}
 
   @Get()
   getItemList(
@@ -34,79 +27,38 @@ export class ItemsController {
     @Query('count') count?: number,
     @Query('filter') filter?: Record<string, string>,
   ): Promise<{ items: ItemDto[]; props: ItemsPageProps }> {
-    try {
-      const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
-      if (filter) {
-        props.filter = filter;
-      }
-
-      return this.itemsService.fetchItems(props);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
+    const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
+    if (filter) {
+      props.filter = filter;
     }
+
+    return this.itemsService.fetchItems(props);
   }
 
   @Get(':uid')
-  getItem(
-    @AuthUser() user: UserDto,
-    @Param('uid') uid: string,
-  ): Promise<ItemDto> {
-    try {
-      return this.itemsService.getItem(uid);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  getItem(@Param('uid') uid: string): Promise<ItemDto> {
+    return this.itemsService.getItem(uid);
   }
 
   @Post()
   @UseGuards(AccessJwtAuthGuard)
-  async saveItemTemplate(): Promise<ItemDto> {
-    try {
-      return await this.itemsService.saveItemTemplate();
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  saveItemTemplate(): Promise<ItemDto> {
+    return this.itemsService.saveItemTemplate();
   }
 
   @Put(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  async editItem(
-    @AuthUser() user: UserDto,
+  editItem(
     @Param('uid') uid: string,
     @Body() itemDto: SaveItemDto,
   ): Promise<ItemDto> {
-    try {
-      compareUid(uid, itemDto.uid);
-      const item = await this.itemsService.saveItem(itemDto);
-
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} отредактировал площадку ${item.uid}`,
-      );
-
-      return item;
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    compareUid(uid, itemDto.uid);
+    return this.itemsService.saveItem(itemDto);
   }
 
   @Delete(':uid')
   @UseGuards(AccessJwtAuthGuard)
-  async deleteItem(
-    @AuthUser() user: UserDto,
-    @Param('uid') uid: string,
-  ): Promise<ItemDto> {
-    try {
-      const item = await this.itemsService.deleteItem(uid);
-
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} удалил площадку ${
-          item.title ?? item.uid
-        }`,
-      );
-
-      return item;
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  deleteItem(@Param('uid') uid: string): Promise<ItemDto> {
+    return this.itemsService.deleteItem(uid);
   }
 }

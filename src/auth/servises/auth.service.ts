@@ -4,25 +4,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserTokens } from 'src/utils/types/types';
-import { ApiService } from '../../api/api.service';
 import { TokensService } from '../../tokens/servises/tokens.service';
 import { JWT_REFRESH_SECRET } from '../../utils/types/constants/env';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Users } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { UserDto } from '../../users/dtos/User.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { Forbidden, Unauthorized } from '../../utils/types/exceptionEnums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
-import { LoginUser } from '../../users/types/types';
-import { DataLoggerService } from '../../logger/servises/data.logger.service';
+import { LoginUser } from '../../users/types';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly apiService: ApiService,
     private readonly tokensService: TokensService,
-    private readonly dataLoggerService: DataLoggerService,
 
     @InjectRepository(Users)
     private readonly usersRepo: Repository<Users>,

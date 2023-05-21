@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { MediaDto } from '../dtos/Media.dto';
+import { MediaDto } from '../dtos/media.dto';
 import { FileService } from '../../file/services/file.service';
 import { FileType } from '../../utils/types/enums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';

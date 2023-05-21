@@ -3,13 +3,13 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { SaveTaxonomyDto } from '../dtos/SaveTaxonomy.dto';
-import { TaxonomyDto } from '../dtos/Taxonomy.dto';
+import { SaveTaxonomyDto } from '../dtos/save-taxonomy.dto';
+import { TaxonomyDto } from '../dtos/taxonomy.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Taxonomy } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { Exception500, TaxonomyTypeLink } from '../../utils/types/enums';
-import { EditTaxonomyDto } from '../dtos/EditTaxonomy.dto';
+import { EditTaxonomyDto } from '../dtos/edit-taxonomy.dto';
 import { v4 as uidv4 } from 'uuid';
 import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { DatabaseService } from '../../database/servises/database.service';

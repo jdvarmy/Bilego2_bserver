@@ -5,8 +5,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { SaveEventDto } from './SaveEvent.dto';
-import { EditEventDateDto } from './EditEventDate.dto';
+import { SaveEventDto } from './save-event.dto';
+import { EditEventDateDto } from './edit-event-date.dto';
 
 export class EditEventDto extends SaveEventDto {
   @IsNotEmpty()

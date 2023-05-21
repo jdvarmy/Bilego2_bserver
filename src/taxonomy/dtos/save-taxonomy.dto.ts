@@ -1,4 +1,4 @@
-import { ReqTaxonomyDto } from './ReqTaxonomy.dto';
+import { ReqTaxonomyDto } from './req-taxonomy.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { TaxonomyType, TaxonomyTypeLink } from '../../utils/types/enums';
 

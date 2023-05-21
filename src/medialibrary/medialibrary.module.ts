@@ -4,10 +4,9 @@ import { MedialibraryController } from './medialibrary.controller';
 import { MedialibraryService } from './services/medialibrary.service';
 import { FileModule } from '../file/file.module';
 import { MedialibraryUtilsService } from './services/medialibrary.utils.service';
-import { DataLoggerModule } from '../logger/data.logger.module';
 
 @Module({
-  imports: [DatabaseModule, FileModule, DataLoggerModule],
+  imports: [DatabaseModule, FileModule],
   controllers: [MedialibraryController],
   providers: [MedialibraryService, MedialibraryUtilsService],
   exports: [MedialibraryService, MedialibraryUtilsService],

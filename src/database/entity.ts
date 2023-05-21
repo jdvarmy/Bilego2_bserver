@@ -13,8 +13,6 @@ import { Taxonomy } from '../taxonomy/entity/taxonomy.entity';
 import { Orders } from '../orders/entity/orders.entity';
 import { OrderItems } from '../orders/entity/order-items.entity';
 import { Media } from '../medialibrary/entity/media.entity';
-import { Session } from './entity/session.entity';
-import { LoggerEntries } from '../logger/entity/logger-entries.entity';
 
 export {
   Users,
@@ -32,8 +30,6 @@ export {
   Orders,
   OrderItems,
   Media,
-  Session,
-  LoggerEntries,
 };
 
 const entities = [
@@ -52,8 +48,6 @@ const entities = [
   Orders,
   OrderItems,
   Media,
-  Session,
-  LoggerEntries,
 ];
 
 export default entities;

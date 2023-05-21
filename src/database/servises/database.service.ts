@@ -17,8 +17,6 @@ import {
   UserAccess,
   Users,
   Media,
-  Session,
-  LoggerEntries,
 } from '../entity';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 
@@ -35,8 +33,6 @@ export class DatabaseService {
     private readonly itemsRepo: Repository<Items>,
     @InjectRepository(ItemClosestMetro)
     private readonly itemClosestMetroRepo: Repository<ItemClosestMetro>,
-    @InjectRepository(LoggerEntries)
-    private readonly loggerEntriesRepo: Repository<LoggerEntries>,
     @InjectRepository(Maps)
     private readonly mapsRepo: Repository<Maps>,
     @InjectRepository(Media)
@@ -47,8 +43,6 @@ export class DatabaseService {
     private readonly orderItemsRepo: Repository<OrderItems>,
     @InjectRepository(SEO)
     private readonly seoRepo: Repository<SEO>,
-    @InjectRepository(Session)
-    private readonly sessionRepo: Repository<Session>,
     @InjectRepository(Taxonomy)
     private readonly taxonomyRepo: Repository<Taxonomy>,
     @InjectRepository(Tickets)

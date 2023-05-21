@@ -2,8 +2,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
-  InternalServerErrorException,
   Param,
   Post,
   Query,
@@ -12,80 +10,38 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AccessJwtAuthGuard } from '../auth/jwt/access-jwt-auth-guard.service';
-import { MediaDto } from './dtos/Media.dto';
+import { MediaDto } from './dtos/media.dto';
 import { MedialibraryService } from './services/medialibrary.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Routs } from '../utils/types/enums';
-import { DataLoggerService } from '../logger/servises/data.logger.service';
-import { AuthUser } from '../utils/decorators/AuthUser';
-import { UserDto } from '../users/dtos/User.dto';
 import { ItemsPageProps, PostOptions } from '../utils/types/types';
 import { Media } from '../database/entity';
 
 @Controller(Routs.media)
 export class MedialibraryController {
-  constructor(
-    private readonly medialibraryService: MedialibraryService,
-    private readonly dataLoggerService: DataLoggerService,
-  ) {}
+  constructor(private readonly medialibraryService: MedialibraryService) {}
 
   @Get()
   @UseGuards(AccessJwtAuthGuard)
   getMedia(
-    @AuthUser() user: UserDto,
     @Query('offset') offset?: number,
     @Query('count') count?: number,
   ): Promise<{ items: MediaDto[]; props: ItemsPageProps }> {
-    try {
-      const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
+    const props: PostOptions = { offset: offset ?? 0, count: count ?? 20 };
 
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} запросил список media`,
-      );
-
-      return this.medialibraryService.fetchMedia(props);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+    return this.medialibraryService.fetchMedia(props);
   }
 
   @Post('upload')
   @UseGuards(AccessJwtAuthGuard)
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images[]', maxCount: 10 }]))
-  async insertMedia(
-    @AuthUser() user: UserDto,
-    @UploadedFiles() files: Express.Multer.File[],
-  ): Promise<boolean> {
-    try {
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} добавил новые media`,
-        [HttpStatus.CREATED, 'Created'],
-      );
-
-      return this.medialibraryService.insertMediaData(files['images[]']);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  insertMedia(@UploadedFiles() files: Express.Multer.File[]): Promise<boolean> {
+    return this.medialibraryService.insertMediaData(files['images[]']);
   }
 
   @Delete(':id')
   @UseGuards(AccessJwtAuthGuard)
-  async removeMedia(
-    @AuthUser() user: UserDto,
-    @Param('id') id: number,
-  ): Promise<Media> {
-    try {
-      const media = await this.medialibraryService.deleteMediaData(id);
-
-      this.dataLoggerService.dbLog(
-        `User ${user.email ?? user.uid} удалил media ${
-          media.originalName ?? media.name ?? media.id
-        }`,
-      );
-
-      return media;
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
+  removeMedia(@Param('id') id: number): Promise<Media> {
+    return this.medialibraryService.deleteMediaData(id);
   }
 }

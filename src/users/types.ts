@@ -1,4 +1,4 @@
-import { UserEntityRole } from '../../utils/types/enums';
+import { UserEntityRole } from '../utils/types/enums';
 
 export type SearchProps = {
   search?: string;

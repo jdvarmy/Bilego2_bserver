@@ -9,7 +9,6 @@ export const Routs = {
   items: Version._1 + 'items',
   map: Version._1 + 'map',
   media: Version._1 + 'media',
-  slides: Version._1 + 'slides',
   taxonomy: Version._1 + 'taxonomy',
   tickets: Version._1 + 'tickets',
   users: Version._1 + 'users',

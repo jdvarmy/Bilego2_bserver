@@ -1,23 +1,14 @@
-import {
-  Controller,
-  Get,
-  InternalServerErrorException,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ArtistsService } from './services/artists.service';
-import { ArtistDto } from './dtos/Artist.dto';
+import { ArtistDto } from './dtos/artist.dto';
 import { Routs } from '../utils/types/enums';
 import { ItemsPageProps, PostOptions } from '../utils/types/types';
-import { DataLoggerService } from '../logger/servises/data.logger.service';
 import { AuthUser } from '../utils/decorators/AuthUser';
-import { UserDto } from '../users/dtos/User.dto';
+import { UserDto } from '../users/dtos/user.dto';
 
 @Controller(Routs.artists)
 export class ArtistsController {
-  constructor(
-    private readonly artistsService: ArtistsService,
-    private readonly dataLoggerService: DataLoggerService,
-  ) {}
+  constructor(private readonly artistsService: ArtistsService) {}
 
   @Get()
   getArtistList(
@@ -26,18 +17,14 @@ export class ArtistsController {
     @Query('count') count?: number,
     @Query('filter') filter?: Record<string, string>,
   ): Promise<{ items: ArtistDto[]; props: ItemsPageProps }> {
-    try {
-      const props: PostOptions = {
-        offset: offset ?? 0,
-        count: count ?? 20,
-      };
-      if (filter) {
-        props.filter = filter;
-      }
-
-      return this.artistsService.fetchArtists(props);
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
+    const props: PostOptions = {
+      offset: offset ?? 0,
+      count: count ?? 20,
+    };
+    if (filter) {
+      props.filter = filter;
     }
+
+    return this.artistsService.fetchArtists(props);
   }
 }

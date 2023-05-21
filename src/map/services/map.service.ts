@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { MapDto } from '../dtos/Map.dto';
+import { MapDto } from '../dtos/map.dto';
 import { FileService } from '../../file/services/file.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Maps } from '../../database/entity';

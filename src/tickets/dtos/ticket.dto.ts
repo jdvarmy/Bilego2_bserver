@@ -1,5 +1,5 @@
 import { TicketType } from '../../utils/types/enums';
-import { TicketSellDto } from './TicketSell.dto';
+import { TicketSellDto } from './ticket-sell.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { Tickets } from '../../database/entity';
 

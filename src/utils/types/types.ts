@@ -1,4 +1,4 @@
-import { UserDto } from '../../users/dtos/User.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { City, PostStatus } from './enums';
 import { HttpStatus } from '@nestjs/common';
 import { IncomingHttpHeaders } from 'http';

@@ -1,5 +1,4 @@
 import { ForbiddenException, Inject, Injectable, Scope } from '@nestjs/common';
-import { ApiService } from '../../api/api.service';
 import { JwtService } from '@nestjs/jwt';
 import {
   JWT_ACCESS_EXPIRES,
@@ -10,14 +9,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserAccess, Users } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { UserDto } from '../../users/dtos/User.dto';
+import { UserDto } from '../../users/dtos/user.dto';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TokensService {
   constructor(
-    private readonly apiService: ApiService,
     private readonly jwtService: JwtService,
 
     @Inject(REQUEST) private readonly request: Request,

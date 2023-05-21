@@ -4,7 +4,7 @@ import { Media, Users } from '../../database/entity';
 import { Exception500 } from '../../utils/types/enums';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SaveUserDto } from '../dtos/SaveUser.dto';
+import { SaveUserDto } from '../dtos/save-user.dto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uidv4 } from 'uuid';
 

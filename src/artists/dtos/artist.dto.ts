@@ -1,6 +1,6 @@
 import { Artists } from '../../database/entity';
 import { PostStatus } from '../../utils/types/enums';
-import { MediaDto } from '../../medialibrary/dtos/Media.dto';
+import { MediaDto } from '../../medialibrary/dtos/media.dto';
 
 export class ArtistDto {
   uid: string;

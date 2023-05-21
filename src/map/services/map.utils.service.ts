@@ -6,7 +6,10 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class MapUtilsService {
-  constructor(@InjectRepository(Maps) private mapRepo: Repository<Maps>) {}
+  constructor(
+    @InjectRepository(Maps)
+    private readonly mapRepo: Repository<Maps>,
+  ) {}
 
   async getMapByUid(uid: string): Promise<Maps> {
     const map = await this.mapRepo.findOne({

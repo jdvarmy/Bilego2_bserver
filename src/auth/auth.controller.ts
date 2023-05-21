@@ -1,18 +1,8 @@
-import {
-  Body,
-  Controller,
-  ForbiddenException,
-  Get,
-  InternalServerErrorException,
-  Post,
-  Req,
-  Res,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './servises/auth.service';
 import { CookieTokenName, UserTokens } from '../utils/types/types';
 import { Request, Response } from 'express';
-import { LoginDto } from '../users/dtos/Login.dto';
+import { LoginDto } from '../users/dtos/login.dto';
 import { setCookieRefreshToken } from '../utils';
 import { Routs } from '../utils/types/enums';
 
@@ -26,22 +16,14 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<Omit<UserTokens, 'refreshToken'>> {
-    try {
-      const { refreshToken, ...data } = await this.authService.login({
-        ...loginDto,
-        ip: req.ip,
-      });
+    const { refreshToken, ...data } = await this.authService.login({
+      ...loginDto,
+      ip: req.ip,
+    });
 
-      setCookieRefreshToken(response, refreshToken);
+    setCookieRefreshToken(response, refreshToken);
 
-      return data;
-    } catch (e) {
-      const message = 'getResponse' in e ? e.getResponse().message : e.message;
-      if (e instanceof UnauthorizedException) {
-        throw new UnauthorizedException(message);
-      }
-      throw new InternalServerErrorException(message);
-    }
+    return data;
   }
 
   @Post('logout')
@@ -49,18 +31,13 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<boolean> {
-    try {
-      res.clearCookie(CookieTokenName);
+    res.clearCookie(CookieTokenName);
 
-      if (req?.cookies?.refreshToken) {
-        return this.authService.logout(req.cookies.refreshToken);
-      }
-
-      return true;
-    } catch (e) {
-      const message = 'getResponse' in e ? e.getResponse().message : e.message;
-      throw new InternalServerErrorException(message);
+    if (req?.cookies?.refreshToken) {
+      return this.authService.logout(req.cookies.refreshToken);
     }
+
+    return true;
   }
 
   @Get('refresh')
@@ -68,22 +45,14 @@ export class AuthController {
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<Omit<UserTokens, 'refreshToken'>> {
-    try {
-      const { refreshToken } = request.cookies;
+    const { refreshToken } = request.cookies;
 
-      const { refreshToken: refresh, ...data } = await this.authService.refresh(
-        refreshToken,
-      );
+    const { refreshToken: refresh, ...data } = await this.authService.refresh(
+      refreshToken,
+    );
 
-      setCookieRefreshToken(response, refresh);
+    setCookieRefreshToken(response, refresh);
 
-      return data;
-    } catch (e) {
-      const message = 'getResponse' in e ? e.getResponse().message : e.message;
-      if (e instanceof ForbiddenException) {
-        throw new ForbiddenException(message);
-      }
-      throw new InternalServerErrorException(message);
-    }
+    return data;
   }
 }

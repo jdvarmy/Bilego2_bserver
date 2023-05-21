@@ -1,20 +1,23 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { SaveTicketDto } from '../dtos/SaveTicket.dto';
+import { SaveTicketDto } from '../dtos/save-ticket.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventDates, Tickets, TicketsSell } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { TicketDto } from '../dtos/Ticket.dto';
+import { TicketDto } from '../dtos/ticket.dto';
 import { Exception500 } from '../../utils/types/enums';
-import { TicketSellDto } from '../dtos/TicketSell.dto';
+import { TicketSellDto } from '../dtos/ticket-sell.dto';
 import { EventsUtilsService } from '../../events/services/events.utils.service';
 
 @Injectable()
 export class TicketsService {
   constructor(
     private readonly eventsUtilsService: EventsUtilsService,
-    @InjectRepository(Tickets) private ticketsRepo: Repository<Tickets>,
+
+    @InjectRepository(Tickets)
+    private readonly ticketsRepo: Repository<Tickets>,
+
     @InjectRepository(TicketsSell)
-    private ticketsSellRepo: Repository<TicketsSell>,
+    private readonly ticketsSellRepo: Repository<TicketsSell>,
   ) {}
 
   async getTickets(dateUid: string): Promise<TicketDto[]> {
