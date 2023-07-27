@@ -63,7 +63,18 @@ export class DatabaseService {
     return Object.entries(filter).forEach(([key, value]) => {
       const clearKey = key.replace(/[^a-zA-Z0-9]/g, '');
 
-      if (typeof value === 'string') {
+      if (
+        (typeof value === 'string' && ['true', 'false'].includes(value)) ||
+        typeof value === 'boolean'
+      ) {
+        builder.andWhere(
+          `lower(${tableName}.${clearKey}) = lower(:${clearKey})`,
+          {
+            [clearKey]:
+              typeof value === 'boolean' ? +value : value === 'true' ? 1 : 0,
+          },
+        );
+      } else if (typeof value === 'string') {
         builder.andWhere(
           `lower(${tableName}.${clearKey}) LIKE lower(:${clearKey})`,
           {

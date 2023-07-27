@@ -11,6 +11,7 @@ export class FileUtilsService {
     const date = new Date();
     const datePath = `${date.getFullYear()}-${date.getMonth() + 1}`;
 
+    // todo: поменять на path.resolve и проверить
     const relativePath = datePath + '/' + type;
     const absolutePath = path.resolve(
       mainDir,

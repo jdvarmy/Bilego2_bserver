@@ -20,7 +20,7 @@ export const databaseConfig = {
   entities: entities,
   synchronize: NODE_ENV === 'development',
   migrationsRun: false,
-  logging: true,
+  // logging: NODE_ENV === 'development',
   migrationsTableName: 'migration',
   migrations: [__dirname + '/migration/**/*.ts'],
   subscribers: [],

@@ -80,10 +80,6 @@ export class EventsService {
 
     const events = await query.getMany();
 
-    if (!events) {
-      throw new InternalServerErrorException(Exception500.findEvents);
-    }
-
     return {
       items: plainToClassResponse(EventDto, events),
       props: {

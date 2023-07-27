@@ -39,7 +39,7 @@ export type PostOptions = {
   city?: City;
   search?: string;
   status?: PostStatus;
-  filter?: Record<string, string>;
+  filter?: Record<string, string | boolean | number>;
   offset: number;
   count: number;
 };
