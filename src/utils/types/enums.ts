@@ -12,7 +12,7 @@ export const Routs = {
   taxonomy: Version._1 + 'taxonomy',
   tickets: Version._1 + 'tickets',
   users: Version._1 + 'users',
-  city: Version._1 + 'city',
+  slider: Version._1 + 'slider',
 };
 
 export enum PostStatus {
@@ -124,9 +124,9 @@ export enum FileType {
 
 export enum ImageSizes {
   origin = 'origin',
-  xs = '200x278',
-  // s = '430x366',
-  // m = '660x470',
+  // xs = '200x278',
+  s = '430x366',
+  m = '660x470',
   // l = '1340x560',
   xl = '1920x1080',
 }

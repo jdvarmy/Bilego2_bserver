@@ -30,7 +30,7 @@ import { PassportModule } from '@nestjs/passport';
 import { HttpsRedirectMiddleware } from './utils/middleware/https.redirect.middleware';
 import { S3Module } from 'nestjs-s3';
 import { databaseConfig } from './database/database.config';
-import { CityModule } from './city/city.module';
+import { SliderModule } from './slider/slider.module';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -65,7 +65,7 @@ if (NODE_ENV === 'production') envFilePath = '.env';
     MedialibraryModule,
     MapModule,
     FileModule,
-    CityModule,
+    SliderModule,
   ],
   controllers: [AppController],
   providers: [AppService],

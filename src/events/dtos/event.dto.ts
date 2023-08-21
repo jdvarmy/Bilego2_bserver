@@ -5,6 +5,7 @@ import { EventTaxonomyDto } from './event-taxonomy.dto';
 import { MediaDto } from '../../medialibrary/dtos/media.dto';
 import { UserDto } from '../../users/dtos/user.dto';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
+import { ItemDto } from '../../items/dtos/item.dto';
 
 export class EventDto {
   uid: string;
@@ -15,7 +16,7 @@ export class EventDto {
   create: Date;
   update?: Date;
   artist?: any;
-  item?: any;
+  item?: ItemDto;
   city?: City;
   seo?: any;
   taxonomy?: EventTaxonomyDto[];
@@ -46,7 +47,9 @@ export class EventDto {
     this.update = event.updateDateTime;
     this.seo = event.seo;
     this.artist = event.artist;
-    this.item = event.item;
+    this.item = event.item
+      ? plainToClassResponse(ItemDto, event.item)
+      : undefined;
     this.city = event.city;
     this.eventManager = event.eventManager
       ? new UserDto(event.eventManager)
@@ -68,7 +71,7 @@ export class EventDto {
     this.videoLink = event.videoLink;
     this.headerType = event.headerType;
     this.headerImage = event.headerImage
-      ? new MediaDto(event.headerImage, true)
+      ? plainToClassResponse(MediaDto, event.headerImage, true)
       : undefined;
     this.headerMedia = event.headerMedia;
     this.headerText = event.headerText;

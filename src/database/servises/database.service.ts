@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Brackets, Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   EventDates,
@@ -19,6 +19,10 @@ import {
   Media,
 } from '../entity';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
+import { PostStatus } from '../../utils/types/enums';
+
+const eventScope = 'events';
+const eventDateScope = 'dates';
 
 @Injectable()
 export class DatabaseService {
@@ -55,7 +59,7 @@ export class DatabaseService {
     private readonly userAccessRepo: Repository<UserAccess>,
   ) {}
 
-  andWhereFilterCondition<T>(
+  public andWhereFilterCondition<T>(
     builder: SelectQueryBuilder<T>,
     filter: FindOptionsWhere<T>,
     tableName: string,
@@ -89,7 +93,32 @@ export class DatabaseService {
     });
   }
 
-  async getTotal<T>(
+  public andWhereFutureEvents<T>(builder: SelectQueryBuilder<T>) {
+    const currentTimestamp = new Date().getTime();
+
+    builder
+      .andWhere(`${eventDateScope}.dateTo IS NOT NULL`)
+      .andWhere(
+        `UNIX_TIMESTAMP(${eventDateScope}.dateTo) * 1000 > ${currentTimestamp}`,
+      )
+      .andWhere(
+        new Brackets((builder1) => {
+          builder1
+            .where(`${eventDateScope}.closeDateTime IS NULL`)
+            .orWhere(
+              `UNIX_TIMESTAMP(${eventDateScope}.closeDateTime) * 1000 > ${currentTimestamp}`,
+            );
+        }),
+      );
+  }
+
+  public andWherePublishEvents<T>(builder: SelectQueryBuilder<T>) {
+    builder.andWhere(`${eventScope}.status = :status`, {
+      status: PostStatus.publish,
+    });
+  }
+
+  public async getTotal<T>(
     params: FindOptionsWhere<T> | undefined,
     scope: string,
   ): Promise<number> {

@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../database/database.module';
 import { MedialibraryModule } from '../medialibrary/medialibrary.module';
-import { CityController } from './city.controller';
-import { CityService } from './city.service';
+import { SliderController } from './slider.controller';
+import { SliderService } from './slider.service';
 
 @Module({
   imports: [DatabaseModule, MedialibraryModule],
-  controllers: [CityController],
-  providers: [CityService],
+  controllers: [SliderController],
+  providers: [SliderService],
   exports: [],
 })
-export class CityModule {}
+export class SliderModule {}
