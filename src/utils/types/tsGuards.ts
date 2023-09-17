@@ -1,4 +1,5 @@
 import { HttpExceptionResponse } from './types';
+import { CityShort } from './enums';
 
 export function isObject(value: unknown): value is object {
   return typeof value === 'object' && value !== null;
@@ -6,6 +7,12 @@ export function isObject(value: unknown): value is object {
 
 export function isString(value: unknown): value is string {
   return value && typeof value === 'string';
+}
+
+export function isCityShortEnum(value: unknown): value is CityShort {
+  return (
+    isString(value) && Object.values(CityShort).includes(value as CityShort)
+  );
 }
 
 export function isHttpExceptionResponse(

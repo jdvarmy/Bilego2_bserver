@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseService } from '../database/servises/database.service';
-import { MedialibraryUtilsService } from '../medialibrary/services/medialibrary.utils.service';
-import { PostOptions } from '../utils/types/types';
-import { plainToClassResponse } from '../utils/helpers/plainToClassResponse';
-import { EventDates, Events } from '../database/entity';
+import { DatabaseService } from '../../database/servises/database.service';
+import { MedialibraryUtilsService } from '../../medialibrary/services/medialibrary.utils.service';
+import { PostOptions } from '../../utils/types/types';
+import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
+import { EventDates, Events } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { SliderDto } from './dtos/slider.dto';
+import { SliderDto } from '../dtos/slider.dto';
 
 const eventScope = 'events';
 const itemScope = 'items';

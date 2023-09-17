@@ -1,14 +1,9 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventDates, Events } from '../../database/entity';
 import { Repository } from 'typeorm';
 import { EventDto } from '../dtos/event.dto';
 import { v4 as uidv4 } from 'uuid';
-import { Exception500 } from '../../utils/types/enums';
 import { EditEventDto } from '../dtos/edit-event.dto';
 import { ItemsPageProps, PostOptions } from '../../utils/types/types';
 import { ItemsUtilsService } from '../../items/services/items.utils.service';
@@ -19,6 +14,7 @@ import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
 import { MedialibraryUtilsService } from '../../medialibrary/services/medialibrary.utils.service';
 import { TaxonomyUtilsService } from '../../taxonomy/services/taxonomy.utils.service';
 import { UsersUtilsService } from '../../users/services/users.utils.service';
+import { isNumber } from 'class-validator';
 
 const scope = 'events';
 
@@ -44,7 +40,9 @@ export class EventsService {
     private readonly eventDatesRepo: Repository<EventDates>,
   ) {}
 
-  async fetchEvents(
+  // SERVER SCOPE
+
+  public async fetchEvents(
     options: PostOptions,
   ): Promise<{ items: EventDto[]; props: ItemsPageProps }> {
     const query = await this.eventsRepo
@@ -88,7 +86,7 @@ export class EventsService {
     };
   }
 
-  async getEvent(uid: string) {
+  public async getEvent(uid: string): Promise<EventDto> {
     const event = await this.eventsUtilsService.getEventByUid(uid, {
       item: true,
       artist: true,
@@ -102,7 +100,7 @@ export class EventsService {
     return plainToClassResponse(EventDto, event);
   }
 
-  async saveEventTemplate(): Promise<EventDto> {
+  public async saveEventTemplate(): Promise<EventDto> {
     const uid = uidv4();
 
     const event = this.eventsRepo.create({
@@ -119,7 +117,7 @@ export class EventsService {
     );
   }
 
-  async saveEvent(data: EditEventDto): Promise<EventDto> {
+  public async saveEvent(data: EditEventDto): Promise<EventDto> {
     const {
       uid,
       taxonomy,
@@ -179,11 +177,20 @@ export class EventsService {
         const eventDateFromDb = await this.eventsUtilsService.getEventDateByUid(
           dateUid,
         );
-        const eventDate = this.eventDatesRepo.create(eventDateData);
-        this.eventDatesRepo.save({
-          ...eventDateFromDb,
-          ...eventDate,
+
+        const eventDate = this.eventDatesRepo.create({
+          ...eventDateData,
+          dateFrom: isNumber(eventDateData.dateFrom)
+            ? new Date(eventDateData.dateFrom)
+            : eventDateData.dateFrom,
+          dateTo: isNumber(eventDateData.dateTo)
+            ? new Date(eventDateData.dateTo)
+            : eventDateData.dateTo,
+          closeDateTime: isNumber(eventDateData.closeDateTime)
+            ? new Date(eventDateData.closeDateTime)
+            : eventDateData.closeDateTime,
         });
+        await this.eventDatesRepo.save({ ...eventDateFromDb, ...eventDate });
       }
     }
 
@@ -197,10 +204,65 @@ export class EventsService {
     return this.getEvent(uid);
   }
 
-  async deleteEvent(uid: string): Promise<EventDto> {
+  public async deleteEvent(uid: string): Promise<EventDto> {
     const eventFromDb = await this.eventsUtilsService.getEventByUid(uid);
     const event = await this.eventsRepo.remove(eventFromDb);
 
     return plainToClassResponse(EventDto, event);
+  }
+
+  // CLIENT SCOPE
+
+  public async fetchEventsClient(
+    options: PostOptions,
+  ): Promise<{ items: EventDto[]; props: ItemsPageProps }> {
+    const query = this.eventsRepo
+      .createQueryBuilder(scope)
+      .select([
+        `${scope}.id`,
+        `${scope}.uid`,
+        `${scope}.status`,
+        `${scope}.city`,
+        `${scope}.title`,
+        `${scope}.slug`,
+        `${scope}.isShowOnSlider`,
+        `${scope}.eventManager`,
+        `${scope}.concertManagerPercentage`,
+      ])
+      .leftJoinAndSelect(`${scope}.eventDates`, 'dates')
+      .leftJoinAndSelect(`${scope}.item`, 'item')
+      .leftJoinAndSelect(`${scope}.artist`, 'artist')
+      .leftJoinAndSelect(`${scope}.image`, 'media')
+      .leftJoinAndSelect(`${scope}.eventManager`, 'eventManager')
+      .leftJoinAndSelect(`${scope}.taxonomy`, 'taxonomy')
+      .orderBy(`dates.dateFrom`, 'ASC')
+      .skip(options.offset)
+      .take(options.count);
+
+    if (options.filter && Object.keys(options.filter).length) {
+      query.where((builder) => {
+        this.databaseService.andWhereFilterCondition(
+          builder,
+          options.filter,
+          scope,
+        );
+
+        this.databaseService.andWhereFutureEvents(builder);
+        this.databaseService.andWherePublishEvents(builder);
+      });
+    }
+
+    const events = await query.getMany();
+
+    return {
+      items: plainToClassResponse(EventDto, events),
+      props: {
+        total: await this.databaseService.getTotalForClientEvents(
+          options.filter,
+          scope,
+        ),
+        offset: options.offset,
+      },
+    };
   }
 }

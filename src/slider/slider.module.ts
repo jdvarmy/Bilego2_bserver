@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../database/database.module';
 import { MedialibraryModule } from '../medialibrary/medialibrary.module';
-import { SliderController } from './slider.controller';
-import { SliderService } from './slider.service';
+import { SliderClientController } from './controllers/slider-client.controller';
+import { SliderService } from './services/slider.service';
 
 @Module({
   imports: [DatabaseModule, MedialibraryModule],
-  controllers: [SliderController],
+  controllers: [SliderClientController],
   providers: [SliderService],
   exports: [],
 })

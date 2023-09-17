@@ -12,7 +12,8 @@ export const Routs = {
   taxonomy: Version._1 + 'taxonomy',
   tickets: Version._1 + 'tickets',
   users: Version._1 + 'users',
-  slider: Version._1 + 'slider',
+  eventsPublic: Version._1 + 'c/events',
+  sliderPublic: Version._1 + 'c/slider',
 };
 
 export enum PostStatus {

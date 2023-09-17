@@ -18,6 +18,7 @@ import { compareUid } from '../../utils/helpers/compareUid';
 import { Routs } from '../../utils/types/enums';
 
 @Controller(Routs.events)
+@UseGuards(AccessJwtAuthGuard)
 export class EventsController {
   constructor(private readonly eventService: EventsService) {}
 
@@ -41,13 +42,11 @@ export class EventsController {
   }
 
   @Post()
-  @UseGuards(AccessJwtAuthGuard)
   saveEventTemplate(): Promise<EventDto> {
     return this.eventService.saveEventTemplate();
   }
 
   @Put(':uid')
-  @UseGuards(AccessJwtAuthGuard)
   editEvent(
     @Param('uid') uid: string,
     @Body() eventDto: EditEventDto,
@@ -57,7 +56,6 @@ export class EventsController {
   }
 
   @Delete(':uid')
-  @UseGuards(AccessJwtAuthGuard)
   deleteEvent(@Param('uid') uid: string): Promise<EventDto> {
     return this.eventService.deleteEvent(uid);
   }

@@ -59,6 +59,8 @@ export class DatabaseService {
     private readonly userAccessRepo: Repository<UserAccess>,
   ) {}
 
+  // SERVER SCOPE
+
   public andWhereFilterCondition<T>(
     builder: SelectQueryBuilder<T>,
     filter: FindOptionsWhere<T>,
@@ -94,7 +96,7 @@ export class DatabaseService {
   }
 
   public andWhereFutureEvents<T>(builder: SelectQueryBuilder<T>) {
-    const currentTimestamp = new Date().getTime();
+    const currentTimestamp = Date.now();
 
     builder
       .andWhere(`${eventDateScope}.dateTo IS NOT NULL`)
@@ -128,6 +130,29 @@ export class DatabaseService {
       query.where((builder) =>
         this.andWhereFilterCondition(builder, params, scope),
       );
+    }
+
+    return query.getCount();
+  }
+
+  // CLIENT SCOPE
+
+  public async getTotalForClientEvents<T>(
+    params: FindOptionsWhere<T> | undefined,
+    scope: string,
+  ): Promise<number> {
+    const query = this[`${scope}Repo`]
+      .createQueryBuilder(scope)
+      .select('id')
+      .leftJoinAndSelect(`${scope}.eventDates`, 'dates');
+
+    if (params && Object.keys(params).length) {
+      query.where((builder) => {
+        this.andWhereFilterCondition(builder, params, scope);
+
+        this.andWhereFutureEvents(builder);
+        this.andWherePublishEvents(builder);
+      });
     }
 
     return query.getCount();
