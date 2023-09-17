@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './servises/auth.service';
 import { CookieTokenName, UserTokens } from '../utils/types/types';
 import { Request, Response } from 'express';
-import { LoginDto } from '../users/dtos/login.dto';
+import { LoginDto } from '../core/users/dtos/login.dto';
 import { setCookieRefreshToken } from '../utils';
 import { Routs } from '../utils/types/enums';
 

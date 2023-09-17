@@ -10,10 +10,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Users } from '../../database/entity';
 import { Repository } from 'typeorm';
-import { UserDto } from '../../users/dtos/user.dto';
+import { UserDto } from '../../core/users/dtos/user.dto';
 import { Forbidden, Unauthorized } from '../../utils/types/exceptionEnums';
 import { plainToClassResponse } from '../../utils/helpers/plainToClassResponse';
-import { LoginUser } from '../../users/types';
+import { LoginUser } from '../../core/users/types';
 
 @Injectable()
 export class AuthService {

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { JWT_ACCESS_SECRET } from '../../utils/types/constants/env';
 import { Users } from '../../database/entity';
-import { UsersUtilsService } from '../../users/services/users.utils.service';
+import { UsersUtilsService } from '../../core/users/services/users.utils.service';
 import { UserEntityRole } from '../../utils/types/enums';
 
 @Injectable()

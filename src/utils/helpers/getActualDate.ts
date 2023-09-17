@@ -1,6 +1,6 @@
 import cloneDeep from '../../utils';
 import { dateParse } from './dateParse';
-import { EventDates } from '../../events/entity/event-dates.entity';
+import { EventDates } from '../../core/events/entity/event-dates.entity';
 
 export const getActualDate = <T extends EventDates>(
   dates: T[],

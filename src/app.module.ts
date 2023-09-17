@@ -13,16 +13,16 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 
 import { AuthModule } from './auth/auth.module';
-import { EventsModule } from './events/events.module';
-import { ItemsModule } from './items/items.module';
-import { ArtistsModule } from './artists/artists.module';
-import { TicketsModule } from './tickets/tickets.module';
-import { UsersModule } from './users/users.module';
-import { TaxonomyModule } from './taxonomy/taxonomy.module';
+import { EventsModule } from './core/events/events.module';
+import { ItemsModule } from './core/items/items.module';
+import { ArtistsModule } from './core/artists/artists.module';
+import { TicketsModule } from './core/tickets/tickets.module';
+import { UsersModule } from './core/users/users.module';
+import { TaxonomyModule } from './core/taxonomy/taxonomy.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseModule } from './database/database.module';
-import { MedialibraryModule } from './medialibrary/medialibrary.module';
-import { MapModule } from './map/map.module';
+import { MedialibraryModule } from './core/medialibrary/medialibrary.module';
+import { MapModule } from './core/map/map.module';
 import { FileModule } from './file/file.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -30,7 +30,7 @@ import { PassportModule } from '@nestjs/passport';
 import { HttpsRedirectMiddleware } from './utils/middleware/https.redirect.middleware';
 import { S3Module } from 'nestjs-s3';
 import { databaseConfig } from './database/database.config';
-import { SliderModule } from './slider/slider.module';
+import { SliderModule } from './core/slider/slider.module';
 
 let envFilePath = '.env';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

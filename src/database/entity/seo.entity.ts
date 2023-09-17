@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Events } from '../../events/entity/events.entity';
-import { Items } from '../../items/entity/items.entity';
-import { Artists } from '../../artists/entity/artists.entity';
+import { Events } from '../../core/events/entity/events.entity';
+import { Items } from '../../core/items/entity/items.entity';
+import { Artists } from '../../core/artists/entity/artists.entity';
 
 @Entity()
 export class SEO {
