@@ -20,6 +20,7 @@ import {
 } from '../entity';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { PostStatus } from '../../utils/types/enums';
+import { EventsSpecialFilters } from '../../core/events/enums';
 
 const eventScope = 'events';
 const eventDateScope = 'dates';
@@ -59,8 +60,6 @@ export class DatabaseService {
     private readonly userAccessRepo: Repository<UserAccess>,
   ) {}
 
-  // SERVER SCOPE
-
   public andWhereFilterCondition<T>(
     builder: SelectQueryBuilder<T>,
     filter: FindOptionsWhere<T>,
@@ -69,7 +68,12 @@ export class DatabaseService {
     return Object.entries(filter).forEach(([key, value]) => {
       const clearKey = key.replace(/[^a-zA-Z0-9]/g, '');
 
-      if (
+      // only events
+      if (clearKey === EventsSpecialFilters.weekends && +value === 1) {
+        // воскресенье, пятница, суббота
+        builder.andWhere(`DAYOFWEEK(${eventDateScope}.dateFrom) IN (1, 6, 7)`);
+        // other
+      } else if (
         (typeof value === 'string' && ['true', 'false'].includes(value)) ||
         typeof value === 'boolean'
       ) {
@@ -120,6 +124,8 @@ export class DatabaseService {
     });
   }
 
+  // SERVER SCOPE
+
   public async getTotal<T>(
     params: FindOptionsWhere<T> | undefined,
     scope: string,
@@ -144,7 +150,7 @@ export class DatabaseService {
     const query = this[`${scope}Repo`]
       .createQueryBuilder(scope)
       .select('id')
-      .leftJoinAndSelect(`${scope}.eventDates`, 'dates');
+      .leftJoinAndSelect(`${scope}.eventDates`, eventDateScope);
 
     if (params && Object.keys(params).length) {
       query.where((builder) => {
