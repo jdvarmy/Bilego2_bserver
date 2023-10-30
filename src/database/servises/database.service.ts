@@ -72,8 +72,11 @@ export class DatabaseService {
       if (clearKey === EventsSpecialFilters.weekends && +value === 1) {
         // воскресенье, пятница, суббота
         builder.andWhere(`DAYOFWEEK(${eventDateScope}.dateFrom) IN (1, 6, 7)`);
-        // other
-      } else if (
+      } else if (clearKey === EventsSpecialFilters.popular && +value === 1) {
+        builder.andWhere(`1=1`);
+      }
+      // other
+      else if (
         (typeof value === 'string' && ['true', 'false'].includes(value)) ||
         typeof value === 'boolean'
       ) {
