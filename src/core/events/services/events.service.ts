@@ -14,7 +14,6 @@ import { plainToClassResponse } from '../../../utils/helpers/plainToClassRespons
 import { MedialibraryUtilsService } from '../../medialibrary/services/medialibrary.utils.service';
 import { TaxonomyUtilsService } from '../../taxonomy/services/taxonomy.utils.service';
 import { UsersUtilsService } from '../../users/services/users.utils.service';
-import { isNumber } from 'class-validator';
 
 const scope = 'events';
 
@@ -96,6 +95,13 @@ export class EventsService {
       headerImage: true,
       image: true,
     });
+    const userTimezoneOffset =
+      event.eventDates[0].dateFrom.getTimezoneOffset() * 60000;
+    console.log(
+      new Date(event.eventDates[0].dateFrom.getTime() - userTimezoneOffset),
+    );
+
+    console.log('getEvent', event.eventDates[0].dateFrom);
 
     return plainToClassResponse(EventDto, event);
   }
@@ -178,19 +184,10 @@ export class EventsService {
           dateUid,
         );
 
-        const eventDate = this.eventDatesRepo.create({
-          ...eventDateData,
-          dateFrom: isNumber(eventDateData.dateFrom)
-            ? new Date(eventDateData.dateFrom)
-            : eventDateData.dateFrom,
-          dateTo: isNumber(eventDateData.dateTo)
-            ? new Date(eventDateData.dateTo)
-            : eventDateData.dateTo,
-          closeDateTime: isNumber(eventDateData.closeDateTime)
-            ? new Date(eventDateData.closeDateTime)
-            : eventDateData.closeDateTime,
-        });
-        await this.eventDatesRepo.save({ ...eventDateFromDb, ...eventDate });
+        console.log('saveEvent', eventDateData.dateFrom);
+
+        const eventDate = this.eventDatesRepo.create({ ...eventDateData });
+        this.eventDatesRepo.save({ ...eventDateFromDb, ...eventDate });
       }
     }
 

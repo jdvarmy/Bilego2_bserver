@@ -14,9 +14,24 @@ export class EventDatesDto {
   constructor(eventDate: EventDates) {
     this.uid = eventDate.uid;
     this.type = eventDate.type;
-    this.dateFrom = eventDate.dateFrom;
-    this.dateTo = eventDate.dateTo;
-    this.closeDateTime = eventDate.closeDateTime;
+    this.dateFrom = eventDate.dateFrom
+      ? new Date(
+          eventDate.dateFrom.getTime() -
+            eventDate.dateFrom.getTimezoneOffset() * 60000,
+        )
+      : undefined;
+    this.dateTo = eventDate.dateTo
+      ? new Date(
+          eventDate.dateTo.getTime() -
+            eventDate.dateTo.getTimezoneOffset() * 60000,
+        )
+      : undefined;
+    this.closeDateTime = eventDate.closeDateTime
+      ? new Date(
+          eventDate.closeDateTime.getTime() -
+            eventDate.closeDateTime.getTimezoneOffset() * 60000,
+        )
+      : undefined;
     this.map = eventDate.map
       ? plainToClassResponse(MapDto, eventDate.map)
       : undefined;
