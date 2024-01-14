@@ -1,5 +1,4 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
 import {
   MYSQL_DB,
   MYSQL_HOST,
@@ -9,8 +8,9 @@ import {
   NODE_ENV,
 } from '../utils/types/constants/env';
 import entities from './entity';
+import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
-export const databaseConfig = {
+export const databaseConfig: MysqlConnectionOptions = {
   type: 'mysql',
   host: MYSQL_HOST,
   port: MYSQL_PORT,
@@ -24,6 +24,6 @@ export const databaseConfig = {
   migrationsTableName: 'migration',
   migrations: [__dirname + '/migration/**/*.ts'],
   subscribers: [],
-} as TypeOrmModuleOptions;
+};
 
-export default new DataSource(databaseConfig as DataSourceOptions);
+export default new DataSource(databaseConfig);
